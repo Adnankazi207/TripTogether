@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 // Destinations matching the sequence of frames
 const DESTINATIONS = [
@@ -8,7 +9,8 @@ const DESTINATIONS = [
   'Taj Mahal', 'Himachal Pradesh', 'Sikkim Mountains'
 ];
 
-export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSearchSubmit }) {
+export default function Cinematic3DHero() {
+  const { theme } = useTheme();
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [currentDestName, setCurrentDestName] = useState(DESTINATIONS[0]);
@@ -25,6 +27,15 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
   
   const totalFrames = 192;
 
+  // Smooth Scroll past Hero section
+  const handleExploreScroll = () => {
+    // The navbar is 80px, so scroll past hero viewport cleanly
+    window.scrollTo({
+      top: window.innerHeight,
+      behavior: 'smooth'
+    });
+  };
+
   // 1. Preload the Image Sequence
   useEffect(() => {
     let loadedCount = 0;
@@ -36,7 +47,7 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
       setLoadingProgress(progress);
 
       if (loadedCount === totalFrames) {
-        // Allow a slight delay for premium animation transition
+        // Delay loader fadeout slightly for luxury experience
         setTimeout(() => {
           setIsLoading(false);
         }, 800);
@@ -84,7 +95,7 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // 3. Canvas Rendering & Animation Loop
+  // 3. Canvas Rendering & Animation Loop (Theme Adaptive)
   useEffect(() => {
     if (isLoading || imagesRef.current.length === 0) return;
 
@@ -104,16 +115,16 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
 
     // Initialize 3D particles
     const particles = [];
-    const particleCount = 60;
+    const particleCount = 45;
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * canvas.clientWidth,
         y: Math.random() * canvas.clientHeight,
         z: Math.random() * 1.2 + 0.2, // Depth index: closer moves faster
         size: Math.random() * 2 + 1,
-        speedX: (Math.random() - 0.5) * 0.2,
-        speedY: -Math.random() * 0.3 - 0.1,
-        opacity: Math.random() * 0.4 + 0.1,
+        speedX: (Math.random() - 0.5) * 0.15,
+        speedY: -Math.random() * 0.25 - 0.08,
+        opacity: Math.random() * 0.35 + 0.1,
         pulseSpeed: Math.random() * 0.02 + 0.005,
         pulseValue: Math.random() * Math.PI
       });
@@ -127,18 +138,18 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
 
       // A. Smooth Spring Interpolation for Mouse Movement
       const mouse = mouseRef.current;
-      const spring = 0.06; // Easing coefficient
+      const spring = 0.05; // Easing coefficient (slightly damped for slower feel)
       mouse.currentX += (mouse.targetX - mouse.currentX) * spring;
       mouse.currentY += (mouse.targetY - mouse.currentY) * spring;
 
       // Add a subtle camera breath effect
-      const breatheX = Math.sin(time * 0.0006) * 0.015;
-      const breatheY = Math.cos(time * 0.0008) * 0.015;
+      const breatheX = Math.sin(time * 0.0005) * 0.012;
+      const breatheY = Math.cos(time * 0.0007) * 0.012;
       const visualX = mouse.currentX + breatheX;
       const visualY = mouse.currentY + breatheY;
 
-      // B. Frame Selection & India Landscape Text Mapping
-      const fps = 24; // Desired play speed
+      // B. Frame Selection & India Landscape Text Mapping (Slowing down FPS to 8 FPS)
+      const fps = 8; // Slower playback for luxury travel speed
       const frameInterval = 1000 / fps;
       const elapsed = time - lastFrameTimeRef.current;
 
@@ -157,9 +168,9 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
         ctx.save();
         
         // Dynamic Zoom/Slight pan effect
-        const zoom = 1.08;
-        const panX = -visualX * 35;
-        const panY = -visualY * 35;
+        const zoom = 1.06;
+        const panX = -visualX * 30;
+        const panY = -visualY * 30;
         
         // Scale to cover canvas
         const imgAspect = currentImage.width / currentImage.height;
@@ -181,22 +192,31 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
         ctx.restore();
       }
 
-      // D. Draw Cinematic Vignette & Ambient Color Gradients
+      // D. Draw Cinematic Vignette (Light theme adaptive)
       const ambientGlow = ctx.createRadialGradient(
-        width / 2 + visualX * 100, 
-        height / 2 + visualY * 100, 
-        width * 0.2, 
+        width / 2 + visualX * 80, 
+        height / 2 + visualY * 80, 
+        width * 0.25, 
         width / 2, 
         height / 2, 
-        width * 0.8
+        width * 0.75
       );
-      ambientGlow.addColorStop(0, 'rgba(5, 5, 5, 0.35)');
-      ambientGlow.addColorStop(0.5, 'rgba(5, 5, 5, 0.55)');
-      ambientGlow.addColorStop(1, 'rgba(5, 5, 5, 0.85)');
+      
+      if (theme === 'light') {
+        // Light theme vignette (fades to clean white)
+        ambientGlow.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+        ambientGlow.addColorStop(0.5, 'rgba(255, 255, 255, 0.35)');
+        ambientGlow.addColorStop(1, 'rgba(255, 255, 255, 0.75)');
+      } else {
+        // Dark theme vignette (fades to midnight)
+        ambientGlow.addColorStop(0, 'rgba(5, 5, 5, 0.3)');
+        ambientGlow.addColorStop(0.5, 'rgba(5, 5, 5, 0.55)');
+        ambientGlow.addColorStop(1, 'rgba(5, 5, 5, 0.85)');
+      }
       ctx.fillStyle = ambientGlow;
       ctx.fillRect(0, 0, width, height);
 
-      // E. Draw 3D Floating Dust Particles Layer
+      // E. Draw 3D Floating Dust Particles Layer (Theme adaptive)
       particles.forEach((p) => {
         // Move particle
         p.y += p.speedY;
@@ -213,21 +233,24 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
         }
 
         // Apply mouse-based 3D Parallax offset based on depth index
-        const px = p.x + (visualX * p.z * 120);
-        const py = p.y + (visualY * p.z * 120);
+        const px = p.x + (visualX * p.z * 100);
+        const py = p.y + (visualY * p.z * 100);
         
         // Pulse size & opacity
-        const activeSize = p.size * (1 + Math.sin(p.pulseValue) * 0.2);
+        const activeSize = p.size * (1 + Math.sin(p.pulseValue) * 0.15);
         const activeOpacity = p.opacity * (0.6 + Math.sin(p.pulseValue) * 0.4);
 
         ctx.save();
         ctx.beginPath();
         ctx.arc(px, py, activeSize, 0, Math.PI * 2);
         
-        // Highlight cyan/blue glow color palette
-        ctx.fillStyle = `rgba(56, 189, 248, ${activeOpacity})`;
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = 'rgba(56, 189, 248, 0.5)';
+        // Highlight particle color: Blue in light, Cyan in dark
+        ctx.fillStyle = theme === 'light' 
+          ? `rgba(37, 99, 235, ${activeOpacity})` 
+          : `rgba(56, 189, 248, ${activeOpacity})`;
+        
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = theme === 'light' ? 'rgba(37, 99, 235, 0.3)' : 'rgba(56, 189, 248, 0.4)';
         ctx.fill();
         ctx.restore();
       });
@@ -235,17 +258,17 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
       // F. Smooth Tilt Transform for visual wrapper to create 3D container depth
       const wrapper = document.getElementById('hero-3d-wrapper');
       if (wrapper) {
-        wrapper.style.transform = `rotateY(${visualX * 6}deg) rotateX(${-visualY * 6}deg) translateZ(0px)`;
+        wrapper.style.transform = `rotateY(${visualX * 4}deg) rotateX(${-visualY * 4}deg) translateZ(0px)`;
       }
 
       const infoTag = document.getElementById('hero-3d-location-tag');
       if (infoTag) {
-        infoTag.style.transform = `translate3d(${visualX * -40}px, ${visualY * -40}px, 40px)`;
+        infoTag.style.transform = `translate3d(${visualX * -30}px, ${visualY * -30}px, 30px)`;
       }
 
       const content = document.getElementById('hero-3d-content');
       if (content) {
-        content.style.transform = `translate3d(${visualX * -20}px, ${visualY * -20}px, 20px)`;
+        content.style.transform = `translate3d(${visualX * -15}px, ${visualY * -15}px, 15px)`;
       }
 
       animationFrameRef.current = requestAnimationFrame(render);
@@ -259,7 +282,7 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [isLoading]);
+  }, [isLoading, theme]);
 
   return (
     <section 
@@ -268,16 +291,17 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
       style={{
         position: 'relative',
         width: '100%',
-        height: '92vh',
-        backgroundColor: '#050505',
+        height: '84vh',
+        backgroundColor: theme === 'light' ? '#ffffff' : '#050505',
         overflow: 'hidden',
         perspective: '1200px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        transition: 'background-color 0.4s ease',
       }}
     >
-      {/* 1. Cinematic Preloader Screen */}
+      {/* 1. Cinematic Preloader Screen (Theme Adaptive) */}
       {isLoading && (
         <div 
           className="hero-loader-overlay"
@@ -285,13 +309,13 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
             position: 'absolute',
             inset: 0,
             zIndex: 100,
-            backgroundColor: '#050505',
+            backgroundColor: theme === 'light' ? '#ffffff' : '#050505',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             gap: '24px',
-            color: 'white',
+            color: theme === 'light' ? '#0a0a0c' : '#ffffff',
             transition: 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s',
           }}
         >
@@ -299,24 +323,24 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
             <span style={{ fontSize: '1.8rem', fontWeight: '800', letterSpacing: '4px', textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>
               Trip<span style={{ color: '#2563EB' }}>Together</span>
             </span>
-            <span style={{ fontSize: '0.8rem', letterSpacing: '6px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', fontWeight: '500' }}>
+            <span style={{ fontSize: '0.8rem', letterSpacing: '6px', color: theme === 'light' ? 'rgba(0,0,0,0.45)' : 'rgba(255,255,255,0.4)', textTransform: 'uppercase', fontWeight: '500' }}>
               Cinematic Expedition
             </span>
           </div>
 
-          <div style={{ width: '200px', height: '2px', backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '4px', overflow: 'hidden', position: 'relative' }}>
+          <div style={{ width: '200px', height: '2px', backgroundColor: theme === 'light' ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)', borderRadius: '4px', overflow: 'hidden', position: 'relative' }}>
             <div 
               style={{
                 width: `${loadingProgress}%`,
                 height: '100%',
                 background: 'linear-gradient(90deg, #2563EB 0%, #38BDF8 100%)',
                 transition: 'width 0.2s ease-out',
-                boxShadow: '0 0 10px rgba(56, 189, 248, 0.7)'
+                boxShadow: theme === 'light' ? '0 0 10px rgba(37, 99, 235, 0.4)' : '0 0 10px rgba(56, 189, 248, 0.7)'
               }}
             ></div>
           </div>
           
-          <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'rgba(255,255,255,0.6)', fontVariantNumeric: 'tabular-nums' }}>
+          <span style={{ fontSize: '0.85rem', fontWeight: '600', color: theme === 'light' ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.6)', fontVariantNumeric: 'tabular-nums' }}>
             {loadingProgress}%
           </span>
         </div>
@@ -347,126 +371,105 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
         
         {/* 3. Floating 3D Cloud Layers */}
         <div className="floating-clouds-container" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 2, transformStyle: 'preserve-3d' }}>
-          {/* Cloud 1 - Top Left */}
-          <div className="3d-cloud cloud-1" style={{ position: 'absolute', top: '15%', left: '5%', opacity: 0.25, width: '320px', height: '140px', background: 'radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 70%)', filter: 'blur(30px)', transform: 'translateZ(60px)' }}></div>
-          {/* Cloud 2 - Top Right */}
-          <div className="3d-cloud cloud-2" style={{ position: 'absolute', top: '22%', right: '8%', opacity: 0.2, width: '450px', height: '180px', background: 'radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%)', filter: 'blur(40px)', transform: 'translateZ(90px)' }}></div>
-          {/* Cloud 3 - Center Mist */}
-          <div className="3d-cloud cloud-3" style={{ position: 'absolute', bottom: '10%', left: '20%', opacity: 0.15, width: '600px', height: '220px', background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 80%)', filter: 'blur(50px)', transform: 'translateZ(30px)' }}></div>
+          {/* Cloud 1 */}
+          <div className="3d-cloud cloud-1" style={{ position: 'absolute', top: '12%', left: '4%', opacity: theme === 'light' ? 0.35 : 0.22, width: '350px', height: '140px', background: theme === 'light' ? 'radial-gradient(circle, rgba(255,255,255,0.45) 0%, transparent 70%)' : 'radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 70%)', filter: 'blur(30px)', transform: 'translateZ(60px)' }}></div>
+          {/* Cloud 2 */}
+          <div className="3d-cloud cloud-2" style={{ position: 'absolute', top: '18%', right: '6%', opacity: theme === 'light' ? 0.3 : 0.18, width: '480px', height: '180px', background: theme === 'light' ? 'radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%)' : 'radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%)', filter: 'blur(40px)', transform: 'translateZ(90px)' }}></div>
         </div>
 
-        {/* 4. Flying Birds Layer (Cinematic Silhouette SVG) */}
+        {/* 4. Flying Birds Layer */}
         <div 
           className="birds-flock"
           style={{
             position: 'absolute',
-            top: '30%',
-            left: '15%',
-            width: '120px',
-            height: '60px',
-            opacity: 0.35,
+            top: '25%',
+            left: '12%',
+            width: '130px',
+            height: '65px',
+            opacity: theme === 'light' ? 0.45 : 0.3,
             pointerEvents: 'none',
             zIndex: 3,
             transform: 'translateZ(50px)',
-            animation: 'flyAcross 45s linear infinite'
+            animation: 'flyAcross 50s linear infinite'
           }}
         >
-          <svg viewBox="0 0 100 50" fill="white">
-            <path className="bird-svg" d="M10,20 Q15,10 20,20 Q25,10 30,20 Q20,18 10,20 Z" style={{ animation: 'flap 0.8s ease-in-out infinite' }} />
-            <path className="bird-svg" d="M40,25 Q43,17 47,25 Q51,17 55,25 Q47,23 40,25 Z" style={{ animation: 'flap 0.8s ease-in-out infinite 0.2s' }} />
-            <path className="bird-svg" d="M25,35 Q28,29 32,35 Q36,29 40,35 Q32,33 25,35 Z" style={{ animation: 'flap 0.8s ease-in-out infinite 0.1s' }} />
+          <svg viewBox="0 0 100 50" fill={theme === 'light' ? '#333333' : '#ffffff'}>
+            <path className="bird-svg" d="M10,20 Q15,10 20,20 Q25,10 30,20 Q20,18 10,20 Z" style={{ animation: 'flap 0.9s ease-in-out infinite' }} />
+            <path className="bird-svg" d="M40,25 Q43,17 47,25 Q51,17 55,25 Q47,23 40,25 Z" style={{ animation: 'flap 0.9s ease-in-out infinite 0.22s' }} />
+            <path className="bird-svg" d="M25,35 Q28,29 32,35 Q36,29 40,35 Q32,33 25,35 Z" style={{ animation: 'flap 0.9s ease-in-out infinite 0.11s' }} />
           </svg>
         </div>
       </div>
 
-      {/* 5. Dynamic 3D Floating Location Overlay Tag */}
+      {/* 5. Floating Location Overlay Tag */}
       <div 
         id="hero-3d-location-tag"
         style={{
           position: 'absolute',
-          bottom: '6%',
-          right: '5%',
+          bottom: '8%',
+          right: '6%',
           zIndex: 4,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'flex-end',
           pointerEvents: 'none',
-          textShadow: '0 4px 12px rgba(0,0,0,0.6)',
+          textShadow: theme === 'light' ? '0 1px 4px rgba(255,255,255,0.7)' : '0 4px 12px rgba(0,0,0,0.6)',
           transformStyle: 'preserve-3d',
           transition: 'transform 0.1s ease-out',
         }}
       >
-        <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '4px', color: '#38BDF8', fontWeight: '700', marginBottom: '4px' }}>
+        <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '4px', color: theme === 'light' ? '#2563EB' : '#38BDF8', fontWeight: '700', marginBottom: '4px' }}>
           Expedition Location
         </span>
-        <span style={{ fontSize: '1.25rem', fontFamily: 'var(--font-heading)', color: 'white', fontWeight: '600', letterSpacing: '1px' }}>
+        <span style={{ fontSize: '1.25rem', fontFamily: 'var(--font-heading)', color: theme === 'light' ? '#1e0004' : '#ffffff', fontWeight: '600', letterSpacing: '1px' }}>
           {currentDestName}
         </span>
       </div>
 
-      {/* 6. Centered Hero Content Overlay */}
+      {/* 6. Simplified Centered Hero Content */}
       <div 
         id="hero-3d-content"
         className="container"
         style={{
           position: 'relative',
           zIndex: 5,
-          color: 'white',
+          color: theme === 'light' ? '#0a0a0c' : '#ffffff',
           textAlign: 'center',
           maxWidth: '850px',
           padding: '0 24px',
           transformStyle: 'preserve-3d',
           transition: 'transform 0.1s ease-out',
           pointerEvents: 'auto',
-          marginTop: '-40px'
         }}
       >
         {/* Glow behind title */}
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '220px', height: '220px', background: 'radial-gradient(circle, rgba(37, 99, 235, 0.12) 0%, transparent 70%)', filter: 'blur(30px)', pointerEvents: 'none', zIndex: -1 }}></div>
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '250px', height: '250px', background: theme === 'light' ? 'radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%)' : 'radial-gradient(circle, rgba(37, 99, 235, 0.12) 0%, transparent 70%)', filter: 'blur(30px)', pointerEvents: 'none', zIndex: -1 }}></div>
 
-        <span className="hero-3d-tagline">
-          ✨ YOUR ULTIMATE TRAVEL COMPANION
-        </span>
-        
-        <h1 className="hero-3d-title">
-          Explore the World,<br />
-          <span className="hero-3d-title-gradient">Plan with Confidence</span>
+        <h1 className="hero-3d-title" style={{ color: theme === 'light' ? '#0a0a0c' : '#ffffff' }}>
+          Explore the Beauty of <br />
+          <span className="hero-3d-title-gradient">India</span>
         </h1>
-        
-        <p className="hero-3d-subtitle">
-          Create custom itineraries, manage budgets in Rupees, track daily expenses collaboratively, and discover top-rated destinations worldwide. Everything for your next adventure.
-        </p>
 
-        <form onSubmit={handleSearchSubmit} className="hero-3d-search-bar">
-          <input
-            type="text"
-            placeholder="Search destinations (e.g. Paris, Manali, Bangalore...)"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <button type="submit" className="btn btn-primary hero-3d-search-btn">
-            Search
+        {/* Single Explore button that smooth scrolls below hero */}
+        <div style={{ animation: 'scaleInFade 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards', opacity: 0, display: 'inline-block' }}>
+          <button 
+            onClick={handleExploreScroll} 
+            className="btn btn-primary"
+            style={{
+              padding: '14px 36px',
+              fontSize: '1rem',
+              borderRadius: '50px',
+              fontWeight: '700',
+              letterSpacing: '1px',
+              background: 'linear-gradient(135deg, #2563EB 0%, #38BDF8 100%)',
+              border: 'none',
+              boxShadow: theme === 'light' ? '0 10px 25px rgba(37, 99, 235, 0.25)' : '0 10px 25px rgba(56, 189, 248, 0.3)',
+              transform: 'translateZ(20px)',
+              cursor: 'pointer'
+            }}
+          >
+            Explore Destinations
           </button>
-        </form>
-
-        {/* Floating 3D stats grid */}
-        <div className="hero-3d-stats-grid">
-          <div className="hero-3d-stat-card">
-            <div className="stat-num-3d">30k+</div>
-            <div className="stat-lbl-3d">Trips Planned</div>
-          </div>
-          <div className="hero-3d-stat-card">
-            <div className="stat-num-3d">4.9★</div>
-            <div className="stat-lbl-3d">User Rating</div>
-          </div>
-          <div className="hero-3d-stat-card">
-            <div className="stat-num-3d">120+</div>
-            <div className="stat-lbl-3d">Cities Covered</div>
-          </div>
-          <div className="hero-3d-stat-card">
-            <div className="stat-num-3d">100%</div>
-            <div className="stat-lbl-3d">Free to Use</div>
-          </div>
         </div>
       </div>
     </section>

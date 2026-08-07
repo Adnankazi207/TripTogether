@@ -46,7 +46,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="page-container animate-fade-in" style={{ paddingBottom: '80px', background: '#050505', paddingTop: '0px' }}>
+    <div className="page-container animate-fade-in" style={{ paddingBottom: '80px', background: 'var(--bg-primary)', paddingTop: '80px' }}>
       
       {/* Cinematic 3D Hero Section */}
       <Cinematic3DHero 
