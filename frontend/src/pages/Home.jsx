@@ -139,9 +139,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* AI Features Showcase Section */}
-      <section className="glass-panel" style={{ padding: '48px', borderRadius: 'var(--radius-lg)', margin: '100px 0', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-glow)', background: 'linear-gradient(135deg, rgba(220,38,38,0.01) 0%, rgba(244,63,94,0.03) 100%)' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '40px', alignItems: 'center' }}>
+         <section className="glass-panel ai-showcase-section">
+        <div className="ai-showcase-grid">
           <div>
             <span className="section-tag">Artificial Intelligence</span>
             <h2 style={{ fontSize: '2.25rem', marginBottom: '16px', fontWeight: '800' }}>Smart Travel Planning Powered by AI</h2>

@@ -1889,3 +1889,30 @@ p {
   }
 }
 
+/* AI Features Showcase Section responsive rules */
+.ai-showcase-section {
+  padding: 48px;
+  border-radius: var(--radius-lg);
+  margin: 100px 0;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-glow);
+  background: linear-gradient(135deg, rgba(220,38,38,0.01) 0%, rgba(244,63,94,0.03) 100%);
+}
+.ai-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 40px;
+  align-items: center;
+}
+@media (max-width: 768px) {
+  .ai-showcase-section {
+    padding: 24px 16px;
+    margin: 40px 0;
+    border-radius: var(--radius-md);
+  }
+  .ai-showcase-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
