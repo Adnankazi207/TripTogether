@@ -26,18 +26,13 @@ export default function Cinematic3DHero() {
   
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
-  const imagesRef = useRef([]);
+  const videoRef = useRef(null);
   
   // Easing values for mouse coordinates (orbit camera parallax)
   const mouseRef = useRef({ targetX: 0, targetY: 0, currentX: 0, currentY: 0 });
   // Scroll target & current position for Z-axis camera zoom
   const scrollRef = useRef({ targetPercent: 0, currentPercent: 0 });
   
-  const frameIndexRef = useRef(0);
-  const lastFrameTimeRef = useRef(0);
-  
-  const totalFrames = 192;
-
   // Smooth Scroll past Hero section
   const handleExploreScroll = () => {
     window.scrollTo({
@@ -46,38 +41,44 @@ export default function Cinematic3DHero() {
     });
   };
 
-  // 1. Preload the Image Sequence
+  // 1. Preload the MP4 Video
   useEffect(() => {
-    let loadedCount = 0;
-    const images = [];
+    const video = document.createElement('video');
+    video.src = '/Travel_montage_showcasing_India_1080p_202608071922.mp4';
+    video.loop = true;
+    video.muted = true;
+    video.playsInline = true;
+    video.autoplay = true;
 
-    const handleImageLoad = () => {
-      loadedCount++;
-      const progress = Math.floor((loadedCount / totalFrames) * 100);
-      setLoadingProgress(progress);
-
-      if (loadedCount === totalFrames) {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 600);
+    // Smoothly progress the load meter mockup
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 8;
+      if (progress >= 96) {
+        clearInterval(interval);
+      } else {
+        setLoadingProgress(progress);
       }
+    }, 80);
+
+    const handleCanPlay = () => {
+      clearInterval(interval);
+      setLoadingProgress(100);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 300);
     };
 
-    const handleImageError = (e) => {
-      console.warn("Failed to load a frame. Continuing...", e);
-      handleImageLoad(); 
-    };
+    video.addEventListener('loadeddata', handleCanPlay);
+    videoRef.current = video;
 
-    for (let i = 1; i <= totalFrames; i++) {
-      const img = new Image();
-      const frameNum = String(i).padStart(3, '0');
-      img.src = `/8899670e253cf24673a6f9370eb17c46/ffout${frameNum}.gif`;
-      img.onload = handleImageLoad;
-      img.onerror = handleImageError;
-      images.push(img);
-    }
-    
-    imagesRef.current = images;
+    return () => {
+      clearInterval(interval);
+      video.removeEventListener('loadeddata', handleCanPlay);
+      video.pause();
+      video.src = '';
+      video.load();
+    };
   }, []);
 
   // 2. Window Event Listeners (Mouse Parallax & Scroll Zoom)
@@ -86,7 +87,6 @@ export default function Cinematic3DHero() {
       if (!containerRef.current) return;
       const width = window.innerWidth;
       const height = window.innerHeight;
-      // Normalize coordinate factors to [-0.5, 0.5]
       mouseRef.current.targetX = (e.clientX / width) - 0.5;
       mouseRef.current.targetY = (e.clientY / height) - 0.5;
     };
@@ -94,7 +94,6 @@ export default function Cinematic3DHero() {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const height = window.innerHeight;
-      // Map scroll progress percentage, clamped at [0, 1]
       const percent = Math.min(Math.max(scrollY / height, 0), 1);
       scrollRef.current.targetPercent = percent;
     };
@@ -109,34 +108,20 @@ export default function Cinematic3DHero() {
 
   // 3. Three.js WebGL Rendering Loop
   useEffect(() => {
-    if (isLoading || imagesRef.current.length === 0 || !canvasRef.current) return;
+    if (isLoading || !videoRef.current || !canvasRef.current) return;
 
     const container = containerRef.current;
     const canvas = canvasRef.current;
+    const video = videoRef.current;
 
-    // A. Offscreen Canvas for Dynamic Texture updating (memory optimized & scaled for crystal clarity)
-    const offscreenCanvas = document.createElement('canvas');
-    const offscreenCtx = offscreenCanvas.getContext('2d');
-    const firstFrame = imagesRef.current[0];
-    
-    // Scale up canvas resolution to double the source frame dimensions
-    const scaleFactor = 2;
-    offscreenCanvas.width = firstFrame.width * scaleFactor;
-    offscreenCanvas.height = firstFrame.height * scaleFactor;
-    
-    // Enable high-quality image smoothing
-    offscreenCtx.imageSmoothingEnabled = true;
-    offscreenCtx.imageSmoothingQuality = 'high';
-    
-    // Draw initial frame scaled up
-    offscreenCtx.drawImage(firstFrame, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
+    // Explicitly trigger play (safeguard)
+    video.play().catch(err => console.log('Video play triggered:', err));
 
-    // B. Three.js Core Setup
+    // A. Three.js Core Setup
     const width = container.clientWidth;
     const height = container.clientHeight;
     
     const scene = new THREE.Scene();
-    // Volumetric WebGL Fog
     const initialFogColor = theme === 'light' ? 0xffffff : 0x050505;
     scene.fog = new THREE.FogExp2(initialFogColor, 0.0);
 
@@ -153,11 +138,11 @@ export default function Cinematic3DHero() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(initialFogColor, 1.0);
 
-    // C. Projection Plane with CanvasTexture Map
-    const texture = new THREE.CanvasTexture(offscreenCanvas);
+    // B. Projection Plane with VideoTexture Map
+    const texture = new THREE.VideoTexture(video);
     texture.minFilter = THREE.LinearFilter;
     texture.magFilter = THREE.LinearFilter;
-    texture.generateMipmaps = false;
+    texture.colorSpace = THREE.SRGBColorSpace;
 
     const planeGeo = new THREE.PlaneGeometry(2, 2);
     const planeMat = new THREE.MeshBasicMaterial({
@@ -176,10 +161,11 @@ export default function Cinematic3DHero() {
       const visibleHeight = 2 * Math.tan(fovRad / 2) * camera.position.z;
       const visibleWidth = visibleHeight * camera.aspect;
       
-      const imgAspect = firstFrame.width / firstFrame.height;
+      const videoWidth = video.videoWidth || 1920;
+      const videoHeight = video.videoHeight || 1080;
+      const imgAspect = videoWidth / videoHeight;
       const planeAspect = visibleWidth / visibleHeight;
       
-      // Slight margin scale to prevent margins during snappy orbit tilts
       const baseZoom = 1.03; 
       if (planeAspect > imgAspect) {
         backgroundPlane.scale.set(visibleWidth * baseZoom, (visibleWidth / imgAspect) * baseZoom, 1);
@@ -188,15 +174,16 @@ export default function Cinematic3DHero() {
       }
     };
     scaleBackgroundPlane();
+    
+    video.addEventListener('loadedmetadata', scaleBackgroundPlane);
 
-    // D. Volumetric glowing 3D particle points system
+    // C. Volumetric glowing 3D particle points system
     const particleGeo = new THREE.BufferGeometry();
     const particleCount = 75;
     const posArray = new Float32Array(particleCount * 3);
     const speedsArray = new Float32Array(particleCount);
     
     for (let i = 0; i < particleCount * 3; i += 3) {
-      // Scatter coordinates in 3D box
       posArray[i] = (Math.random() - 0.5) * 8.0;     // X coordinate
       posArray[i + 1] = (Math.random() - 0.5) * 5.0; // Y coordinate
       posArray[i + 2] = (Math.random() * 4.0) - 1.0; // Z depth
@@ -205,7 +192,6 @@ export default function Cinematic3DHero() {
 
     particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
     
-    // Create points material (adapt color dynamically)
     const particleMat = new THREE.PointsMaterial({
       size: 0.024,
       transparent: true,
@@ -218,7 +204,7 @@ export default function Cinematic3DHero() {
     const particles = new THREE.Points(particleGeo, particleMat);
     scene.add(particles);
 
-    // E. Lighting Setup
+    // D. Lighting Setup
     const ambientLight = new THREE.AmbientLight(0xffffff, theme === 'light' ? 0.95 : 0.45);
     scene.add(ambientLight);
     
@@ -226,7 +212,7 @@ export default function Cinematic3DHero() {
     dirLight.position.set(0, 2, 4);
     scene.add(dirLight);
 
-    // F. Frame resize handler
+    // E. Frame resize handler
     const handleResize = () => {
       const w = container.clientWidth;
       const h = container.clientHeight;
@@ -237,28 +223,17 @@ export default function Cinematic3DHero() {
     };
     window.addEventListener('resize', handleResize);
 
-    // G. WebGL Rendering Easing Loop
+    // F. WebGL Rendering Easing Loop
     let animationFrameId;
     const render = (time) => {
-      // 1. Update Video texture sequence (24 FPS)
-      const fps = 24;
-      const interval = 1000 / fps;
-      const elapsed = time - lastFrameTimeRef.current;
-
-      if (elapsed > interval) {
-        frameIndexRef.current = (frameIndexRef.current + 1) % totalFrames;
-        lastFrameTimeRef.current = time - (elapsed % interval);
-
-        const activeImg = imagesRef.current[frameIndexRef.current];
-        if (activeImg && activeImg.complete) {
-          // Re-enforce high-quality smoothing parameters
-          offscreenCtx.imageSmoothingEnabled = true;
-          offscreenCtx.imageSmoothingQuality = 'high';
-          offscreenCtx.drawImage(activeImg, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
-          texture.needsUpdate = true; // Signals WebGL to reload texture data
-        }
-
-        const destIndex = Math.floor((frameIndexRef.current / totalFrames) * DESTINATIONS.length);
+      // 1. Cycle location tag coordinates synchronized with video playtime progress
+      if (video.duration) {
+        const currentTime = video.currentTime;
+        const duration = video.duration;
+        const destIndex = Math.min(
+          Math.floor((currentTime / duration) * DESTINATIONS.length),
+          DESTINATIONS.length - 1
+        );
         setCurrentDest(DESTINATIONS[destIndex]);
       }
 
@@ -268,66 +243,55 @@ export default function Cinematic3DHero() {
       mouse.currentX += (mouse.targetX - mouse.currentX) * spring;
       mouse.currentY += (mouse.targetY - mouse.currentY) * spring;
 
-      // Subtle Camera Breath
       const breatheX = Math.sin(time * 0.0006) * 0.008;
       const breatheY = Math.cos(time * 0.0008) * 0.008;
       const orbitX = mouse.currentX + breatheX;
       const orbitY = mouse.currentY + breatheY;
 
-      // Rotate camera around origin for dynamic 3D depth feeling
       camera.position.x = orbitX * 0.75;
       camera.position.y = -orbitY * 0.75;
 
       // 3. Scroll-driven camera Z-depth zoom
       const scroll = scrollRef.current;
       scroll.currentPercent += (scroll.targetPercent - scroll.currentPercent) * 0.08;
-      
-      // Zooms camera forward as user scrolls down
       camera.position.z = 5.0 - (scroll.currentPercent * 2.0);
 
       // Rotate plane slightly to enhance depth speed-ramp
       backgroundPlane.rotation.y = orbitX * 0.08;
       backgroundPlane.rotation.x = -orbitY * 0.08;
-      backgroundPlane.rotation.z = scroll.currentPercent * 0.03; // Subtle camera roll
+      backgroundPlane.rotation.z = scroll.currentPercent * 0.03;
 
       // 4. Animate Volumetric 3D Particles
       const positions = particleGeo.attributes.position.array;
       for (let i = 0; i < particleCount; i++) {
-        // Index mapping
         const yIndex = i * 3 + 1;
         const xIndex = i * 3;
         
-        // Float particles upward
         positions[yIndex] += speedsArray[i];
-        
-        // Slow sway drift
         positions[xIndex] += Math.sin(time * 0.001 + i) * 0.0008;
 
-        // Reset if drifted past ceiling boundary
         if (positions[yIndex] > 3.0) {
           positions[yIndex] = -3.0;
           positions[xIndex] = (Math.random() - 0.5) * 8.0;
         }
       }
-      particleGeo.attributes.position.needsUpdate = true; // Tell WebGL geometry updated
-      particles.rotation.y = time * 0.0001; // Slow continuous particle orbit
+      particleGeo.attributes.position.needsUpdate = true;
+      particles.rotation.y = time * 0.0001;
 
-      // Keep camera locked on scene center
       camera.lookAt(0, 0, 0);
       
-      // Render WebGL frame
       renderer.render(scene, camera);
       animationFrameId = requestAnimationFrame(render);
     };
     
     animationFrameId = requestAnimationFrame(render);
 
-    // cleanups on unmount
+    // Cleanups on unmount
     return () => {
       window.removeEventListener('resize', handleResize);
+      video.removeEventListener('loadedmetadata', scaleBackgroundPlane);
       cancelAnimationFrame(animationFrameId);
       
-      // Dispose WebGL resources to prevent memory leaks
       renderer.dispose();
       planeGeo.dispose();
       planeMat.dispose();
