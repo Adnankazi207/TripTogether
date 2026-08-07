@@ -131,7 +131,7 @@ export default function Cinematic3DHero() {
     const scene = new THREE.Scene();
     // Volumetric WebGL Fog
     const initialFogColor = theme === 'light' ? 0xffffff : 0x050505;
-    scene.fog = new THREE.FogExp2(initialFogColor, 0.14);
+    scene.fog = new THREE.FogExp2(initialFogColor, 0.0);
 
     const camera = new THREE.PerspectiveCamera(55, width / height, 0.1, 100);
     camera.position.z = 5.0; // Base depth position
