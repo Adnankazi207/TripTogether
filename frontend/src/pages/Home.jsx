@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Cinematic3DHero from '../components/Cinematic3DHero';
+import FeatureSlider from '../components/FeatureSlider';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -98,45 +99,7 @@ export default function Home() {
         </div>
       </section>
 
-         <section className="glass-panel ai-showcase-section">
-        <div className="ai-showcase-grid">
-          <div>
-            <span className="section-tag">Artificial Intelligence</span>
-            <h2 style={{ fontSize: '2.25rem', marginBottom: '16px', fontWeight: '800' }}>Smart Travel Planning Powered by AI</h2>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', fontSize: '1.02rem', lineHeight: '1.6' }}>
-              We leverage modern language models to handle scheduling logistics and answer travel questions, allowing you to focus on enjoying the journey.
-            </p>
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <Link to="/ai-copilot" className="btn btn-primary" style={{ padding: '10px 20px', borderRadius: 'var(--radius-sm)' }}>
-                ✨ Try AI Co-Pilot
-              </Link>
-            </div>
-          </div>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            {/* AI Card 1 */}
-            <div className="feature-card" style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', background: 'var(--bg-secondary)' }}>
-              <div style={{ fontSize: '2rem', lineHeight: '1' }}>🤖</div>
-              <div>
-                <h4 style={{ fontSize: '1.15rem', marginBottom: '6px', fontWeight: '700', color: 'var(--text-primary)' }}>Automatic AI Itineraries</h4>
-                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-                  Generate custom day-by-day sightseeing and activity schedules instantly. Tailored to local climates, cost index, and categories.
-                </p>
-              </div>
-            </div>
-            {/* AI Card 2 */}
-            <div className="feature-card" style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', background: 'var(--bg-secondary)' }}>
-              <div style={{ fontSize: '2rem', lineHeight: '1' }}>💬</div>
-              <div>
-                <h4 style={{ fontSize: '1.15rem', marginBottom: '6px', fontWeight: '700', color: 'var(--text-primary)' }}>AI Co-Pilot Travel Chat</h4>
-                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-                  Chat with our co-pilot to plan transit routes, request local restaurant advice, find shopping spots, and get dynamic packing lists.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+         <FeatureSlider />
 
       {/* Visual Walkthrough: How it Works */}
       <section style={{ margin: '100px 0' }}>
