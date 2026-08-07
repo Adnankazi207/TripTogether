@@ -182,9 +182,9 @@ export default function Home() {
       </section>
 
       {/* Final Call to Action Section */}
-      <section className="glass-panel cta-banner" style={{ padding: '60px 40px', borderRadius: 'var(--radius-lg)', textAlign: 'center', border: '1px solid var(--border-color)', background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.02) 0%, rgba(244, 63, 94, 0.05) 100%)', boxShadow: 'var(--shadow-lg)', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: '-40%', left: '-20%', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(220, 38, 38, 0.08) 0%, transparent 75%)', pointerEvents: 'none' }}></div>
-        <div style={{ position: 'absolute', bottom: '-40%', right: '-20%', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(244, 63, 94, 0.08) 0%, transparent 75%)', pointerEvents: 'none' }}></div>
+      <section className="glass-panel cta-banner" style={{ padding: '60px 40px', borderRadius: 'var(--radius-lg)', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+        <div className="cta-glow-1"></div>
+        <div className="cta-glow-2"></div>
         
         <div style={{ position: 'relative', zIndex: 2, maxWidth: '600px', margin: '0 auto' }}>
           <span className="section-tag" style={{ marginBottom: '12px' }}>Start planning</span>
@@ -205,7 +205,6 @@ export default function Home() {
 
       </div> {/* Closing container wrapper */}
 
-      {/* Premium CSS transitions and animations */}
       <style>{`
         /* Feature Cards Premium 3D Tilt Transitions */
         .features-grid {
@@ -216,7 +215,7 @@ export default function Home() {
           border-radius: var(--radius-md);
           background: var(--bg-secondary);
           border: 1px solid var(--border-color);
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+          box-shadow: var(--shadow-md);
           transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), 
                       border-color 0.4s ease, 
                       box-shadow 0.4s ease;
@@ -237,8 +236,8 @@ export default function Home() {
         }
         .feature-card:hover {
           transform: translateY(-8px) rotateX(2deg) rotateY(2deg);
-          border-color: rgba(220, 38, 38, 0.22);
-          box-shadow: 0 20px 40px rgba(220, 38, 38, 0.05), var(--shadow-glow);
+          border-color: var(--color-primary);
+          box-shadow: var(--shadow-lg), var(--shadow-glow);
         }
         .feature-card:hover::before {
           opacity: 1;
@@ -250,7 +249,7 @@ export default function Home() {
           border-radius: var(--radius-md);
           background: var(--bg-secondary);
           border: 1px solid var(--border-color);
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+          box-shadow: var(--shadow-md);
           transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), 
                       border-color 0.4s ease, 
                       box-shadow 0.4s ease;
@@ -258,8 +257,8 @@ export default function Home() {
         }
         .step-card:hover {
           transform: translateY(-6px);
-          border-color: rgba(220, 38, 38, 0.18);
-          box-shadow: 0 15px 30px rgba(220, 38, 38, 0.04);
+          border-color: var(--color-primary);
+          box-shadow: var(--shadow-lg);
         }
         .step-num {
           position: absolute;
@@ -273,9 +272,12 @@ export default function Home() {
           display: flex;
           align-items: center;
           justify-content: center;
-          fontWeight: 800;
+          font-weight: 800;
           font-size: 0.88rem;
-          box-shadow: 0 2px 6px rgba(220, 38, 38, 0.3);
+          box-shadow: 0 4px 10px rgba(29, 78, 216, 0.2);
+        }
+        [data-theme='dark'] .step-num {
+          box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
         }
 
         /* Trending Destinations Zoom Transition */
@@ -283,7 +285,7 @@ export default function Home() {
           border-radius: var(--radius-md);
           background: var(--bg-secondary);
           border: 1px solid var(--border-color);
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+          box-shadow: var(--shadow-md);
           transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), 
                       border-color 0.4s ease, 
                       box-shadow 0.4s ease;
@@ -292,8 +294,8 @@ export default function Home() {
         }
         .dest-card:hover {
           transform: translateY(-10px);
-          border-color: rgba(220, 38, 38, 0.22);
-          box-shadow: 0 30px 50px rgba(220, 38, 38, 0.06);
+          border-color: var(--color-primary);
+          box-shadow: var(--shadow-lg), var(--shadow-glow);
         }
         .dest-image-wrapper {
           overflow: hidden;
@@ -308,11 +310,40 @@ export default function Home() {
         
         /* CTA Hover Effects */
         .cta-banner {
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-color);
+          box-shadow: var(--shadow-lg);
           transition: border-color 0.4s ease, box-shadow 0.4s ease;
         }
         .cta-banner:hover {
-          border-color: rgba(220, 38, 38, 0.15);
-          box-shadow: 0 20px 45px rgba(220, 38, 38, 0.04);
+          border-color: var(--color-primary);
+          box-shadow: var(--shadow-lg), var(--shadow-glow);
+        }
+        .cta-glow-1 {
+          position: absolute;
+          top: -40%;
+          left: -20%;
+          width: 300px;
+          height: 300px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(29, 78, 216, 0.06) 0%, transparent 75%);
+          pointer-events: none;
+        }
+        [data-theme='dark'] .cta-glow-1 {
+          background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 75%);
+        }
+        .cta-glow-2 {
+          position: absolute;
+          bottom: -40%;
+          right: -20%;
+          width: 300px;
+          height: 300px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(180, 83, 9, 0.06) 0%, transparent 75%);
+          pointer-events: none;
+        }
+        [data-theme='dark'] .cta-glow-2 {
+          background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 75%);
         }
 
         /* Responsive Mobile Styles */
