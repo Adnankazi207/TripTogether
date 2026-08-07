@@ -2246,3 +2246,94 @@ p {
   }
 }
 
+/* Luxury travel coordinated ticker (Swiss design layout) */
+.luxury-location-tag {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  font-family: var(--font-heading);
+}
+
+.coordinate-ticker {
+  font-size: 0.72rem;
+  letter-spacing: 3px;
+  font-weight: 500;
+  opacity: 0.85;
+  font-family: monospace;
+}
+
+.location-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+
+/* Luxury Explorer Button (Translucent Border Magnetic Style) */
+.hero-luxury-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 36px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  border-radius: 100px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--font-heading);
+}
+
+[data-theme='light'] .hero-luxury-btn {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.15);
+  color: #0a0a0c;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+[data-theme='dark'] .hero-luxury-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.hero-luxury-btn:hover {
+  transform: translateY(-4px) scale(1.02);
+}
+
+[data-theme='light'] .hero-luxury-btn:hover {
+  background: #0a0a0c !important;
+  color: #ffffff !important;
+  border-color: #0a0a0c !important;
+  box-shadow: 0 12px 30px rgba(10, 10, 12, 0.25), 0 0 0 1px rgba(10, 10, 12, 0.1);
+}
+
+[data-theme='dark'] .hero-luxury-btn:hover {
+  background: #ffffff !important;
+  color: #050505 !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 12px 35px rgba(255, 255, 255, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.hero-luxury-btn:hover .btn-arrow {
+  transform: translateX(6px);
+}
+
+/* Ensure navbar transitions look incredibly premium */
+.navbar-wrapper {
+  transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              backdrop-filter 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              padding 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+
