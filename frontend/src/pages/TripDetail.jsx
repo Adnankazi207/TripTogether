@@ -43,6 +43,7 @@ export default function TripDetail() {
   // Shared Gallery States
   const [photoUrl, setPhotoUrl] = useState('');
   const [photoSubmitting, setPhotoSubmitting] = useState(false);
+  const [activeLightboxImage, setActiveLightboxImage] = useState(null);
 
   // AI Itinerary States
   const [aiSuggestions, setAiSuggestions] = useState(null);
@@ -515,6 +516,35 @@ export default function TripDetail() {
       }
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleDownloadImage = async (url, filename) => {
+    try {
+      if (url.startsWith('data:')) {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename || 'trip-photo.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        return;
+      }
+      
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = filename || 'trip-photo.jpg';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error('Failed to download image:', error);
+      // Fallback: Open in new tab so they can right-click save if CORS blocks fetch
+      window.open(url, '_blank');
+    }
   };
 
   // Actions: AI Itinerary suggestion planner
@@ -1297,15 +1327,34 @@ export default function TripDetail() {
                         <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginTop: '2px' }}>
                           🕒 {new Date(photo.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                         </span>
-                        <a 
-                          href={photo.url} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="btn btn-secondary" 
-                          style={{ padding: '6px 12px', fontSize: '0.75rem', width: '100%', marginTop: '10px', justifyContent: 'center' }}
-                        >
-                          ⬇️ View / Save Full
-                        </a>
+                        <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+                          <button
+                            onClick={() => setActiveLightboxImage(photo)}
+                            className="btn btn-secondary"
+                            style={{ 
+                              flex: 1, 
+                              padding: '6px 8px', 
+                              fontSize: '0.75rem', 
+                              justifyContent: 'center',
+                              whiteSpace: 'nowrap'
+                            }}
+                          >
+                            🔍 View Full
+                          </button>
+                          <button
+                            onClick={() => handleDownloadImage(photo.url, `trip-${tripId}-${photo._id}.jpg`)}
+                            className="btn btn-secondary"
+                            style={{ 
+                              flex: 1, 
+                              padding: '6px 8px', 
+                              fontSize: '0.75rem', 
+                              justifyContent: 'center',
+                              whiteSpace: 'nowrap'
+                            }}
+                          >
+                            ⬇️ Download
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -1503,6 +1552,115 @@ export default function TripDetail() {
         </div>
 
       </div>
+
+      {/* Lightbox Modal for Shared Gallery */}
+      {activeLightboxImage && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+            backdropFilter: 'blur(8px)',
+            zIndex: 9999,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '20px',
+          }}
+          onClick={() => setActiveLightboxImage(null)}
+        >
+          <div 
+            style={{
+              position: 'relative',
+              maxWidth: '90%',
+              maxHeight: '90%',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '16px'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setActiveLightboxImage(null)}
+              style={{
+                position: 'absolute',
+                top: '-45px',
+                right: '0',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: 'none',
+                color: '#fff',
+                fontSize: '24px',
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'background 0.2s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'}
+            >
+              &times;
+            </button>
+
+            {/* Lightbox Image */}
+            <img 
+              src={activeLightboxImage.url} 
+              alt="Shared Gallery Preview"
+              style={{
+                maxWidth: '100%',
+                maxHeight: '70vh',
+                objectFit: 'contain',
+                borderRadius: 'var(--radius-sm)',
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+              }}
+            />
+
+            {/* Info and Actions inside Lightbox */}
+            <div style={{ 
+              textAlign: 'center', 
+              color: '#fff',
+              background: 'rgba(15, 23, 42, 0.65)',
+              padding: '16px 24px',
+              borderRadius: 'var(--radius-md)',
+              backdropFilter: 'blur(4px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              width: '100%',
+              minWidth: '280px',
+              maxWidth: '500px'
+            }}>
+              <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: '500' }}>
+                Shared by: <strong>{activeLightboxImage.uploadedBy}</strong>
+              </p>
+              <p style={{ margin: '4px 0 12px 0', fontSize: '0.75rem', color: '#cbd5e1' }}>
+                🕒 {new Date(activeLightboxImage.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+              </p>
+              <button
+                onClick={() => handleDownloadImage(activeLightboxImage.url, `trip-${tripId}-${activeLightboxImage._id}.jpg`)}
+                className="btn btn-primary"
+                style={{ 
+                  margin: '0 auto', 
+                  padding: '8px 24px', 
+                  fontSize: '0.85rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  justifyContent: 'center'
+                }}
+              >
+                ⬇️ Download Image
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
