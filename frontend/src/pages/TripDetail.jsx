@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { createPortal } from 'react-dom';
 
 export default function TripDetail() {
   const { tripId } = useParams();
@@ -1554,7 +1555,7 @@ export default function TripDetail() {
       </div>
 
       {/* Lightbox Modal for Shared Gallery */}
-      {activeLightboxImage && (
+      {activeLightboxImage && createPortal(
         <div 
           style={{
             position: 'fixed',
@@ -1564,7 +1565,7 @@ export default function TripDetail() {
             height: '100vh',
             backgroundColor: 'rgba(15, 23, 42, 0.9)',
             backdropFilter: 'blur(8px)',
-            zIndex: 9999,
+            zIndex: 99999,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -1659,7 +1660,8 @@ export default function TripDetail() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>
