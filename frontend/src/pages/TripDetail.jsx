@@ -60,6 +60,19 @@ export default function TripDetail() {
   const markersRef = useRef({});
   const geolocationWatchIdRef = useRef(null);
 
+  // Safety Notifications State
+  const [safetyNotifications, setSafetyNotifications] = useState([]);
+
+  const triggerSafetyNotification = (message) => {
+    const id = Date.now() + Math.random().toString();
+    setSafetyNotifications(prev => [...prev, { id, message }]);
+
+    // Auto-remove after 8 seconds
+    setTimeout(() => {
+      setSafetyNotifications(prev => prev.filter(n => n.id !== id));
+    }, 8000);
+  };
+
   useEffect(() => {
     if (user && tripId) {
       fetchTripDetails();
@@ -151,12 +164,12 @@ export default function TripDetail() {
     }
   }, [trip?.locations, activeTab]);
 
-  // 4. Polling for locations while Safety Radar tab is open
+  // 4. Global Background Polling for live updates and Safety Radar alerts
   useEffect(() => {
     let intervalId = null;
 
-    if (activeTab === 'locations') {
-      const pollTripDetails = async () => {
+    if (user && tripId) {
+      const pollTripUpdates = async () => {
         try {
           const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}`, {
             headers: {
@@ -165,18 +178,42 @@ export default function TripDetail() {
           });
           if (res.ok) {
             const data = await res.json();
-            setTrip(prev => ({
-              ...prev,
-              locations: data.locations || [],
-              members: data.members || []
-            }));
+            
+            setTrip(prev => {
+              if (prev) {
+                const oldLocs = prev.locations || [];
+                const newLocs = data.locations || [];
+                
+                newLocs.forEach(newLoc => {
+                  const newUserId = newLoc.user._id ? newLoc.user._id.toString() : newLoc.user.toString();
+                  if (newUserId !== user.id) {
+                    const wasSharing = oldLocs.some(oldLoc => {
+                      const oldUserId = oldLoc.user._id ? oldLoc.user._id.toString() : oldLoc.user.toString();
+                      return oldUserId === newUserId;
+                    });
+                    
+                    if (!wasSharing) {
+                      triggerSafetyNotification(`⚠️ Safety Alert: ${newLoc.userName} has activated their live location radar. Go to "Safety Radar" to see their map location!`);
+                    }
+                  }
+                });
+              }
+              
+              return {
+                ...prev,
+                locations: data.locations || [],
+                members: data.members || [],
+                photos: data.photos || (prev ? prev.photos : [])
+              };
+            });
           }
         } catch (err) {
-          console.error('Polling location error:', err);
+          console.error('Global background polling error:', err);
         }
       };
 
-      intervalId = setInterval(pollTripDetails, 10000);
+      // Poll every 12 seconds in the background
+      intervalId = setInterval(pollTripUpdates, 12000);
     }
 
     return () => {
@@ -184,7 +221,7 @@ export default function TripDetail() {
         clearInterval(intervalId);
       }
     };
-  }, [activeTab, tripId, user.token]);
+  }, [user, tripId]);
 
   // Cleanup watcher on unmount
   useEffect(() => {
@@ -2146,6 +2183,71 @@ export default function TripDetail() {
               </button>
             </div>
           </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Safety Radar Floating Notification Banners */}
+      {safetyNotifications.length > 0 && createPortal(
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          zIndex: 999999,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px',
+          maxWidth: '380px',
+          width: 'calc(100vw - 40px)'
+        }}>
+          <style>{`
+            @keyframes slideInRight {
+              0% { transform: translateX(120%); opacity: 0; }
+              100% { transform: translateX(0); opacity: 1; }
+            }
+          `}</style>
+          {safetyNotifications.map(n => (
+            <div 
+              key={n.id}
+              style={{
+                background: 'rgba(15, 23, 42, 0.95)',
+                borderLeft: '4px solid var(--color-danger)',
+                borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRight: '1px solid rgba(255, 255, 255, 0.1)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 0 15px rgba(244, 63, 94, 0.25)',
+                borderRadius: 'var(--radius-sm)',
+                padding: '16px',
+                color: '#fff',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                gap: '12px',
+                backdropFilter: 'blur(12px)',
+                animation: 'slideInRight 0.3s ease-out'
+              }}
+            >
+              <div style={{ fontSize: '0.85rem', lineHeight: '1.4', fontWeight: '500' }}>
+                {n.message}
+              </div>
+              <button 
+                onClick={() => setSafetyNotifications(prev => prev.filter(item => item.id !== n.id))}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'rgba(255, 255, 255, 0.5)',
+                  fontSize: '18px',
+                  cursor: 'pointer',
+                  padding: 0,
+                  lineHeight: 1
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.5)'}
+              >
+                &times;
+              </button>
+            </div>
+          ))}
         </div>,
         document.body
       )}
