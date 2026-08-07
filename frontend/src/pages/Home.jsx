@@ -182,21 +182,22 @@ export default function Home() {
       </section>
 
       {/* Final Call to Action Section */}
-      <section className="glass-panel cta-banner" style={{ padding: '60px 40px', borderRadius: 'var(--radius-lg)', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+      <section className="glass-panel cta-banner" style={{ position: 'relative', overflow: 'hidden' }}>
+        <div className="cta-grid-pattern"></div>
         <div className="cta-glow-1"></div>
         <div className="cta-glow-2"></div>
         
-        <div style={{ position: 'relative', zIndex: 2, maxWidth: '600px', margin: '0 auto' }}>
-          <span className="section-tag" style={{ marginBottom: '12px' }}>Start planning</span>
-          <h2 style={{ fontSize: '2.5rem', marginBottom: '16px', fontWeight: '800' }}>Ready for Your Next Adventure?</h2>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', fontSize: '1.05rem', lineHeight: '1.6' }}>
+        <div style={{ position: 'relative', zIndex: 2, maxWidth: '650px', margin: '0 auto' }}>
+          <span className="cta-tag">Start planning</span>
+          <h2 className="cta-title">Ready for Your Next <span>Adventure?</span></h2>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '36px', fontSize: '1.05rem', lineHeight: '1.65' }}>
             Join thousands of travelers who plan, collaborate, and track their expenses with TripTogether. Create a secure, group-accessible room code in seconds.
           </p>
-          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link to="/register" className="btn btn-primary" style={{ padding: '14px 28px' }}>
-              Create Account Free
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
+            <Link to="/register" className="btn btn-primary cta-btn-primary">
+              Create Account Free <span className="btn-arrow" style={{ display: 'inline-block', transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}>→</span>
             </Link>
-            <Link to="/destinations" className="btn btn-secondary" style={{ padding: '14px 28px' }}>
+            <Link to="/destinations" className="btn btn-secondary cta-btn-secondary">
               Browse Catalog
             </Link>
           </div>
@@ -310,40 +311,142 @@ export default function Home() {
         
         /* CTA Hover Effects */
         .cta-banner {
-          background: var(--bg-secondary);
-          border: 1px solid var(--border-color);
-          box-shadow: var(--shadow-lg);
-          transition: border-color 0.4s ease, box-shadow 0.4s ease;
+          background: var(--bg-secondary) !important;
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid var(--border-color) !important;
+          box-shadow: var(--shadow-lg), 0 10px 40px rgba(0, 0, 0, 0.03) !important;
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+          padding: 80px 40px !important;
+          border-radius: 24px !important;
+          text-align: center;
+        }
+        [data-theme='dark'] .cta-banner {
+          background: linear-gradient(135deg, rgba(10, 10, 12, 0.7) 0%, rgba(3, 7, 18, 0.95) 100%) !important;
+          box-shadow: var(--shadow-lg), 0 20px 50px rgba(0, 0, 0, 0.3) !important;
         }
         .cta-banner:hover {
-          border-color: var(--color-primary);
-          box-shadow: var(--shadow-lg), var(--shadow-glow);
+          border-color: var(--color-primary) !important;
+          box-shadow: var(--shadow-lg), var(--shadow-glow), 0 20px 60px rgba(37, 99, 235, 0.15) !important;
+          transform: translateY(-4px);
+        }
+        .cta-grid-pattern {
+          position: absolute;
+          inset: 0;
+          background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+          background-size: 30px 30px;
+          opacity: 0.22;
+          pointer-events: none;
+          z-index: 1;
         }
         .cta-glow-1 {
           position: absolute;
-          top: -40%;
+          top: -50%;
           left: -20%;
-          width: 300px;
-          height: 300px;
+          width: 450px;
+          height: 450px;
           border-radius: 50%;
-          background: radial-gradient(circle, rgba(29, 78, 216, 0.06) 0%, transparent 75%);
+          background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%);
+          filter: blur(40px);
           pointer-events: none;
+          z-index: 1;
+          animation: ctaPulseGlow 8s ease-in-out infinite alternate;
         }
-        [data-theme='dark'] .cta-glow-1 {
-          background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 75%);
+        [data-theme='light'] .cta-glow-1 {
+          background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
         }
         .cta-glow-2 {
           position: absolute;
-          bottom: -40%;
+          bottom: -50%;
           right: -20%;
-          width: 300px;
-          height: 300px;
+          width: 450px;
+          height: 450px;
           border-radius: 50%;
-          background: radial-gradient(circle, rgba(180, 83, 9, 0.06) 0%, transparent 75%);
+          background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
+          filter: blur(40px);
           pointer-events: none;
+          z-index: 1;
+          animation: ctaPulseGlow 8s ease-in-out infinite alternate-reverse;
         }
-        [data-theme='dark'] .cta-glow-2 {
-          background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 75%);
+        [data-theme='light'] .cta-glow-2 {
+          background: radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%);
+        }
+        @keyframes ctaPulseGlow {
+          0% { transform: translate(0, 0) scale(1); }
+          100% { transform: translate(30px, -20px) scale(1.15); }
+        }
+        .cta-tag {
+          text-transform: uppercase;
+          font-size: 0.78rem;
+          font-weight: 800;
+          letter-spacing: 4px;
+          color: var(--color-primary);
+          background: rgba(37, 99, 235, 0.06);
+          padding: 6px 16px;
+          border-radius: 100px;
+          border: 1px solid rgba(37, 99, 235, 0.15);
+          display: inline-block;
+          margin-bottom: 24px;
+        }
+        .cta-title {
+          font-size: 3rem !important;
+          font-weight: 800 !important;
+          letter-spacing: -1.5px;
+          margin-bottom: 20px !important;
+          font-family: var(--font-heading);
+          color: var(--text-primary);
+          line-height: 1.15;
+        }
+        .cta-title span {
+          background: linear-gradient(135deg, #2563EB 0%, #38BDF8 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          text-shadow: 0 0 40px rgba(56, 189, 248, 0.1);
+        }
+        .cta-btn-primary {
+          background: var(--gradient-accent) !important;
+          border-color: transparent !important;
+          padding: 16px 36px !important;
+          font-weight: 700 !important;
+          font-size: 0.95rem !important;
+          border-radius: 100px !important;
+          display: inline-flex !important;
+          align-items: center;
+          gap: 12px;
+          box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25) !important;
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+          color: white !important;
+        }
+        .cta-btn-primary:hover {
+          transform: translateY(-4px) scale(1.02);
+          box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45) !important;
+        }
+        .cta-btn-primary:hover .btn-arrow {
+          transform: translateX(4px);
+        }
+        .cta-btn-secondary {
+          padding: 16px 36px !important;
+          font-weight: 700 !important;
+          font-size: 0.95rem !important;
+          border-radius: 100px !important;
+          background: rgba(15, 23, 42, 0.02) !important;
+          border: 1px solid var(--border-color) !important;
+          color: var(--text-primary) !important;
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        [data-theme='dark'] .cta-btn-secondary {
+          background: rgba(255, 255, 255, 0.02) !important;
+        }
+        .cta-btn-secondary:hover {
+          background: var(--text-primary) !important;
+          border-color: var(--text-primary) !important;
+          color: var(--bg-primary) !important;
+          transform: translateY(-4px);
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+        [data-theme='dark'] .cta-btn-secondary:hover {
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
 
         /* Responsive Mobile Styles */
