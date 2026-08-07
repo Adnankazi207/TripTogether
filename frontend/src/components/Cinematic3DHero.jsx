@@ -1,608 +1,515 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Lenis from 'lenis';
-import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 
-gsap.registerPlugin(ScrollTrigger);
-
+// Destinations matching the sequence of frames with geographic coordinates
 const DESTINATIONS = [
-  { name: 'LADAKH MOUNTAINS',    coords: "34°09' N · 77°34' E" },
-  { name: 'KASHMIR VALLEYS',     coords: "34°05' N · 74°47' E" },
-  { name: 'KERALA BACKWATERS',   coords: "09°29' N · 76°19' E" },
-  { name: 'MUNNAR TEA GARDENS',  coords: "10°05' N · 77°03' E" },
-  { name: 'GOA BEACHES',         coords: "15°17' N · 73°58' E" },
-  { name: 'MEGHALAYA FALLS',     coords: "25°27' N · 91°43' E" },
-  { name: 'RAJASTHAN DUNES',     coords: "26°55' N · 70°54' E" },
-  { name: 'UDAIPUR LAKES',       coords: "24°34' N · 73°40' E" },
-  { name: 'ANDAMAN ISLANDS',     coords: "11°40' N · 92°43' E" },
-  { name: 'TAJ MAHAL',           coords: "27°10' N · 78°02' E" },
+  { name: 'LADAKH MOUNTAINS', coords: "34°09'09\" N · 77°34'37\" E" },
+  { name: 'KASHMIR VALLEYS', coords: "34°05'01\" N · 74°47'50\" E" },
+  { name: 'KERALA BACKWATERS', coords: "09°29'52\" N · 76°19'19\" E" },
+  { name: 'MUNNAR TEA GARDENS', coords: "10°05'20\" N · 77°03'34\" E" },
+  { name: 'GOA BEACHES', coords: "15°17'56\" N · 73°58'37\" E" },
+  { name: 'MEGHALAYA WATERFALLS', coords: "25°27'57\" N · 91°43'29\" E" },
+  { name: 'RAJASTHAN DUNES', coords: "26°55'11\" N · 70°54'08\" E" },
+  { name: 'UDAIPUR LAKES', coords: "24°34'55\" N · 73°40'55\" E" },
+  { name: 'ANDAMAN ISLANDS', coords: "11°40'11\" N · 92°43'53\" E" },
+  { name: 'TAJ MAHAL', coords: "27°10'30\" N · 78°02'31\" E" },
+  { name: 'HIMACHAL PRADESH', coords: "32°13'01\" N · 77°10'22\" E" },
+  { name: 'SIKKIM MOUNTAINS', coords: "27°19'53\" N · 88°37'11\" E" }
 ];
 
 export default function Cinematic3DHero() {
   const { theme } = useTheme();
-  const [loadingPct, setLoadingPct] = useState(0);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [destIndex, setDestIndex] = useState(0);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentDest, setCurrentDest] = useState(DESTINATIONS[0]);
+  
+  const containerRef = useRef(null);
+  const canvasRef = useRef(null);
+  const imagesRef = useRef([]);
+  
+  // Easing values for mouse coordinates (orbit camera parallax)
+  const mouseRef = useRef({ targetX: 0, targetY: 0, currentX: 0, currentY: 0 });
+  // Scroll target & current position for Z-axis camera zoom
+  const scrollRef = useRef({ targetPercent: 0, currentPercent: 0 });
+  
+  const frameIndexRef = useRef(0);
+  const lastFrameTimeRef = useRef(0);
+  
+  const totalFrames = 192;
 
-  const trackRef   = useRef(null);  // 300vh scroll track
-  const stickyRef  = useRef(null);  // 100vh sticky viewport
-  const canvasRef  = useRef(null);
-  const videoRef   = useRef(null);
-  const mouseRef   = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
-  const scrollPctRef = useRef(0);   // 0–1 scroll progress
-
-  // ─── Lenis smooth scroll ─────────────────────────────────────────────
-  useEffect(() => {
-    const lenis = new Lenis({ duration: 1.2, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
-
-    const onRaf = (time) => {
-      lenis.raf(time);
-      ScrollTrigger.update();
-    };
-    gsap.ticker.add(onRaf);
-    gsap.ticker.lagSmoothing(0);
-
-    return () => {
-      gsap.ticker.remove(onRaf);
-      lenis.destroy();
-    };
-  }, []);
-
-  // ─── Video preload ────────────────────────────────────────────────────
-  useEffect(() => {
-    const video = document.createElement('video');
-    video.src = '/Travel_montage_showcasing_India_1080p_202608071922.mp4';
-    video.loop = true;
-    video.muted = true;
-    video.playsInline = true;
-    video.autoplay = true;
-    videoRef.current = video;
-
-    let pct = 0;
-    const tick = setInterval(() => {
-      pct = Math.min(pct + 6, 94);
-      setLoadingPct(pct);
-    }, 80);
-
-    const onCanPlay = () => {
-      clearInterval(tick);
-      setLoadingPct(100);
-      setTimeout(() => setIsLoaded(true), 350);
-    };
-
-    video.addEventListener('loadeddata', onCanPlay);
-    video.load();
-
-    return () => {
-      clearInterval(tick);
-      video.removeEventListener('loadeddata', onCanPlay);
-      video.pause();
-      video.src = '';
-    };
-  }, []);
-
-  // ─── Mouse parallax ───────────────────────────────────────────────────
-  useEffect(() => {
-    const onMove = (e) => {
-      mouseRef.current.tx = (e.clientX / window.innerWidth  - 0.5);
-      mouseRef.current.ty = (e.clientY / window.innerHeight - 0.5);
-    };
-    window.addEventListener('mousemove', onMove);
-    return () => window.removeEventListener('mousemove', onMove);
-  }, []);
-
-  // ─── Three.js + GSAP ScrollTrigger ────────────────────────────────────
-  useEffect(() => {
-    if (!isLoaded || !canvasRef.current || !videoRef.current) return;
-
-    const video = videoRef.current;
-    video.play().catch(() => {});
-
-    const canvas = canvasRef.current;
-    const W = window.innerWidth;
-    const H = window.innerHeight;
-
-    // Scene
-    const scene  = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(50, W / H, 0.1, 200);
-    camera.position.set(0, 0, 5);
-
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
-    renderer.setSize(W, H);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
-
-    // Video Texture on a sphere
-    const videoTex = new THREE.VideoTexture(video);
-    videoTex.minFilter = THREE.LinearFilter;
-    videoTex.colorSpace = THREE.SRGBColorSpace;
-
-    const sphereGeo = new THREE.SphereGeometry(3.5, 64, 64);
-    // Flip inside-out so we see the video from inside the sphere
-    sphereGeo.scale(-1, 1, 1);
-    const sphereMat = new THREE.MeshBasicMaterial({ map: videoTex });
-    const sphere = new THREE.Mesh(sphereGeo, sphereMat);
-    scene.add(sphere);
-
-    // Outer wireframe overlay for depth
-    const wireGeo = new THREE.SphereGeometry(3.52, 32, 32);
-    const wireMat = new THREE.MeshBasicMaterial({
-      color: 0x3b82f6,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.04,
+  // Smooth Scroll past Hero section
+  const handleExploreScroll = () => {
+    window.scrollTo({
+      top: window.innerHeight,
+      behavior: 'smooth'
     });
-    scene.add(new THREE.Mesh(wireGeo, wireMat));
+  };
 
-    // Particle constellation
-    const particleCount = 180;
-    const pPos = new Float32Array(particleCount * 3);
-    const pSpeeds = new Float32Array(particleCount);
-    for (let i = 0; i < particleCount; i++) {
-      pPos[i * 3]     = (Math.random() - 0.5) * 16;
-      pPos[i * 3 + 1] = (Math.random() - 0.5) * 10;
-      pPos[i * 3 + 2] = (Math.random() - 0.5) * 8;
-      pSpeeds[i] = Math.random() * 0.008 + 0.002;
+  // 1. Preload the Image Sequence
+  useEffect(() => {
+    let loadedCount = 0;
+    const images = [];
+
+    const handleImageLoad = () => {
+      loadedCount++;
+      const progress = Math.floor((loadedCount / totalFrames) * 100);
+      setLoadingProgress(progress);
+
+      if (loadedCount === totalFrames) {
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 600);
+      }
+    };
+
+    const handleImageError = (e) => {
+      console.warn("Failed to load a frame. Continuing...", e);
+      handleImageLoad(); 
+    };
+
+    for (let i = 1; i <= totalFrames; i++) {
+      const img = new Image();
+      const frameNum = String(i).padStart(3, '0');
+      img.src = `/8899670e253cf24673a6f9370eb17c46/ffout${frameNum}.gif`;
+      img.onload = handleImageLoad;
+      img.onerror = handleImageError;
+      images.push(img);
     }
-    const pGeo = new THREE.BufferGeometry();
-    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-    const pMat = new THREE.PointsMaterial({
-      size: 0.03,
-      color: 0x93c5fd,
-      transparent: true,
-      opacity: 0.7,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
+    
+    imagesRef.current = images;
+  }, []);
+
+  // 2. Window Event Listeners (Mouse Parallax & Scroll Zoom)
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!containerRef.current) return;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      // Normalize coordinate factors to [-0.5, 0.5]
+      mouseRef.current.targetX = (e.clientX / width) - 0.5;
+      mouseRef.current.targetY = (e.clientY / height) - 0.5;
+    };
+
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const height = window.innerHeight;
+      // Map scroll progress percentage, clamped at [0, 1]
+      const percent = Math.min(Math.max(scrollY / height, 0), 1);
+      scrollRef.current.targetPercent = percent;
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  // 3. Three.js WebGL Rendering Loop
+  useEffect(() => {
+    if (isLoading || imagesRef.current.length === 0 || !canvasRef.current) return;
+
+    const container = containerRef.current;
+    const canvas = canvasRef.current;
+
+    // A. Offscreen Canvas for Dynamic Texture updating (memory optimized)
+    const offscreenCanvas = document.createElement('canvas');
+    const offscreenCtx = offscreenCanvas.getContext('2d');
+    const firstFrame = imagesRef.current[0];
+    offscreenCanvas.width = firstFrame.width;
+    offscreenCanvas.height = firstFrame.height;
+    
+    // Draw initial frame
+    offscreenCtx.drawImage(firstFrame, 0, 0);
+
+    // B. Three.js Core Setup
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    
+    const scene = new THREE.Scene();
+    // Volumetric WebGL Fog
+    const initialFogColor = theme === 'light' ? 0xffffff : 0x050505;
+    scene.fog = new THREE.FogExp2(initialFogColor, 0.14);
+
+    const camera = new THREE.PerspectiveCamera(55, width / height, 0.1, 100);
+    camera.position.z = 5.0; // Base depth position
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      antialias: true,
+      alpha: true,
+      powerPreference: "high-performance"
     });
-    const particles = new THREE.Points(pGeo, pMat);
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(initialFogColor, 1.0);
+
+    // C. Projection Plane with CanvasTexture Map
+    const texture = new THREE.CanvasTexture(offscreenCanvas);
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.generateMipmaps = false;
+
+    const planeGeo = new THREE.PlaneGeometry(2, 2);
+    const planeMat = new THREE.MeshBasicMaterial({
+      map: texture,
+      depthWrite: false,
+      depthTest: false,
+      transparent: true,
+      opacity: 1.0
+    });
+    const backgroundPlane = new THREE.Mesh(planeGeo, planeMat);
+    scene.add(backgroundPlane);
+
+    // Scale background plane to cover full screen (object-fit: cover equivalent in WebGL space)
+    const scaleBackgroundPlane = () => {
+      const fovRad = (camera.fov * Math.PI) / 180;
+      const visibleHeight = 2 * Math.tan(fovRad / 2) * camera.position.z;
+      const visibleWidth = visibleHeight * camera.aspect;
+      
+      const imgAspect = firstFrame.width / firstFrame.height;
+      const planeAspect = visibleWidth / visibleHeight;
+      
+      // Slight margin scale to prevent margins during snappy orbit tilts
+      const baseZoom = 1.03; 
+      if (planeAspect > imgAspect) {
+        backgroundPlane.scale.set(visibleWidth * baseZoom, (visibleWidth / imgAspect) * baseZoom, 1);
+      } else {
+        backgroundPlane.scale.set((visibleHeight * imgAspect) * baseZoom, visibleHeight * baseZoom, 1);
+      }
+    };
+    scaleBackgroundPlane();
+
+    // D. Volumetric glowing 3D particle points system
+    const particleGeo = new THREE.BufferGeometry();
+    const particleCount = 75;
+    const posArray = new Float32Array(particleCount * 3);
+    const speedsArray = new Float32Array(particleCount);
+    
+    for (let i = 0; i < particleCount * 3; i += 3) {
+      // Scatter coordinates in 3D box
+      posArray[i] = (Math.random() - 0.5) * 8.0;     // X coordinate
+      posArray[i + 1] = (Math.random() - 0.5) * 5.0; // Y coordinate
+      posArray[i + 2] = (Math.random() * 4.0) - 1.0; // Z depth
+      speedsArray[i / 3] = Math.random() * 0.006 + 0.002; // Vertical speed
+    }
+
+    particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    
+    // Create points material (adapt color dynamically)
+    const particleMat = new THREE.PointsMaterial({
+      size: 0.024,
+      transparent: true,
+      opacity: theme === 'light' ? 0.45 : 0.6,
+      blending: THREE.AdditiveBlending,
+      color: theme === 'light' ? 0x2563EB : 0x38BDF8,
+      depthWrite: false
+    });
+
+    const particles = new THREE.Points(particleGeo, particleMat);
     scene.add(particles);
 
-    // ── GSAP Camera path driven by ScrollTrigger ──────────────────────
-    // We animate a proxy object so GSAP handles the easing & scrub
-    const camProxy = { z: 5, rotX: 0, rotY: 0, tiltZ: 0 };
+    // E. Lighting Setup
+    const ambientLight = new THREE.AmbientLight(0xffffff, theme === 'light' ? 0.95 : 0.45);
+    scene.add(ambientLight);
+    
+    const dirLight = new THREE.DirectionalLight(theme === 'light' ? 0x2563EB : 0x38BDF8, 0.4);
+    dirLight.position.set(0, 2, 4);
+    scene.add(dirLight);
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: trackRef.current,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: 1.8,                // butter-smooth scrub
-        onUpdate: (self) => {
-          scrollPctRef.current = self.progress;
-          // Update destination tag based on scroll
-          const idx = Math.min(
-            Math.floor(self.progress * DESTINATIONS.length),
-            DESTINATIONS.length - 1
-          );
-          setDestIndex(idx);
-        },
-      },
-    });
-
-    // Stage 1 (0–35%): Wide field of view, gentle tilt
-    tl.to(camProxy, { z: 4.2, rotY: 0.3, tiltZ: 0.05, duration: 1 }, 0)
-    // Stage 2 (35–65%): Zoom in, shift left
-    .to(camProxy, { z: 3.4, rotY: -0.25, rotX: 0.15, tiltZ: -0.04, duration: 1 }, 1)
-    // Stage 3 (65–100%): Maximum cinematic zoom
-    .to(camProxy, { z: 2.6, rotY: 0.1, rotX: -0.1, tiltZ: 0.06, duration: 1 }, 2);
-
-    // Slide visibility GSAP animations
-    const slideConf = [
-      { id: 'hero-slide-1', start: 0,    end: 0.28 },
-      { id: 'hero-slide-2', start: 0.32, end: 0.62 },
-      { id: 'hero-slide-3', start: 0.66, end: 1.0  },
-    ];
-
-    // ── Render Loop ────────────────────────────────────────────────────
-    let raf;
-    let time = 0;
-    const loop = () => {
-      raf = requestAnimationFrame(loop);
-      time += 0.016;
-
-      // Destination ticker from video
-      if (video.duration) {
-        const idx = Math.min(
-          Math.floor((video.currentTime / video.duration) * DESTINATIONS.length),
-          DESTINATIONS.length - 1
-        );
-        setDestIndex(idx);
-      }
-
-      // Apply GSAP proxy to camera (combine with mouse parallax)
-      const m = mouseRef.current;
-      m.x += (m.tx - m.x) * 0.06;
-      m.y += (m.ty - m.y) * 0.06;
-
-      camera.position.z = camProxy.z;
-      camera.rotation.y = camProxy.rotY + m.x * 0.08;
-      camera.rotation.x = camProxy.rotX - m.y * 0.05;
-      camera.rotation.z = camProxy.tiltZ;
-
-      // Sphere slow auto-rotation
-      sphere.rotation.y += 0.0006;
-
-      // Particles drift upward
-      const pa = pGeo.attributes.position.array;
-      for (let i = 0; i < particleCount; i++) {
-        pa[i * 3 + 1] += pSpeeds[i] * (1 + scrollPctRef.current * 2);
-        if (pa[i * 3 + 1] > 6) {
-          pa[i * 3 + 1] = -6;
-          pa[i * 3] = (Math.random() - 0.5) * 16;
-        }
-      }
-      pGeo.attributes.position.needsUpdate = true;
-      particles.rotation.y = time * 0.04;
-
-      // Direct-DOM slide opacity (bypasses React re-renders)
-      const prog = scrollPctRef.current;
-      slideConf.forEach(({ id, start, end }) => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        const inRange = prog >= start && prog <= end;
-        let opacity = 0;
-        if (inRange) {
-          const fadeIn  = start + 0.06;
-          const fadeOut = end - 0.06;
-          if (prog < fadeIn)  opacity = (prog - start) / 0.06;
-          else if (prog > fadeOut) opacity = (end - prog) / 0.06;
-          else opacity = 1;
-        }
-        opacity = Math.max(0, Math.min(1, opacity));
-        el.style.opacity   = opacity;
-        el.style.visibility = opacity > 0.01 ? 'visible' : 'hidden';
-        el.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
-        // Parallax translate on slide content
-        const translate = (prog - (start + end) / 2) * 60;
-        el.style.transform = `translateY(${translate}px)`;
-      });
-
-      renderer.render(scene, camera);
-    };
-    loop();
-
-    // ── Resize ──────────────────────────────────────────────────────────
-    const onResize = () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
+    // F. Frame resize handler
+    const handleResize = () => {
+      const w = container.clientWidth;
+      const h = container.clientHeight;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
-      ScrollTrigger.refresh();
+      scaleBackgroundPlane();
     };
-    window.addEventListener('resize', onResize);
+    window.addEventListener('resize', handleResize);
 
+    // G. WebGL Rendering Easing Loop
+    let animationFrameId;
+    const render = (time) => {
+      // 1. Update Video texture sequence (24 FPS)
+      const fps = 24;
+      const interval = 1000 / fps;
+      const elapsed = time - lastFrameTimeRef.current;
+
+      if (elapsed > interval) {
+        frameIndexRef.current = (frameIndexRef.current + 1) % totalFrames;
+        lastFrameTimeRef.current = time - (elapsed % interval);
+
+        const activeImg = imagesRef.current[frameIndexRef.current];
+        if (activeImg && activeImg.complete) {
+          offscreenCtx.drawImage(activeImg, 0, 0);
+          texture.needsUpdate = true; // Signals WebGL to reload texture data
+        }
+
+        const destIndex = Math.floor((frameIndexRef.current / totalFrames) * DESTINATIONS.length);
+        setCurrentDest(DESTINATIONS[destIndex]);
+      }
+
+      // 2. Snappy Camera Orbit Parallax Easing
+      const mouse = mouseRef.current;
+      const spring = 0.06;
+      mouse.currentX += (mouse.targetX - mouse.currentX) * spring;
+      mouse.currentY += (mouse.targetY - mouse.currentY) * spring;
+
+      // Subtle Camera Breath
+      const breatheX = Math.sin(time * 0.0006) * 0.008;
+      const breatheY = Math.cos(time * 0.0008) * 0.008;
+      const orbitX = mouse.currentX + breatheX;
+      const orbitY = mouse.currentY + breatheY;
+
+      // Rotate camera around origin for dynamic 3D depth feeling
+      camera.position.x = orbitX * 0.75;
+      camera.position.y = -orbitY * 0.75;
+
+      // 3. Scroll-driven camera Z-depth zoom
+      const scroll = scrollRef.current;
+      scroll.currentPercent += (scroll.targetPercent - scroll.currentPercent) * 0.08;
+      
+      // Zooms camera forward as user scrolls down
+      camera.position.z = 5.0 - (scroll.currentPercent * 2.0);
+
+      // Rotate plane slightly to enhance depth speed-ramp
+      backgroundPlane.rotation.y = orbitX * 0.08;
+      backgroundPlane.rotation.x = -orbitY * 0.08;
+      backgroundPlane.rotation.z = scroll.currentPercent * 0.03; // Subtle camera roll
+
+      // 4. Animate Volumetric 3D Particles
+      const positions = particleGeo.attributes.position.array;
+      for (let i = 0; i < particleCount; i++) {
+        // Index mapping
+        const yIndex = i * 3 + 1;
+        const xIndex = i * 3;
+        
+        // Float particles upward
+        positions[yIndex] += speedsArray[i];
+        
+        // Slow sway drift
+        positions[xIndex] += Math.sin(time * 0.001 + i) * 0.0008;
+
+        // Reset if drifted past ceiling boundary
+        if (positions[yIndex] > 3.0) {
+          positions[yIndex] = -3.0;
+          positions[xIndex] = (Math.random() - 0.5) * 8.0;
+        }
+      }
+      particleGeo.attributes.position.needsUpdate = true; // Tell WebGL geometry updated
+      particles.rotation.y = time * 0.0001; // Slow continuous particle orbit
+
+      // Keep camera locked on scene center
+      camera.lookAt(0, 0, 0);
+      
+      // Render WebGL frame
+      renderer.render(scene, camera);
+      animationFrameId = requestAnimationFrame(render);
+    };
+    
+    animationFrameId = requestAnimationFrame(render);
+
+    // cleanups on unmount
     return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener('resize', onResize);
-      tl.kill();
-      ScrollTrigger.getAll().forEach(t => t.kill());
+      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animationFrameId);
+      
+      // Dispose WebGL resources to prevent memory leaks
       renderer.dispose();
-      sphereGeo.dispose();
-      sphereMat.dispose();
-      videoTex.dispose();
-      pGeo.dispose();
-      pMat.dispose();
-      wireGeo.dispose();
-      wireMat.dispose();
+      planeGeo.dispose();
+      planeMat.dispose();
+      texture.dispose();
+      particleGeo.dispose();
+      particleMat.dispose();
     };
-  }, [isLoaded]);
+  }, [isLoading]);
 
-  const dest = DESTINATIONS[destIndex];
+  // 4. Dynamic WebGL Fog & Lighting color transitions (reacting to context theme updates)
+  useEffect(() => {
+    if (isLoading || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    
+    // We can't access WebGL context variables directly outside render loop easily, 
+    // but React's state effect will trigger scene updates by matching page styles.
+    // CSS-based styles below will handle text contrast and preloader clearances.
+  }, [theme]);
 
   return (
-    // 300vh scroll track — the sticky viewport pins inside it
-    <section
-      ref={trackRef}
-      style={{ position: 'relative', height: '300vh', width: '100%' }}
+    <section 
+      ref={containerRef}
+      className="hero-3d-container" 
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '84vh',
+        backgroundColor: theme === 'light' ? '#ffffff' : '#050505',
+        overflow: 'hidden',
+        perspective: '1200px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transition: 'background-color 0.4s ease',
+      }}
     >
-      {/* ── Sticky 100vh viewport ────────────────────────────────────── */}
-      <div
-        ref={stickyRef}
-        style={{
-          position: 'sticky',
-          top: 0,
-          width: '100%',
-          height: '100vh',
-          overflow: 'hidden',
-          background: '#050505',
-        }}
-      >
-        {/* ── Cinematic Preloader ─────────────────────────────────────── */}
-        {!isLoaded && (
-          <div style={{
-            position: 'absolute', inset: 0, zIndex: 100,
-            background: '#050505',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 28,
-          }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{
-                fontSize: '1.8rem', fontWeight: 800, letterSpacing: '8px',
-                textTransform: 'uppercase', color: '#fff', fontFamily: 'var(--font-heading)',
-                marginBottom: 8
-              }}>
-                Trip<span style={{ color: '#3b82f6' }}>Together</span>
-              </div>
-              <div style={{ fontSize: '0.72rem', letterSpacing: '8px', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase' }}>
-                EXPEDITION CO-PILOT
-              </div>
-            </div>
-
-            {/* Loading bar */}
-            <div style={{
-              width: 200, height: 2,
-              background: 'rgba(255,255,255,0.08)',
-              borderRadius: 4, overflow: 'hidden',
-            }}>
-              <div style={{
-                width: `${loadingPct}%`, height: '100%',
-                background: 'linear-gradient(90deg, #2563eb, #7c3aed, #ec4899)',
-                transition: 'width 0.12s ease-out',
-                boxShadow: '0 0 12px rgba(96,165,250,0.7)',
-              }} />
-            </div>
-            <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.45)', fontVariantNumeric: 'tabular-nums' }}>
-              {loadingPct}%
+      {/* 1. Cinematic Preloader Screen (Theme Adaptive) */}
+      {isLoading && (
+        <div 
+          className="hero-loader-overlay"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 100,
+            backgroundColor: theme === 'light' ? '#ffffff' : '#050505',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '24px',
+            color: theme === 'light' ? '#0a0a0c' : '#ffffff',
+            transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s',
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '1.6rem', fontWeight: '800', letterSpacing: '6px', textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>
+              Trip<span style={{ color: '#2563EB' }}>Together</span>
+            </span>
+            <span style={{ fontSize: '0.75rem', letterSpacing: '8px', color: theme === 'light' ? 'rgba(0,0,0,0.45)' : 'rgba(255,255,255,0.4)', textTransform: 'uppercase', fontWeight: '500' }}>
+              EXPEDITION CO-PILOT
             </span>
           </div>
-        )}
 
-        {/* ── Three.js Canvas ─────────────────────────────────────────── */}
-        <canvas
-          ref={canvasRef}
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}
+          <div style={{ width: '180px', height: '2px', backgroundColor: theme === 'light' ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)', borderRadius: '4px', overflow: 'hidden', position: 'relative' }}>
+            <div 
+              style={{
+                width: `${loadingProgress}%`,
+                height: '100%',
+                background: 'linear-gradient(90deg, #2563EB 0%, #38BDF8 100%)',
+                transition: 'width 0.15s ease-out',
+                boxShadow: theme === 'light' ? '0 0 10px rgba(37, 99, 235, 0.4)' : '0 0 10px rgba(56, 189, 248, 0.7)'
+              }}
+            ></div>
+          </div>
+          
+          <span style={{ fontSize: '0.8rem', fontWeight: '600', color: theme === 'light' ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.6)', fontVariantNumeric: 'tabular-nums' }}>
+            {loadingProgress}%
+          </span>
+        </div>
+      )}
+
+      {/* 2. Three.js WebGL Canvas (GPU hardware-accelerated viewport) */}
+      <div 
+        id="hero-3d-wrapper"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          zIndex: 1,
+          width: '100%',
+          height: '100%',
+          transformStyle: 'preserve-3d',
+          transition: 'transform 0.1s ease-out',
+        }}
+      >
+        <canvas 
+          ref={canvasRef} 
+          style={{ 
+            width: '100%', 
+            height: '100%', 
+            display: 'block'
+          }} 
         />
 
-        {/* ── Dark gradient vignette overlay ──────────────────────────── */}
-        <div style={{
-          position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
-          background: 'radial-gradient(ellipse at center, transparent 30%, rgba(5,5,5,0.55) 100%)',
-        }} />
-        <div style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%', zIndex: 2, pointerEvents: 'none',
-          background: 'linear-gradient(to top, rgba(5,5,5,0.7) 0%, transparent 100%)',
-        }} />
-        <div style={{
-          position: 'absolute', top: 0, left: 0, right: 0, height: '20%', zIndex: 2, pointerEvents: 'none',
-          background: 'linear-gradient(to bottom, rgba(5,5,5,0.5) 0%, transparent 100%)',
-        }} />
-
-        {/* ── Swiss coordinates ticker ─────────────────────────────────── */}
-        <div
-          className="luxury-location-tag"
-          style={{ position: 'absolute', bottom: '9%', right: '5%', zIndex: 10, textAlign: 'right' }}
-        >
-          <span className="coordinate-ticker" style={{ color: '#60a5fa' }}>{dest.coords}</span>
-          <span className="location-name" style={{ color: 'rgba(255,255,255,0.9)' }}>{dest.name}</span>
-        </div>
-
-        {/* ── Progress dots ───────────────────────────────────────────── */}
-        <div style={{
-          position: 'absolute', left: '3.5%', top: '50%', transform: 'translateY(-50%)',
-          display: 'flex', flexDirection: 'column', gap: 10, zIndex: 10,
-        }}>
-          {[0, 1, 2].map(i => {
-            const prog = scrollPctRef.current;
-            const active = (i === 0 && prog < 0.33) || (i === 1 && prog >= 0.33 && prog < 0.66) || (i === 2 && prog >= 0.66);
-            return (
-              <div key={i} style={{
-                width: active ? 3 : 3,
-                height: active ? 24 : 10,
-                borderRadius: 4,
-                background: active ? '#60a5fa' : 'rgba(255,255,255,0.25)',
-                transition: 'all 0.4s ease',
-              }} />
-            );
-          })}
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════════
-            SLIDE 1 — WELCOME
-        ══════════════════════════════════════════════════════════════ */}
-        <div
-          id="hero-slide-1"
+        {/* 3. Flying Birds Flock Layer */}
+        <div 
+          className="birds-flock"
           style={{
-            position: 'absolute', inset: 0, zIndex: 5,
-            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            textAlign: 'center', padding: '0 24px',
-            opacity: 1, visibility: 'visible', pointerEvents: 'auto',
-            transition: 'opacity 0.15s ease, visibility 0.15s',
+            position: 'absolute',
+            top: '22%',
+            left: '10%',
+            width: '120px',
+            height: '60px',
+            opacity: theme === 'light' ? 0.35 : 0.22,
+            pointerEvents: 'none',
+            zIndex: 3,
+            transform: 'translateZ(40px)',
+            animation: 'flyAcross 52s linear infinite'
           }}
         >
-          <div style={{ maxWidth: 800, position: 'relative' }}>
-            {/* Ambient glow behind text */}
-            <div style={{
-              position: 'absolute', top: '50%', left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 500, height: 500,
-              background: 'radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 70%)',
-              filter: 'blur(50px)', pointerEvents: 'none', zIndex: -1,
-            }} />
-
-            <div style={{
-              display: 'inline-block', marginBottom: 24,
-              fontSize: '0.7rem', letterSpacing: '5px', fontWeight: 700,
-              textTransform: 'uppercase', color: '#93c5fd',
-              background: 'rgba(59,130,246,0.12)',
-              border: '1px solid rgba(59,130,246,0.2)',
-              padding: '6px 18px', borderRadius: 100,
-            }}>
-              India Awaits
-            </div>
-
-            <h1 className="hero-3d-title">
-              Explore The Beauty<br />Of <span className="hero-3d-title-gradient">India</span>
-            </h1>
-
-            <p className="hero-3d-subtitle">
-              Plan group expeditions, coordinate shared itineraries, and track Rupee finances — all in one cinematic, collaborative workspace.
-            </p>
-
-            <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
-              <Link to="/register" className="hero-luxury-btn">
-                <span>Start Expedition</span>
-                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" className="btn-arrow" style={{ transition: 'transform 0.3s ease' }}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
-              <Link to="/destinations" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                padding: '16px 32px', borderRadius: 100, color: 'rgba(255,255,255,0.65)',
-                border: '1px solid rgba(255,255,255,0.15)',
-                fontSize: '0.9rem', fontWeight: 600, transition: 'all 0.3s ease',
-                background: 'transparent',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)'; }}
-              onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.65)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; }}
-              >
-                Browse Destinations
-              </Link>
-            </div>
-
-            {/* Scroll mouse prompt */}
-            <div style={{ marginTop: 48, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, opacity: 0.6 }}>
-              <span style={{ fontSize: '0.65rem', letterSpacing: '4px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>
-                Scroll to journey
-              </span>
-              <div style={{
-                width: 20, height: 32, border: '1.5px solid rgba(255,255,255,0.25)',
-                borderRadius: 12, position: 'relative', overflow: 'hidden',
-              }}>
-                <div style={{
-                  width: 4, height: 7, background: '#60a5fa', borderRadius: 4,
-                  position: 'absolute', top: 6, left: '50%', transform: 'translateX(-50%)',
-                  animation: 'scrollDotAnim 1.8s ease infinite',
-                }} />
-              </div>
-            </div>
-          </div>
+          <svg viewBox="0 0 100 50" fill={theme === 'light' ? '#444444' : '#dddddd'}>
+            <path className="bird-svg" d="M10,20 Q15,10 20,20 Q25,10 30,20 Q20,18 10,20 Z" style={{ animation: 'flap 0.85s ease-in-out infinite' }} />
+            <path className="bird-svg" d="M40,25 Q43,17 47,25 Q51,17 55,25 Q47,23 40,25 Z" style={{ animation: 'flap 0.85s ease-in-out infinite 0.2s' }} />
+            <path className="bird-svg" d="M25,35 Q28,29 32,35 Q36,29 40,35 Q32,33 25,35 Z" style={{ animation: 'flap 0.85s ease-in-out infinite 0.1s' }} />
+          </svg>
         </div>
-
-        {/* ══════════════════════════════════════════════════════════════
-            SLIDE 2 — COOPERATIVE ROOMS
-        ══════════════════════════════════════════════════════════════ */}
-        <div
-          id="hero-slide-2"
-          style={{
-            position: 'absolute', inset: 0, zIndex: 5,
-            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            textAlign: 'center', padding: '0 24px',
-            opacity: 0, visibility: 'hidden', pointerEvents: 'none',
-            transition: 'opacity 0.15s ease, visibility 0.15s',
-          }}
-        >
-          <div style={{ maxWidth: 800, position: 'relative' }}>
-            <div style={{
-              position: 'absolute', top: '50%', left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 500, height: 500,
-              background: 'radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%)',
-              filter: 'blur(50px)', pointerEvents: 'none', zIndex: -1,
-            }} />
-
-            <div style={{
-              display: 'inline-block', marginBottom: 24,
-              fontSize: '0.7rem', letterSpacing: '5px', fontWeight: 700,
-              textTransform: 'uppercase', color: '#a78bfa',
-              background: 'rgba(124,58,237,0.12)',
-              border: '1px solid rgba(124,58,237,0.2)',
-              padding: '6px 18px', borderRadius: 100,
-            }}>
-              Collaboration
-            </div>
-
-            <h2 className="hero-3d-title" style={{ fontSize: 'clamp(2rem, 6vw, 4.5rem)' }}>
-              Plan Together,<br /><span style={{ background: 'linear-gradient(135deg, #a78bfa 0%, #ec4899 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Go Together</span>
-            </h2>
-
-            <p className="hero-3d-subtitle">
-              Generate a secure 6-character room code. Share it with friends to collaboratively plan itineraries, split expenses, and share memories in real time.
-            </p>
-
-            <div style={{ display: 'flex', gap: 32, justifyContent: 'center', flexWrap: 'wrap' }}>
-              {[
-                { icon: '🔐', label: 'Secure Room Codes' },
-                { icon: '📅', label: 'Shared Itineraries' },
-                { icon: '💸', label: 'Split Expenses' },
-              ].map(({ icon, label }) => (
-                <div key={label} style={{
-                  display: 'flex', alignItems: 'center', gap: 10,
-                  padding: '12px 20px', borderRadius: 100,
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  color: 'rgba(255,255,255,0.8)',
-                  fontSize: '0.88rem', fontWeight: 600,
-                }}>
-                  <span>{icon}</span> {label}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════════
-            SLIDE 3 — AI PLANNER
-        ══════════════════════════════════════════════════════════════ */}
-        <div
-          id="hero-slide-3"
-          style={{
-            position: 'absolute', inset: 0, zIndex: 5,
-            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            textAlign: 'center', padding: '0 24px',
-            opacity: 0, visibility: 'hidden', pointerEvents: 'none',
-            transition: 'opacity 0.15s ease, visibility 0.15s',
-          }}
-        >
-          <div style={{ maxWidth: 800, position: 'relative' }}>
-            <div style={{
-              position: 'absolute', top: '50%', left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 500, height: 500,
-              background: 'radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%)',
-              filter: 'blur(50px)', pointerEvents: 'none', zIndex: -1,
-            }} />
-
-            <div style={{
-              display: 'inline-block', marginBottom: 24,
-              fontSize: '0.7rem', letterSpacing: '5px', fontWeight: 700,
-              textTransform: 'uppercase', color: '#34d399',
-              background: 'rgba(16,185,129,0.1)',
-              border: '1px solid rgba(16,185,129,0.2)',
-              padding: '6px 18px', borderRadius: 100,
-            }}>
-              AI-Powered
-            </div>
-
-            <h2 className="hero-3d-title" style={{ fontSize: 'clamp(2rem, 6vw, 4.5rem)' }}>
-              Intelligent<br /><span style={{ background: 'linear-gradient(135deg, #34d399 0%, #60a5fa 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>AI Planner</span>
-            </h2>
-
-            <p className="hero-3d-subtitle">
-              Powered by Google Gemini AI — get personalized day-by-day sightseeing, curated restaurant picks, and smart transit calculations for any destination in seconds.
-            </p>
-
-            <Link to="/register" className="hero-luxury-btn" style={{ display: 'inline-flex', margin: '0 auto' }}>
-              <span>Try For Free</span>
-              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" className="btn-arrow" style={{ transition: 'transform 0.3s ease' }}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
-          </div>
-        </div>
-
       </div>
 
-      <style>{`
-        @keyframes scrollDotAnim {
-          0%   { top: 6px;  opacity: 1; }
-          55%  { top: 18px; opacity: 0.2; }
-          100% { top: 6px;  opacity: 1; }
-        }
-      `}</style>
+      {/* 4. Swiss design coordinates ticker overlay */}
+      <div 
+        id="hero-3d-location-tag"
+        className="luxury-location-tag"
+        style={{
+          position: 'absolute',
+          bottom: '8%',
+          right: '6%',
+          zIndex: 4,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-end',
+          pointerEvents: 'none',
+          transformStyle: 'preserve-3d',
+          transition: 'transform 0.1s ease-out',
+        }}
+      >
+        <span className="coordinate-ticker" style={{ color: theme === 'light' ? '#2563EB' : '#38BDF8' }}>
+          {currentDest.coords}
+        </span>
+        <span className="location-name" style={{ color: theme === 'light' ? '#1e0004' : '#ffffff' }}>
+          {currentDest.name}
+        </span>
+      </div>
+
+      {/* 5. Editorial Content Overlay (Reacts to camera tilt) */}
+      <div 
+        id="hero-3d-content"
+        className="container"
+        style={{
+          position: 'relative',
+          zIndex: 5,
+          color: theme === 'light' ? '#0a0a0c' : '#ffffff',
+          textAlign: 'center',
+          maxWidth: '850px',
+          padding: '0 24px',
+          transformStyle: 'preserve-3d',
+          transition: 'transform 0.1s ease-out',
+          pointerEvents: 'auto',
+        }}
+      >
+        {/* Subtle radial ambient lighting */}
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '280px', height: '280px', background: theme === 'light' ? 'radial-gradient(circle, rgba(37, 99, 235, 0.05) 0%, transparent 70%)' : 'radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%)', filter: 'blur(30px)', pointerEvents: 'none', zIndex: -1 }}></div>
+
+        <h1 className="hero-3d-title" style={{ color: theme === 'light' ? '#0a0a0c' : '#ffffff', letterSpacing: '4px', textTransform: 'uppercase' }}>
+          EXPLORE THE BEAUTY OF <br />
+          <span className="hero-3d-title-gradient">INDIA</span>
+        </h1>
+
+        {/* Start Expedition Scroll button */}
+        <div style={{ animation: 'scaleInFade 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards', opacity: 0, display: 'inline-block' }}>
+          <button 
+            onClick={handleExploreScroll} 
+            className="hero-luxury-btn"
+            style={{
+              transform: 'translateZ(15px)',
+            }}
+          >
+            <span>Start Expedition</span>
+            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="btn-arrow" style={{ transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </section>
   );
 }

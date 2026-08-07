@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 
 const SLIDES = [
@@ -7,35 +7,35 @@ const SLIDES = [
     title: "Smart Destination Guide Generator",
     desc: "Search for any city worldwide. If it's not in our database, our Gemini AI automatically compiles descriptive guides, ideal stay durations, packing lists, and matches beautiful Unsplash photos on the fly.",
     type: "search",
-    icon: "🔍"
+    icon: "≡ƒöì"
   },
   {
     tag: "Rupee Control",
-    title: "Indian Rupee (₹) Expense Tracking",
+    title: "Indian Rupee (Γé╣) Expense Tracking",
     desc: "Log daily transit, food, and lodging costs in Indian Rupees. Collaborative warning meters pulse red to alert your group members when you cross 75% or 100% of your allocated budget ceiling.",
     type: "budget",
-    icon: "💸"
+    icon: "≡ƒÆ╕"
   },
   {
     tag: "Time Management",
     title: "Day-by-Day Timeline & Checklist",
     desc: "Coordinate daily timelines with precise event slots. Maintain shared packing lists, checklist logs, and booking reminders in real-time so your travel group never misses a flight or reservation.",
     type: "timeline",
-    icon: "📅"
+    icon: "≡ƒôà"
   },
   {
     tag: "Group Collaboration",
     title: "Cooperative Trip Rooms",
     desc: "Generate secure 6-character room codes. Share codes with travel partners to let them edit timelines collectively, track shared ledger balances, and build a group vacation picture gallery.",
     type: "rooms",
-    icon: "👥"
+    icon: "≡ƒæÑ"
   },
   {
     tag: "AI Chat Console",
     title: "AI Co-Pilot Travel Agent",
     desc: "Chat interactively with our Co-Pilot to map transit connections, request local restaurant advice, calculate distance timings, and construct custom itineraries tailored to current weather seasons.",
     type: "chat",
-    icon: "🤖"
+    icon: "≡ƒñû"
   }
 ];
 
@@ -106,14 +106,14 @@ export default function FeatureSlider() {
             {/* Content area */}
             <div className="mockup-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div className="mockup-search-input-box" style={{ background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)', border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.08)' }}>
-                <span>🔍</span>
+                <span>≡ƒöì</span>
                 <span className="mockup-typing-text">{typedText}<span className="blink-caret">|</span></span>
               </div>
 
               {typedText.length > 15 && (
                 <div className="mockup-card animate-fade-in" style={{ background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)', border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.06)' }}>
-                  <div style={{ display: 'flex', justifycontent: 'space-between', marginBottom: '8px' }}>
-                    <span style={{ fontWeight: '700', fontSize: '1rem', color: '#2563EB' }}>✨ Paris Guide Generated</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <span style={{ fontWeight: '700', fontSize: '1rem', color: '#2563EB' }}>Γ£¿ Paris Guide Generated</span>
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Ideal stay: 4 Days</span>
                   </div>
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
@@ -133,22 +133,22 @@ export default function FeatureSlider() {
               <span className="mockup-title-text">Trip Budget Ledger</span>
             </div>
             <div className="mockup-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ display: 'flex', justifycontent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>TOTAL BUDGET LIMIT</div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-primary)' }}>₹50,000</div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-primary)' }}>Γé╣50,000</div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>TOTAL EXPENSES</div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: '800', color: '#EF4444' }}>₹39,000</div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: '800', color: '#EF4444' }}>Γé╣39,000</div>
                 </div>
               </div>
 
               {/* Progress bar with glowing alert */}
               <div>
-                <div style={{ display: 'flex', justifycontent: 'space-between', fontSize: '0.75rem', marginBottom: '4px', fontWeight: '600' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '4px', fontWeight: '600' }}>
                   <span>Usage Meter: 78%</span>
-                  <span className="pulsing-warning-text" style={{ color: '#EF4444' }}>⚠️ 75% BUDGET ALERT</span>
+                  <span className="pulsing-warning-text" style={{ color: '#EF4444' }}>ΓÜá∩╕Å 75% BUDGET ALERT</span>
                 </div>
                 <div style={{ width: '100%', height: '8px', background: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)', borderRadius: '4px', overflow: 'hidden' }}>
                   <div style={{ width: '78%', height: '100%', background: 'linear-gradient(90deg, #F59E0B 0%, #EF4444 100%)', borderRadius: '4px' }}></div>
@@ -157,13 +157,13 @@ export default function FeatureSlider() {
 
               {/* Expense list */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
-                <div style={{ display: 'flex', justifycontent: 'space-between', paddingBottom: '6px', borderBottom: '1px solid var(--border-color)' }}>
-                  <span>🏨 Paris Hotel (Lodging)</span>
-                  <span style={{ fontWeight: '700' }}>₹25,000</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '6px', borderBottom: '1px solid var(--border-color)' }}>
+                  <span>≡ƒÅ¿ Paris Hotel (Lodging)</span>
+                  <span style={{ fontWeight: '700' }}>Γé╣25,000</span>
                 </div>
-                <div style={{ display: 'flex', justifycontent: 'space-between', paddingBottom: '6px', borderBottom: '1px solid var(--border-color)' }}>
-                  <span>🚇 Metro Pass (Transit)</span>
-                  <span style={{ fontWeight: '700' }}>₹8,000</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '6px', borderBottom: '1px solid var(--border-color)' }}>
+                  <span>≡ƒÜç Metro Pass (Transit)</span>
+                  <span style={{ fontWeight: '700' }}>Γé╣8,000</span>
                 </div>
               </div>
             </div>
@@ -182,22 +182,22 @@ export default function FeatureSlider() {
                 <div className="time-badge">09:30 AM</div>
                 <div className="timeline-connector"></div>
                 <div className="timeline-mockup-card">
-                  <div style={{ fontWeight: '700', fontSize: '0.9rem' }}>✈ Boarding Flight CDG</div>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Terminal 2B · Gate 14</div>
+                  <div style={{ fontWeight: '700', fontSize: '0.9rem' }}>Γ£ê Boarding Flight CDG</div>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Terminal 2B ┬╖ Gate 14</div>
                 </div>
               </div>
               <div className="timeline-mockup-item">
                 <div className="time-badge">02:00 PM</div>
                 <div className="timeline-connector"></div>
                 <div className="timeline-mockup-card">
-                  <div style={{ fontWeight: '700', fontSize: '0.9rem' }}>🏨 Hotel Check-In</div>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Hotel Plaza Athénée</div>
+                  <div style={{ fontWeight: '700', fontSize: '0.9rem' }}>≡ƒÅ¿ Hotel Check-In</div>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Hotel Plaza Ath├⌐n├⌐e</div>
                 </div>
               </div>
               <div className="timeline-mockup-item">
                 <div className="time-badge">05:30 PM</div>
                 <div className="timeline-mockup-card">
-                  <div style={{ fontWeight: '700', fontSize: '0.9rem' }}>🗼 Eiffel Tower Summit Visit</div>
+                  <div style={{ fontWeight: '700', fontSize: '0.9rem' }}>≡ƒù╝ Eiffel Tower Summit Visit</div>
                   <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>E-tickets preloaded in App</div>
                 </div>
               </div>
@@ -214,12 +214,12 @@ export default function FeatureSlider() {
             </div>
             <div className="mockup-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {/* Room Code */}
-              <div style={{ display: 'flex', justifycontent: 'space-between', alignItems: 'center', background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)', padding: '10px 14px', borderRadius: '8px', border: '1px dashed var(--border-color)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)', padding: '10px 14px', borderRadius: '8px', border: '1px dashed var(--border-color)' }}>
                 <div>
                   <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block' }}>ROOM SHARE CODE</span>
                   <span style={{ fontSize: '1.2rem', fontWeight: '800', color: '#2563EB', letterSpacing: '2px' }}>FR-P41</span>
                 </div>
-                <button className="btn-icon" style={{ borderRadius: '50%', width: '36px', height: '36px' }}>📋</button>
+                <button className="btn-icon" style={{ borderRadius: '50%', width: '36px', height: '36px' }}>≡ƒôï</button>
               </div>
 
               {/* Members Grid */}
@@ -243,7 +243,7 @@ export default function FeatureSlider() {
 
               {/* Activity Logger */}
               <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', background: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)', padding: '8px', borderRadius: '6px', borderLeft: '3px solid #059669' }}>
-                💬 <strong>Kazi</strong> updated Day 2 timeline (Louvre Museum visit) 10m ago
+                ≡ƒÆ¼ <strong>Kazi</strong> updated Day 2 timeline (Louvre Museum visit) 10m ago
               </div>
             </div>
           </div>
@@ -254,16 +254,16 @@ export default function FeatureSlider() {
           <div className="slider-mockup-window glass-panel">
             <div className="mockup-header">
               <span className="dot dot-r"></span><span className="dot dot-y"></span><span className="dot dot-g"></span>
-              <span className="mockup-title-text">🤖 Co-Pilot Chat Agent</span>
+              <span className="mockup-title-text">≡ƒñû Co-Pilot Chat Agent</span>
             </div>
-            <div className="mockup-body" style={{ display: 'flex', flexDirection: 'column', gap: '12px', height: '220px', justifycontent: 'flex-end' }}>
+            <div className="mockup-body" style={{ display: 'flex', flexDirection: 'column', gap: '12px', height: '220px', justifyContent: 'flex-end' }}>
               {/* Message 1 */}
               <div style={{ alignSelf: 'flex-end', background: '#2563EB', color: '#ffffff', padding: '10px 14px', borderRadius: '14px 14px 2px 14px', fontSize: '0.82rem', maxWidth: '80%', lineHeight: '1.4' }}>
                 Suggest the best local restaurant guides in Manali near Mall Road?
               </div>
               {/* Message 2 */}
               <div style={{ alignSelf: 'flex-start', background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)', padding: '12px 14px', borderRadius: '14px 14px 14px 2px', fontSize: '0.82rem', maxWidth: '85%', border: '1px solid var(--border-color)', lineHeight: '1.4' }}>
-                🤖 <strong>Co-Pilot:</strong> "Try **Johnson's Cafe** (famous for fresh local Himalayan trout fish, 5m walk from Mall Road) or **Chopsticks** for excellent Tibetan cuisine."
+                ≡ƒñû <strong>Co-Pilot:</strong> "Try **Johnson's Cafe** (famous for fresh local Himalayan trout fish, 5m walk from Mall Road) or **Chopsticks** for excellent Tibetan cuisine."
               </div>
             </div>
           </div>
