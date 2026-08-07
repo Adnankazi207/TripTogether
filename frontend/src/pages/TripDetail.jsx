@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { createPortal } from 'react-dom';
@@ -51,12 +51,301 @@ export default function TripDetail() {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState(null);
 
+  // Safety Radar States & Refs
+  const [isSharingLocation, setIsSharingLocation] = useState(false);
+  const [sharingError, setSharingError] = useState(null);
+  const [leafletLoaded, setLeafletLoaded] = useState(false);
+  const mapRef = useRef(null);
+  const leafletMapInstanceRef = useRef(null);
+  const markersRef = useRef({});
+  const geolocationWatchIdRef = useRef(null);
+
   useEffect(() => {
     if (user && tripId) {
       fetchTripDetails();
       fetchTripExpenses();
     }
   }, [user, tripId]);
+
+  // 1. Load Leaflet dynamically when Safety Radar tab is open
+  useEffect(() => {
+    if (activeTab === 'locations') {
+      const linkId = 'leaflet-css';
+      if (!document.getElementById(linkId)) {
+        const link = document.createElement('link');
+        link.id = linkId;
+        link.rel = 'stylesheet';
+        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+        document.head.appendChild(link);
+      }
+
+      const scriptId = 'leaflet-js';
+      if (!document.getElementById(scriptId)) {
+        const script = document.createElement('script');
+        script.id = scriptId;
+        script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+        script.async = true;
+        script.onload = () => {
+          setLeafletLoaded(true);
+        };
+        document.head.appendChild(script);
+      } else {
+        if (window.L) {
+          setLeafletLoaded(true);
+        } else {
+          const script = document.getElementById(scriptId);
+          const oldOnload = script.onload;
+          script.onload = (e) => {
+            if (oldOnload) oldOnload(e);
+            setLeafletLoaded(true);
+          };
+        }
+      }
+    }
+  }, [activeTab]);
+
+  // 2. Initialize Leaflet map instance
+  useEffect(() => {
+    if (activeTab === 'locations' && leafletLoaded && trip && mapRef.current) {
+      const L = window.L;
+      if (!L) return;
+
+      if (leafletMapInstanceRef.current) {
+        leafletMapInstanceRef.current.remove();
+        leafletMapInstanceRef.current = null;
+        markersRef.current = {};
+      }
+
+      let mapCenter = [20.5937, 78.9629]; // Default: India
+      let zoomLevel = 5;
+
+      const activeLocations = trip.locations || [];
+      if (activeLocations.length > 0) {
+        mapCenter = [activeLocations[0].latitude, activeLocations[0].longitude];
+        zoomLevel = 13;
+      }
+
+      const map = L.map(mapRef.current).setView(mapCenter, zoomLevel);
+      leafletMapInstanceRef.current = map;
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      updateMapMarkers(activeLocations);
+    }
+
+    return () => {
+      if (leafletMapInstanceRef.current) {
+        leafletMapInstanceRef.current.remove();
+        leafletMapInstanceRef.current = null;
+        markersRef.current = {};
+      }
+    };
+  }, [activeTab, leafletLoaded, trip === null]);
+
+  // 3. Reactively update markers when locations list changes
+  useEffect(() => {
+    if (activeTab === 'locations' && leafletMapInstanceRef.current && trip) {
+      updateMapMarkers(trip.locations || []);
+    }
+  }, [trip?.locations, activeTab]);
+
+  // 4. Polling for locations while Safety Radar tab is open
+  useEffect(() => {
+    let intervalId = null;
+
+    if (activeTab === 'locations') {
+      const pollTripDetails = async () => {
+        try {
+          const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}`, {
+            headers: {
+              'Authorization': `Bearer ${user.token}`,
+            }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setTrip(prev => ({
+              ...prev,
+              locations: data.locations || [],
+              members: data.members || []
+            }));
+          }
+        } catch (err) {
+          console.error('Polling location error:', err);
+        }
+      };
+
+      intervalId = setInterval(pollTripDetails, 10000);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [activeTab, tripId, user.token]);
+
+  // Cleanup watcher on unmount
+  useEffect(() => {
+    return () => {
+      if (geolocationWatchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(geolocationWatchIdRef.current);
+      }
+    };
+  }, []);
+
+  const updateMapMarkers = (activeLocations) => {
+    const L = window.L;
+    const map = leafletMapInstanceRef.current;
+    if (!L || !map) return;
+
+    const currentLocUserIds = activeLocations.map(loc => loc.user.toString());
+    Object.keys(markersRef.current).forEach(userId => {
+      if (!currentLocUserIds.includes(userId)) {
+        markersRef.current[userId].remove();
+        delete markersRef.current[userId];
+      }
+    });
+
+    activeLocations.forEach(loc => {
+      const userId = loc.user.toString();
+      const isSelf = userId === user.id;
+
+      const popupContent = `
+        <div style="font-family: var(--font-primary); color: #000; padding: 4px;">
+          <strong style="font-size: 0.9rem;">${loc.userName} ${isSelf ? '(You)' : ''}</strong><br/>
+          <span style="font-size: 0.75rem; color: #64748b;">
+            Last active: ${new Date(loc.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+          </span>
+        </div>
+      `;
+
+      if (markersRef.current[userId]) {
+        markersRef.current[userId].setLatLng([loc.latitude, loc.longitude]);
+        markersRef.current[userId].setPopupContent(popupContent);
+      } else {
+        const markerColor = isSelf ? '#6366f1' : '#f43f5e';
+        const markerIcon = L.divIcon({
+          className: 'custom-leaflet-marker',
+          html: `
+            <div style="
+              width: 14px; 
+              height: 14px; 
+              background-color: ${markerColor}; 
+              border: 2px solid #fff; 
+              border-radius: 50%;
+              box-shadow: 0 0 8px ${markerColor}, 0 0 16px ${markerColor};
+            "></div>
+          `,
+          iconSize: [14, 14],
+          iconAnchor: [7, 7]
+        });
+
+        const marker = L.marker([loc.latitude, loc.longitude], { icon: markerIcon })
+          .addTo(map)
+          .bindPopup(popupContent);
+
+        markersRef.current[userId] = marker;
+      }
+    });
+
+    if (activeLocations.length > 1) {
+      const bounds = L.latLngBounds(activeLocations.map(loc => [loc.latitude, loc.longitude]));
+      map.fitBounds(bounds, { padding: [40, 40] });
+    } else if (activeLocations.length === 1) {
+      map.setView([activeLocations[0].latitude, activeLocations[0].longitude], 14);
+    }
+  };
+
+  const uploadLocation = async (latitude, longitude) => {
+    try {
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}/location`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({ latitude, longitude }),
+      });
+      if (res.ok) {
+        const updatedLocations = await res.json();
+        setTrip(prev => ({
+          ...prev,
+          locations: updatedLocations
+        }));
+      }
+    } catch (err) {
+      console.error('Error uploading live location:', err);
+    }
+  };
+
+  const startSharingLocation = () => {
+    if (!navigator.geolocation) {
+      setSharingError('Geolocation is not supported by your browser.');
+      return;
+    }
+
+    setSharingError(null);
+    setIsSharingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        uploadLocation(latitude, longitude);
+
+        if (leafletMapInstanceRef.current) {
+          leafletMapInstanceRef.current.setView([latitude, longitude], 14);
+        }
+      },
+      (err) => {
+        setSharingError(`Failed to get initial location: ${err.message}`);
+        setIsSharingLocation(false);
+      },
+      { enableHighAccuracy: true }
+    );
+
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        uploadLocation(latitude, longitude);
+      },
+      (err) => {
+        console.error('Geolocation watch error:', err);
+        setSharingError(`Location tracking error: ${err.message}`);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    );
+
+    geolocationWatchIdRef.current = watchId;
+  };
+
+  const stopSharingLocation = async () => {
+    setIsSharingLocation(false);
+    
+    if (geolocationWatchIdRef.current !== null) {
+      navigator.geolocation.clearWatch(geolocationWatchIdRef.current);
+      geolocationWatchIdRef.current = null;
+    }
+
+    try {
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}/location`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${user.token}`,
+        }
+      });
+      if (res.ok) {
+        const updatedLocations = await res.json();
+        setTrip(prev => ({
+          ...prev,
+          locations: updatedLocations
+        }));
+      }
+    } catch (err) {
+      console.error('Error stopping location sharing:', err);
+    }
+  };
 
   const fetchTripDetails = async () => {
     try {
@@ -939,6 +1228,13 @@ export default function TripDetail() {
             >
               ✨ AI Planner
             </button>
+            <button 
+              onClick={() => setActiveTab('locations')}
+              className={`tab-btn ${activeTab === 'locations' ? 'active' : ''}`}
+              style={{ padding: '8px 16px', borderRadius: 'var(--radius-sm)', border: '1px solid transparent', fontSize: '0.95rem', fontWeight: '600' }}
+            >
+              📍 Safety Radar
+            </button>
           </div>
 
           {/* TAB 1: EXPENSE LOG LIST */}
@@ -1531,6 +1827,196 @@ export default function TripDetail() {
                   </button>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* TAB 7: SAFETY RADAR */}
+          {activeTab === 'locations' && (
+            <div className="glass-panel animate-fade-in" style={{ padding: '28px', borderRadius: 'var(--radius-md)' }}>
+              <style>{`
+                @keyframes radar-pulse {
+                  0% { transform: scale(0.6); opacity: 0.9; }
+                  100% { transform: scale(2.2); opacity: 0; }
+                }
+              `}</style>
+              <h3 style={{ marginBottom: '4px' }}>📍 Safety Radar & Live Location</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '24px' }}>
+                Share your live coordinates with other members of this trip room so nobody gets lost. Location updates are shared until you stop them.
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+                
+                {/* Control Panel / Sidebar */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  
+                  {/* Share Toggle */}
+                  <div style={{ 
+                    background: 'var(--bg-tertiary)', 
+                    border: '1px solid var(--border-color)', 
+                    borderRadius: 'var(--radius-sm)', 
+                    padding: '20px', 
+                    textAlign: 'center' 
+                  }}>
+                    {isSharingLocation ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+                        {/* Glowing Radar animation */}
+                        <div style={{ position: 'relative', width: '60px', height: '60px', marginBottom: '8px' }}>
+                          <span style={{
+                            position: 'absolute',
+                            width: '100%',
+                            height: '100%',
+                            background: 'rgba(244, 63, 94, 0.2)',
+                            borderRadius: '50%',
+                            left: 0, top: 0,
+                            animation: 'radar-pulse 2s infinite ease-out'
+                          }}></span>
+                          <span style={{
+                            position: 'absolute',
+                            width: '60%',
+                            height: '60%',
+                            background: 'var(--color-danger)',
+                            borderRadius: '50%',
+                            left: '20%', top: '20%',
+                          }}></span>
+                          <span style={{
+                            position: 'absolute',
+                            color: '#fff',
+                            fontSize: '20px',
+                            left: '33%', top: '28%',
+                          }}>📡</span>
+                        </div>
+                        <strong style={{ color: 'var(--color-danger)', fontSize: '0.95rem' }}>Location Sharing Active</strong>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>Updating your position in real-time...</p>
+                        <button 
+                          onClick={stopSharingLocation} 
+                          className="btn btn-secondary" 
+                          style={{ 
+                            width: '100%', 
+                            padding: '10px', 
+                            background: 'rgba(244, 63, 94, 0.1)', 
+                            border: '1px solid var(--color-danger)', 
+                            color: 'var(--color-danger)',
+                            cursor: 'pointer',
+                            borderRadius: 'var(--radius-sm)'
+                          }}
+                        >
+                          ⏹️ Stop Sharing
+                        </button>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ fontSize: '32px', marginBottom: '8px' }}>🛰️</div>
+                        <strong style={{ fontSize: '0.95rem' }}>Radar Inactive</strong>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>Your coordinates are private. Share location for safety.</p>
+                        <button 
+                          onClick={startSharingLocation} 
+                          className="btn btn-primary" 
+                          style={{ width: '100%', padding: '10px', cursor: 'pointer', borderRadius: 'var(--radius-sm)' }}
+                        >
+                          📡 Start Sharing Live
+                        </button>
+                      </div>
+                    )}
+
+                    {sharingError && (
+                      <div style={{ 
+                        marginTop: '12px', 
+                        padding: '8px 12px', 
+                        background: 'rgba(239, 68, 68, 0.1)', 
+                        border: '1px solid var(--color-danger)', 
+                        borderRadius: 'var(--radius-sm)', 
+                        fontSize: '0.75rem', 
+                        color: 'var(--color-danger)' 
+                      }}>
+                        ⚠️ {sharingError}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Active List */}
+                  <div>
+                    <h4 style={{ fontSize: '0.9rem', marginBottom: '12px', color: 'var(--color-secondary)' }}>Active Radar ({trip.locations?.length || 0})</h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '250px', overflowY: 'auto' }} className="no-scrollbar">
+                      {(!trip.locations || trip.locations.length === 0) ? (
+                        <p style={{ color: 'var(--text-muted)', fontStyle: 'italic', fontSize: '0.8rem', margin: 0 }}>
+                          Nobody is currently sharing location.
+                        </p>
+                      ) : (
+                        trip.locations.map(loc => {
+                          const isSelf = loc.user.toString() === user.id;
+                          return (
+                            <div 
+                              key={loc._id || loc.user} 
+                              style={{ 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                gap: '10px', 
+                                background: 'var(--bg-secondary)', 
+                                border: '1px solid var(--border-color)', 
+                                borderRadius: 'var(--radius-sm)', 
+                                padding: '10px 12px' 
+                              }}
+                            >
+                              <span style={{ 
+                                display: 'inline-block', 
+                                width: '10px', 
+                                height: '10px', 
+                                borderRadius: '50%', 
+                                background: isSelf ? '#6366f1' : '#f43f5e',
+                                boxShadow: isSelf ? '0 0 8px #6366f1' : '0 0 8px #f43f5e'
+                              }}></span>
+                              <div style={{ flex: 1 }}>
+                                <strong style={{ fontSize: '0.85rem', display: 'block' }}>
+                                  {loc.userName} {isSelf ? '(You)' : ''}
+                                </strong>
+                                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                                  Active: {new Date(loc.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Map Display */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {!leafletLoaded ? (
+                    <div style={{ 
+                      height: '350px', 
+                      background: 'var(--bg-tertiary)', 
+                      border: '1px dashed var(--border-color)', 
+                      borderRadius: 'var(--radius-sm)', 
+                      display: 'flex', 
+                      flexDirection: 'column',
+                      justifyContent: 'center', 
+                      alignItems: 'center',
+                      gap: '12px' 
+                    }}>
+                      <div className="loader"></div>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Loading radar map utilities...</p>
+                    </div>
+                  ) : (
+                    <div 
+                      ref={mapRef} 
+                      style={{ 
+                        height: '350px', 
+                        width: '100%', 
+                        background: 'var(--bg-tertiary)', 
+                        border: '1px solid var(--border-color)', 
+                        borderRadius: 'var(--radius-sm)', 
+                        overflow: 'hidden',
+                        zIndex: 10
+                      }}
+                    ></div>
+                  )}
+                </div>
+
+              </div>
+
             </div>
           )}
 

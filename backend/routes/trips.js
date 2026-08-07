@@ -13,6 +13,8 @@ const {
   uploadPhoto,
   generateAIItinerary,
   chatWithCoPilot,
+  updateLiveLocation,
+  stopSharingLocation,
 } = require('../controllers/tripController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -31,6 +33,11 @@ router.route('/:id')
 router.post('/:id/photos', protect, uploadPhoto);
 router.post('/:id/ai-itinerary', protect, generateAIItinerary);
 router.post('/:id/chat', protect, chatWithCoPilot);
+
+// Live location sharing routes
+router.route('/:id/location')
+  .post(protect, updateLiveLocation)
+  .delete(protect, stopSharingLocation);
 
 // Expense routes inside a trip context
 router.route('/:tripId/expenses')

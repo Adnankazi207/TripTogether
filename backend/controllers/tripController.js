@@ -794,6 +794,85 @@ const chatWithCoPilot = async (req, res) => {
   }
 };
 
+// @desc    Update/share user's live location
+// @route   POST /api/trips/:id/location
+// @access  Private
+const updateLiveLocation = async (req, res) => {
+  try {
+    const { latitude, longitude } = req.body;
+    if (latitude === undefined || longitude === undefined) {
+      return res.status(400).json({ message: 'Latitude and longitude are required' });
+    }
+
+    const trip = await Trip.findById(req.params.id);
+    if (!trip) {
+      return res.status(404).json({ message: 'Trip not found' });
+    }
+
+    if (!isAuthorized(trip, req.user.id)) {
+      return res.status(401).json({ message: 'User not authorized' });
+    }
+
+    // Initialize locations array if it doesn't exist
+    if (!trip.locations) {
+      trip.locations = [];
+    }
+
+    // Check if user already sharing location
+    const existingIndex = trip.locations.findIndex(
+      (loc) => loc.user.toString() === req.user.id
+    );
+
+    if (existingIndex > -1) {
+      // Update existing
+      trip.locations[existingIndex].latitude = latitude;
+      trip.locations[existingIndex].longitude = longitude;
+      trip.locations[existingIndex].updatedAt = Date.now();
+    } else {
+      // Push new
+      trip.locations.push({
+        user: req.user.id,
+        userName: req.user.name || 'Group Member',
+        latitude,
+        longitude,
+        updatedAt: Date.now(),
+      });
+    }
+
+    await trip.save();
+    res.json(trip.locations);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Stop sharing live location
+// @route   DELETE /api/trips/:id/location
+// @access  Private
+const stopSharingLocation = async (req, res) => {
+  try {
+    const trip = await Trip.findById(req.params.id);
+    if (!trip) {
+      return res.status(404).json({ message: 'Trip not found' });
+    }
+
+    if (!isAuthorized(trip, req.user.id)) {
+      return res.status(401).json({ message: 'User not authorized' });
+    }
+
+    if (trip.locations) {
+      trip.locations = trip.locations.filter(
+        (loc) => loc.user.toString() !== req.user.id
+      );
+      await trip.save();
+    }
+
+    res.json(trip.locations || []);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getTrips,
   createTrip,
@@ -807,4 +886,6 @@ module.exports = {
   uploadPhoto,
   generateAIItinerary,
   chatWithCoPilot,
+  updateLiveLocation,
+  stopSharingLocation,
 };
