@@ -1959,6 +1959,32 @@ p {
   border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
+/* Light Theme transparent overrides to ensure text visibility */
+[data-theme='light'] .navbar-transparent .logo-text {
+  color: var(--text-primary) !important;
+}
+[data-theme='light'] .navbar-transparent .nav-link {
+  color: var(--text-secondary) !important;
+}
+[data-theme='light'] .navbar-transparent .nav-link:hover,
+[data-theme='light'] .navbar-transparent .nav-link.active {
+  color: var(--text-primary) !important;
+}
+[data-theme='light'] .navbar-transparent .btn-icon {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme='light'] .navbar-transparent .btn-secondary {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme='light'] .navbar-transparent .btn-secondary:hover {
+  background: rgba(0, 0, 0, 0.06) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
 /* Scrolled Glassmorphism Navbar */
 .navbar-scrolled {
   background: rgba(10, 10, 12, 0.72) !important;
