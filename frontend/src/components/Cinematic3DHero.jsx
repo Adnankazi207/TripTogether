@@ -114,15 +114,22 @@ export default function Cinematic3DHero() {
     const container = containerRef.current;
     const canvas = canvasRef.current;
 
-    // A. Offscreen Canvas for Dynamic Texture updating (memory optimized)
+    // A. Offscreen Canvas for Dynamic Texture updating (memory optimized & scaled for crystal clarity)
     const offscreenCanvas = document.createElement('canvas');
     const offscreenCtx = offscreenCanvas.getContext('2d');
     const firstFrame = imagesRef.current[0];
-    offscreenCanvas.width = firstFrame.width;
-    offscreenCanvas.height = firstFrame.height;
     
-    // Draw initial frame
-    offscreenCtx.drawImage(firstFrame, 0, 0);
+    // Scale up canvas resolution to double the source frame dimensions
+    const scaleFactor = 2;
+    offscreenCanvas.width = firstFrame.width * scaleFactor;
+    offscreenCanvas.height = firstFrame.height * scaleFactor;
+    
+    // Enable high-quality image smoothing
+    offscreenCtx.imageSmoothingEnabled = true;
+    offscreenCtx.imageSmoothingQuality = 'high';
+    
+    // Draw initial frame scaled up
+    offscreenCtx.drawImage(firstFrame, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
     // B. Three.js Core Setup
     const width = container.clientWidth;
@@ -244,7 +251,10 @@ export default function Cinematic3DHero() {
 
         const activeImg = imagesRef.current[frameIndexRef.current];
         if (activeImg && activeImg.complete) {
-          offscreenCtx.drawImage(activeImg, 0, 0);
+          // Re-enforce high-quality smoothing parameters
+          offscreenCtx.imageSmoothingEnabled = true;
+          offscreenCtx.imageSmoothingQuality = 'high';
+          offscreenCtx.drawImage(activeImg, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
           texture.needsUpdate = true; // Signals WebGL to reload texture data
         }
 
