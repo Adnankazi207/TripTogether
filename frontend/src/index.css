@@ -2701,5 +2701,240 @@ p {
   .btn-next { right: 10px; }
 }
 
+/* ==========================================================================
+   TRIP DETAIL DASHBOARD ENHANCEMENTS
+   ========================================================================== */
+
+/* Premium Capsule Tab Buttons */
+.tab-btn {
+  padding: 10px 22px !important;
+  border-radius: 100px !important;
+  border: 1px solid var(--border-color) !important;
+  font-family: var(--font-heading);
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+  color: var(--text-secondary) !important;
+  background: rgba(15, 23, 42, 0.03) !important;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+[data-theme='dark'] .tab-btn {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.tab-btn:hover {
+  background: rgba(15, 23, 42, 0.06) !important;
+  color: var(--text-primary) !important;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+[data-theme='dark'] .tab-btn:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.tab-btn.active {
+  background: var(--gradient-accent) !important;
+  border-color: transparent !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3) !important;
+  transform: translateY(-1px);
+}
+
+/* Premium Card-Style Tables for Expenses Log */
+.expense-table-wrapper {
+  border-radius: var(--radius-md);
+  background: rgba(var(--text-primary-rgb, 15, 23, 42), 0.01);
+  padding: 4px;
+}
+
+.expense-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 12px; /* Visual separation of card rows */
+  margin-top: 4px;
+}
+
+.expense-table th {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 10px 16px;
+  border-bottom: 2px solid var(--border-color);
+  background: transparent !important;
+}
+
+.expense-table tr {
+  transition: all 0.25s ease;
+}
+
+.expense-table td {
+  padding: 16px 20px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  transition: all 0.25s ease;
+}
+
+.expense-table td:first-child {
+  border-left: 1px solid var(--border-color);
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+}
+
+.expense-table td:last-child {
+  border-right: 1px solid var(--border-color);
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+/* Row Hover effect */
+.expense-table tr:hover td {
+  background: var(--bg-tertiary);
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='dark'] .expense-table tr:hover td {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* Category Badge Indicators */
+.expense-category-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  border-radius: 100px !important;
+  border: 1px solid transparent;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.cat-Food {
+  background: rgba(244, 63, 94, 0.08) !important;
+  border-color: rgba(244, 63, 94, 0.18) !important;
+  color: #EF4444 !important;
+}
+.cat-Transport {
+  background: rgba(59, 130, 246, 0.08) !important;
+  border-color: rgba(59, 130, 246, 0.18) !important;
+  color: #3B82F6 !important;
+}
+.cat-Lodging {
+  background: rgba(16, 185, 129, 0.08) !important;
+  border-color: rgba(16, 185, 129, 0.18) !important;
+  color: #10B981 !important;
+}
+.cat-Leisure {
+  background: rgba(139, 92, 246, 0.08) !important;
+  border-color: rgba(139, 92, 246, 0.18) !important;
+  color: #8B5CF6 !important;
+}
+.cat-Shopping {
+  background: rgba(236, 72, 153, 0.08) !important;
+  border-color: rgba(236, 72, 153, 0.18) !important;
+  color: #EC4899 !important;
+}
+.cat-Other {
+  background: rgba(100, 116, 139, 0.08) !important;
+  border-color: rgba(100, 116, 139, 0.18) !important;
+  color: #64748B !important;
+}
+
+/* Premium Trash-button hover state */
+.expense-delete-btn {
+  color: var(--color-danger) !important;
+  font-weight: 700 !important;
+  font-size: 0.78rem !important;
+  background: rgba(239, 68, 68, 0.05) !important;
+  border: 1px solid rgba(239, 68, 68, 0.15) !important;
+  padding: 6px 14px !important;
+  border-radius: 8px !important;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.expense-delete-btn:hover {
+  background: #EF4444 !important;
+  border-color: #EF4444 !important;
+  color: #ffffff !important;
+  transform: scale(1.06);
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
+}
+
+/* Glowing Progress Meter Cards */
+.budget-status-section {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md) !important;
+  padding: 20px !important;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+}
+
+.budget-progress-bar-bg {
+  height: 12px !important;
+  background: var(--bg-tertiary) !important;
+  border: 1px solid var(--border-color);
+  border-radius: 100px !important;
+}
+
+.budget-progress-bar-fill {
+  border-radius: 100px !important;
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* Glowing Timeline Activity List */
+.timeline-container {
+  border-left: 2px dashed var(--border-color) !important;
+  padding-left: 26px !important;
+  margin: 24px 0 !important;
+}
+
+.timeline-node {
+  position: absolute;
+  left: -33px;
+  top: 18px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  border: 2.5px solid var(--bg-primary);
+  box-shadow: 0 0 6px var(--color-primary);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.timeline-item:hover .timeline-node {
+  transform: scale(1.4);
+  background: var(--color-secondary);
+  box-shadow: 0 0 10px var(--color-secondary);
+}
+
+.timeline-activity-card {
+  flex: 1;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.timeline-item:hover .timeline-activity-card {
+  transform: translateX(6px);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md), var(--shadow-glow);
+}
+
 
 

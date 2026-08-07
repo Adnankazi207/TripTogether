@@ -1226,49 +1226,42 @@ export default function TripDetail() {
             <button 
               onClick={() => setActiveTab('expenses')}
               className={`tab-btn ${activeTab === 'expenses' ? 'active' : ''}`}
-              style={{ padding: '8px 16px', borderRadius: 'var(--radius-sm)', border: '1px solid transparent', fontSize: '0.95rem', fontWeight: '600' }}
             >
               📊 Expense Log
             </button>
             <button 
               onClick={() => setActiveTab('itinerary')}
               className={`tab-btn ${activeTab === 'itinerary' ? 'active' : ''}`}
-              style={{ padding: '8px 16px', borderRadius: 'var(--radius-sm)', border: '1px solid transparent', fontSize: '0.95rem', fontWeight: '600' }}
             >
               📅 Timeline Itinerary
             </button>
             <button 
               onClick={() => setActiveTab('packing')}
               className={`tab-btn ${activeTab === 'packing' ? 'active' : ''}`}
-              style={{ padding: '8px 16px', borderRadius: 'var(--radius-sm)', border: '1px solid transparent', fontSize: '0.95rem', fontWeight: '600' }}
             >
               🎒 Packing List
             </button>
             <button 
               onClick={() => setActiveTab('gallery')}
               className={`tab-btn ${activeTab === 'gallery' ? 'active' : ''}`}
-              style={{ padding: '8px 16px', borderRadius: 'var(--radius-sm)', border: '1px solid transparent', fontSize: '0.95rem', fontWeight: '600' }}
             >
               📸 Shared Gallery
             </button>
             <button 
               onClick={() => setActiveTab('weather')}
               className={`tab-btn ${activeTab === 'weather' ? 'active' : ''}`}
-              style={{ padding: '8px 16px', borderRadius: 'var(--radius-sm)', border: '1px solid transparent', fontSize: '0.95rem', fontWeight: '600' }}
             >
               ⛅ Weather Forecast
             </button>
             <button 
               onClick={() => setActiveTab('ai')}
               className={`tab-btn ${activeTab === 'ai' ? 'active' : ''}`}
-              style={{ padding: '8px 16px', borderRadius: 'var(--radius-sm)', border: '1px solid transparent', fontSize: '0.95rem', fontWeight: '600' }}
             >
               ✨ AI Planner
             </button>
             <button 
               onClick={() => setActiveTab('locations')}
               className={`tab-btn ${activeTab === 'locations' ? 'active' : ''}`}
-              style={{ padding: '8px 16px', borderRadius: 'var(--radius-sm)', border: '1px solid transparent', fontSize: '0.95rem', fontWeight: '600' }}
             >
               📍 Safety Radar
             </button>
@@ -1281,28 +1274,28 @@ export default function TripDetail() {
               {expenses.length === 0 ? (
                 <p style={{ color: 'var(--text-muted)', fontStyle: 'italic', margin: 0 }}>No expenses logged for this trip yet.</p>
               ) : (
-                <div className="expense-table-wrapper no-scrollbar" style={{ overflowX: 'auto', maxHeight: '350px', overflowY: 'auto' }}>
-                  <table className="expense-table" style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <div className="expense-table-wrapper no-scrollbar" style={{ maxHeight: '350px', overflowY: 'auto' }}>
+                  <table className="expense-table">
                     <thead>
                       <tr>
-                        <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Expense</th>
-                        <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Category</th>
-                        <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Amount</th>
-                        <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Action</th>
+                        <th>Expense</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       {expenses.map((exp) => (
                         <tr key={exp._id}>
-                          <td style={{ padding: '12px', borderBottom: '1px solid var(--border-color)', fontWeight: '500' }}>{exp.title}</td>
-                          <td style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>
-                            <span className={`expense-category-tag cat-${exp.category}`} style={{ borderRadius: 'var(--radius-sm)', padding: '2px 8px', fontSize: '0.75rem', fontWeight: '600' }}>
+                          <td style={{ fontWeight: '600' }}>{exp.title}</td>
+                          <td>
+                            <span className={`expense-category-tag cat-${exp.category}`}>
                               {exp.category}
                             </span>
                           </td>
-                          <td style={{ padding: '12px', borderBottom: '1px solid var(--border-color)', fontWeight: '600' }}>₹{exp.amount.toLocaleString()}</td>
-                          <td style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>
-                            <button onClick={() => handleDeleteExpense(exp._id)} className="expense-delete-btn" style={{ background: 'none', border: 'none', color: 'var(--color-danger)', cursor: 'pointer', fontWeight: '500' }}>
+                          <td style={{ fontWeight: '700' }}>₹{exp.amount.toLocaleString()}</td>
+                          <td>
+                            <button onClick={() => handleDeleteExpense(exp._id)} className="expense-delete-btn">
                               Delete
                             </button>
                           </td>
@@ -1338,44 +1331,24 @@ export default function TripDetail() {
               </div>
 
               {/* Day Timeline Activities list */}
-              <div 
-                className="no-scrollbar"
-                style={{ 
-                  borderLeft: '2px solid var(--color-primary)', 
-                  paddingLeft: '20px', 
-                  margin: '20px 0', 
-                  minHeight: '80px', 
-                  maxHeight: '350px',
-                  overflowY: 'auto',
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  gap: '20px' 
-                }}
-              >
+              <div className="no-scrollbar timeline-container" style={{ maxHeight: '380px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 {dayActivities.length === 0 ? (
                   <p style={{ color: 'var(--text-muted)', fontStyle: 'italic', margin: 0 }}>No activities logged for Day {activeDay} yet. Add some below!</p>
                 ) : (
                   dayActivities.map((act, index) => (
-                    <div key={index} style={{ position: 'relative' }}>
-                      <span style={{
-                        position: 'absolute',
-                        left: '-27px', top: '4px',
-                        width: '12px', height: '12px',
-                        borderRadius: '50%',
-                        background: 'var(--color-primary)',
-                        border: '2px solid var(--bg-secondary)',
-                      }}></span>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div key={index} className="timeline-item" style={{ position: 'relative' }}>
+                      <span className="timeline-node"></span>
+                      <div className="timeline-activity-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <div>
-                          <strong style={{ display: 'inline-block', fontSize: '0.85rem', color: 'var(--color-secondary)' }}>
+                          <strong style={{ display: 'inline-block', fontSize: '0.82rem', color: 'var(--color-secondary)', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
                             {act.time || 'All Day'}
                           </strong>
-                          <h4 style={{ margin: '2px 0 4px', fontSize: '1.05rem' }}>{act.activity}</h4>
-                          {act.desc && <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>{act.desc}</p>}
+                          <h4 style={{ margin: '4px 0', fontSize: '1.05rem', fontWeight: '700' }}>{act.activity}</h4>
+                          {act.desc && <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '4px 0 0', lineHeight: '1.4' }}>{act.desc}</p>}
                         </div>
                         <button
                           onClick={() => handleDeleteActivity(activeDay, index)}
-                          style={{ color: 'var(--color-danger)', fontSize: '12px', background: 'none', border: 'none', cursor: 'pointer', fontWeight: '500' }}
+                          style={{ color: 'var(--color-danger)', fontSize: '12px', background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600' }}
                         >
                           &times; Remove
                         </button>
