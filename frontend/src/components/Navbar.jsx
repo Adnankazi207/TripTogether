@@ -32,9 +32,16 @@ export default function Navbar() {
   };
 
   const isActive = (path) => location.pathname === path;
+  const isHome = location.pathname === '/';
 
   return (
-    <div className={`navbar-wrapper ${scrolled ? 'glass-panel' : ''}`} style={{ borderBottom: scrolled ? '1px solid var(--border-color)' : 'none' }}>
+    <div 
+      className={`navbar-wrapper ${scrolled || !isHome ? 'navbar-scrolled glass-panel' : 'navbar-transparent'}`} 
+      style={{ 
+        borderBottom: (scrolled || !isHome) ? '1px solid var(--glass-border)' : 'none',
+        transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+      }}
+    >
       <div className="container navbar-container">
         
         {/* Logo */}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import Cinematic3DHero from '../components/Cinematic3DHero';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -45,60 +46,18 @@ export default function Home() {
   ];
 
   return (
-    <div className="container page-container animate-fade-in" style={{ paddingBottom: '80px' }}>
+    <div className="page-container animate-fade-in" style={{ paddingBottom: '80px', background: '#050505', paddingTop: '0px' }}>
       
-      {/* Hero Section */}
-      <section className="hero-section" style={{ boxShadow: 'var(--shadow-md)', border: '1px solid var(--border-color)', background: 'var(--gradient-hero)' }}>
-        <div className="hero-glow-1"></div>
-        <div className="hero-glow-2"></div>
-        
-        <div className="hero-content">
-          <span className="hero-tagline">✨ Your Ultimate Travel Companion</span>
-          <h1 className="hero-title">
-            Explore the World, <br />
-            <span className="gradient-text">Plan with Confidence</span>
-          </h1>
-          <p className="hero-subtitle">
-            Create custom itineraries, manage budgets in Rupees, track daily expenses collaboratively, and discover top-rated destinations worldwide. Everything for your next adventure.
-          </p>
+      {/* Cinematic 3D Hero Section */}
+      <Cinematic3DHero 
+        searchQuery={searchQuery} 
+        setSearchQuery={setSearchQuery} 
+        handleSearchSubmit={handleSearchSubmit} 
+      />
 
-          <form onSubmit={handleSearchSubmit} className="hero-search-bar" style={{ border: '1px solid var(--border-color)' }}>
-            <input
-              type="text"
-              placeholder="Search destinations (e.g. Paris, Manali, Bangalore...)"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ background: 'transparent' }}
-            />
-            <button type="submit" className="btn btn-primary" style={{ borderRadius: 'var(--radius-sm)' }}>
-              Search
-            </button>
-          </form>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="stats-container">
-          <div className="stat-card" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-            <div className="stat-number">30k+</div>
-            <div className="stat-label">Trips Planned</div>
-          </div>
-          <div className="stat-card" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-            <div className="stat-number">4.9★</div>
-            <div className="stat-label">User Rating</div>
-          </div>
-          <div className="stat-card" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-            <div className="stat-number">120+</div>
-            <div className="stat-label">Cities Covered</div>
-          </div>
-          <div className="stat-card" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-            <div className="stat-number">100%</div>
-            <div className="stat-label">Free to Use</div>
-          </div>
-        </div>
-      </section>
-
-      {/* Core Features Grid */}
-      <section style={{ margin: '100px 0' }}>
+      <div className="container" style={{ marginTop: '60px' }}>
+        {/* Core Features Grid */}
+        <section style={{ margin: '100px 0' }}>
         <div className="section-header">
           <span className="section-tag">Key Features</span>
           <h2 className="section-title" style={{ fontSize: '2.5rem' }}>Everything You Need to Plan</h2>
@@ -280,6 +239,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      </div> {/* Closing container wrapper */}
 
       {/* Premium CSS transitions and animations */}
       <style>{`
