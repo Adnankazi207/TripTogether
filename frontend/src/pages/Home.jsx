@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Cinematic3DHero from '../components/Cinematic3DHero';
-import FeatureSlider from '../components/FeatureSlider';
+import BentoGridFeatures from '../components/BentoGridFeatures';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -57,6 +57,32 @@ export default function Home() {
       />
 
       <div className="container" style={{ marginTop: '60px' }}>
+        
+        {/* Live Travel Statistics Section */}
+        <section className="my-16 py-8 border border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/30 rounded-2xl p-6 md:p-8 backdrop-blur-sm">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div className="flex flex-col gap-1">
+              <span className="text-3xl md:text-4xl font-extrabold text-blue-600 dark:text-sky-400">12,850+</span>
+              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold flex items-center justify-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-ping inline-block"></span>
+                Active Rooms
+              </span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-3xl md:text-4xl font-extrabold text-blue-600 dark:text-sky-400">4,200+</span>
+              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Cities Generated</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-3xl md:text-4xl font-extrabold text-blue-600 dark:text-sky-400">₹4.8 Cr+</span>
+              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Ledger Budgets</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-3xl md:text-4xl font-extrabold text-blue-600 dark:text-sky-400">85,340+</span>
+              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Global Planners</span>
+            </div>
+          </div>
+        </section>
+
         {/* Core Features Grid */}
         <section style={{ margin: '100px 0' }}>
         <div className="section-header">
@@ -99,7 +125,65 @@ export default function Home() {
         </div>
       </section>
 
-         <FeatureSlider />
+         <BentoGridFeatures />
+
+        {/* Traveler Stories Section */}
+        <section className="my-24">
+          <div className="section-header mb-12">
+            <span className="section-tag">Community</span>
+            <h2 className="section-title text-3xl md:text-5xl font-extrabold tracking-tight" style={{ fontSize: '2.5rem' }}>Traveler Stories & Itineraries</h2>
+            <p className="section-desc max-w-2xl">
+              Explore successful group trips structured, calculated, and coordinated entirely on TripTogether.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Story Card 1 */}
+            <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/40 backdrop-blur-sm shadow-sm flex flex-col justify-between hover:shadow-md hover:border-blue-500/30 transition-all duration-300">
+              <div>
+                <div className="flex gap-2 mb-4">
+                  <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-sky-400">🏔️ Adventure</span>
+                  <span className="text-[10px] text-slate-400 font-semibold">5 Members · 6 Days</span>
+                </div>
+                <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mb-2">Spiti Valley Expedition</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  "Mapped high-altitude mountain transits, monitored shared ledger logs under a strict ₹25k limit warning per member, and kept checklists synchronized on off-road passes."
+                </p>
+              </div>
+              <span className="text-[10px] text-slate-400 mt-4 block font-semibold">🎒 Created by Adnan & Friends</span>
+            </div>
+
+            {/* Story Card 2 */}
+            <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/40 backdrop-blur-sm shadow-sm flex flex-col justify-between hover:shadow-md hover:border-blue-500/30 transition-all duration-300">
+              <div>
+                <div className="flex gap-2 mb-4">
+                  <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">🌴 Leisure</span>
+                  <span className="text-[10px] text-slate-400 font-semibold">3 Members · 4 Days</span>
+                </div>
+                <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mb-2">Wayanad Backwater Cruise</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  "Calculated joint resort and cruise rates, managed shared food costs dynamically, and uploaded 45 group snapshots directly to the shared photo gallery."
+                </p>
+              </div>
+              <span className="text-[10px] text-slate-400 mt-4 block font-semibold">📸 Created by Ananya K.</span>
+            </div>
+
+            {/* Story Card 3 */}
+            <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/40 backdrop-blur-sm shadow-sm flex flex-col justify-between hover:shadow-md hover:border-blue-500/30 transition-all duration-300">
+              <div>
+                <div className="flex gap-2 mb-4">
+                  <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500">🏰 Heritage</span>
+                  <span className="text-[10px] text-slate-400 font-semibold">2 Members · 7 Days</span>
+                </div>
+                <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mb-2">Rajasthan Golden Triangle</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  "Monitored palace stay costs, set budget warning limits to prevent overspending, and interactively chatted with AI Co-Pilot to map transit from Udaipur to Jodhpur."
+                </p>
+              </div>
+              <span className="text-[10px] text-slate-400 mt-4 block font-semibold">✍️ Created by Rahul & Rohit</span>
+            </div>
+          </div>
+        </section>
 
       {/* Visual Walkthrough: How it Works */}
       <section style={{ margin: '100px 0' }}>
