@@ -1,18 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 export default function Footer() {
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubsubscribed] = useState(false);
-
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-    if (email) {
-      setSubsubscribed(true);
-      setEmail('');
-      setTimeout(() => setSubsubscribed(false), 5000);
-    }
-  };
 
   return (
     <footer className="footer animate-fade-in">
@@ -57,35 +46,6 @@ export default function Footer() {
               <li><Link to="/destinations?category=Cultural">Cultural Travel</Link></li>
               <li><Link to="/destinations?category=Nature">Nature Retreats</Link></li>
             </ul>
-          </div>
-
-          {/* Column 4: Newsletter */}
-          <div className="footer-col">
-            <div className="footer-newsletter">
-              <h4>Newsletter</h4>
-              <p>Subscribe to receive travel tips, exclusive offers, and destination recommendations directly in your inbox.</p>
-              
-              {subscribed ? (
-                <div className="alert alert-success" style={{ margin: 0, padding: '10px 14px' }}>
-                  🎉 Thank you for subscribing!
-                </div>
-              ) : (
-                <form onSubmit={handleSubscribe} className="newsletter-form">
-                  <input
-                    type="email"
-                    placeholder="Enter email address"
-                    className="input-field"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    style={{ padding: '10px 14px' }}
-                  />
-                  <button type="submit" className="btn btn-primary" style={{ padding: '10px 16px' }}>
-                    Join
-                  </button>
-                </form>
-              )}
-            </div>
           </div>
 
         </div>

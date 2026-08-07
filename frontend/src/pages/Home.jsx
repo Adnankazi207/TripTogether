@@ -148,7 +148,7 @@ export default function Home() {
               We leverage modern language models to handle scheduling logistics and answer travel questions, allowing you to focus on enjoying the journey.
             </p>
             <div style={{ display: 'flex', gap: '12px' }}>
-              <Link to="/destinations" className="btn btn-primary" style={{ padding: '10px 20px', borderRadius: 'var(--radius-sm)' }}>
+              <Link to="/ai-copilot" className="btn btn-primary" style={{ padding: '10px 20px', borderRadius: 'var(--radius-sm)' }}>
                 ✨ Try AI Co-Pilot
               </Link>
             </div>

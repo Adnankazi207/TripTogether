@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
@@ -13,7 +13,17 @@ import Profile from './pages/Profile';
 import TripDetail from './pages/TripDetail';
 import BudgetCalculator from './pages/BudgetCalculator';
 import AICopilot from './pages/AICopilot';
-import './App.css'; // Imported to satisfy default configuration, styling resides in index.css
+import './App.css'; 
+
+// Scroll restoration helper
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
@@ -40,6 +50,7 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <Router>
+          <ScrollToTop />
           <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             {/* Top Navigation Bar */}
             <Navbar />
