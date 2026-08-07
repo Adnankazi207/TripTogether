@@ -359,7 +359,7 @@ export default function AICopilot() {
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyDown={handleKeyPress}
-                placeholder={activeTrip ? `Ask your travel co-pilot about ${activeTrip.destination?.title || 'your trip'}...` : 'Select a trip to begin...'}
+                placeholder={activeTrip ? `Ask about ${activeTrip.destination?.title || 'your trip'}...` : 'Select a trip to begin...'}
                 disabled={!activeTrip}
                 rows={1}
                 style={{
