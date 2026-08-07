@@ -107,9 +107,9 @@ export default function BudgetCalculator() {
     try {
       let url = '';
       if (selectedCity) {
-        url = `http://localhost:5050/api/destinations/tips?city=${encodeURIComponent(selectedCity.title)}`;
+        url = `https://triptogether-backend-f1j9.onrender.com/api/destinations/tips?city=${encodeURIComponent(selectedCity.title)}`;
       } else {
-        url = `http://localhost:5050/api/destinations/tips?category=${category}&comfort=${comfortLevel}&transit=${transitMode}&days=${days}`;
+        url = `https://triptogether-backend-f1j9.onrender.com/api/destinations/tips?category=${category}&comfort=${comfortLevel}&transit=${transitMode}&days=${days}`;
       }
       const res = await fetch(url);
       if (res.ok) {
@@ -136,7 +136,7 @@ export default function BudgetCalculator() {
     setSearchError(null);
     try {
       // Fetch matching destination profile (if not exist, seeds dynamically!)
-      const res = await fetch(`http://localhost:5050/api/destinations?search=${encodeURIComponent(searchQuery)}`);
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/destinations?search=${encodeURIComponent(searchQuery)}`);
       if (res.ok) {
         const data = await res.json();
         if (data.length > 0) {

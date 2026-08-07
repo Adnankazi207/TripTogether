@@ -58,7 +58,7 @@ export default function TripDetail() {
 
   const fetchTripDetails = async () => {
     try {
-      const res = await fetch(`http://localhost:5050/api/trips/${tripId}`, {
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}`, {
         headers: {
           'Authorization': `Bearer ${user.token}`,
         },
@@ -74,7 +74,7 @@ export default function TripDetail() {
 
   const fetchTripExpenses = async () => {
     try {
-      const res = await fetch(`http://localhost:5050/api/trips/${tripId}/expenses`, {
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}/expenses`, {
         headers: {
           'Authorization': `Bearer ${user.token}`,
         },
@@ -225,7 +225,7 @@ export default function TripDetail() {
 
     setExpenseFormSubmitting(true);
     try {
-      const res = await fetch(`http://localhost:5050/api/trips/${tripId}/expenses`, {
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}/expenses`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -256,7 +256,7 @@ export default function TripDetail() {
   const handleDeleteExpense = async (expenseId) => {
     if (!window.confirm('Delete this expense?')) return;
     try {
-      const res = await fetch(`http://localhost:5050/api/trips/${tripId}/expenses/${expenseId}`, {
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}/expenses/${expenseId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${user.token}`,
@@ -273,7 +273,7 @@ export default function TripDetail() {
   const handleSaveNotes = async () => {
     setNotesSaving(true);
     try {
-      const res = await fetch(`http://localhost:5050/api/trips/${tripId}`, {
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -320,7 +320,7 @@ export default function TripDetail() {
     }
 
     try {
-      const res = await fetch(`http://localhost:5050/api/trips/${tripId}`, {
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -352,7 +352,7 @@ export default function TripDetail() {
     }
 
     try {
-      const res = await fetch(`http://localhost:5050/api/trips/${tripId}`, {
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -383,7 +383,7 @@ export default function TripDetail() {
     });
 
     try {
-      const res = await fetch(`http://localhost:5050/api/trips/${tripId}`, {
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -411,7 +411,7 @@ export default function TripDetail() {
     });
 
     try {
-      const res = await fetch(`http://localhost:5050/api/trips/${tripId}`, {
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -433,7 +433,7 @@ export default function TripDetail() {
     const currentPacking = (trip.packingList || []).filter((item) => item._id !== itemId);
 
     try {
-      const res = await fetch(`http://localhost:5050/api/trips/${tripId}`, {
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -458,7 +458,7 @@ export default function TripDetail() {
 
     setPhotoSubmitting(true);
     try {
-      const res = await fetch(`http://localhost:5050/api/trips/${tripId}/photos`, {
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}/photos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -492,7 +492,7 @@ export default function TripDetail() {
       const base64Data = reader.result;
       setPhotoSubmitting(true);
       try {
-        const res = await fetch(`http://localhost:5050/api/trips/${tripId}/photos`, {
+        const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}/photos`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -522,7 +522,7 @@ export default function TripDetail() {
     setAiLoading(true);
     setAiError(null);
     try {
-      const res = await fetch(`http://localhost:5050/api/trips/${tripId}/ai-itinerary`, {
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}/ai-itinerary`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -546,7 +546,7 @@ export default function TripDetail() {
     }
 
     try {
-      const res = await fetch(`http://localhost:5050/api/trips/${tripId}`, {
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

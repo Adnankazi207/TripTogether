@@ -24,7 +24,7 @@ export default function Profile() {
     const calculateStats = async () => {
       try {
         // Fetch all trips
-        const tripsRes = await fetch('http://localhost:5050/api/trips', {
+        const tripsRes = await fetch('https://triptogether-backend-f1j9.onrender.com/api/trips', {
           headers: {
             'Authorization': `Bearer ${user.token}`,
           },
@@ -47,7 +47,7 @@ export default function Profile() {
         let sumExpenses = 0;
         await Promise.all(
           tripsData.map(async (trip) => {
-            const expRes = await fetch(`http://localhost:5050/api/trips/${trip._id}/expenses`, {
+            const expRes = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${trip._id}/expenses`, {
               headers: {
                 'Authorization': `Bearer ${user.token}`,
               },

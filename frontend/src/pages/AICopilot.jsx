@@ -18,7 +18,7 @@ export default function AICopilot() {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const res = await fetch('http://localhost:5050/api/trips', {
+        const res = await fetch('https://triptogether-backend-f1j9.onrender.com/api/trips', {
           headers: {
             'Authorization': `Bearer ${user.token}`,
           },
@@ -83,7 +83,7 @@ export default function AICopilot() {
         text: m.text
       }));
 
-      const res = await fetch(`http://localhost:5050/api/trips/${selectedTripId}/chat`, {
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${selectedTripId}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

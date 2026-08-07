@@ -45,7 +45,7 @@ export default function Destinations() {
     const fetchDestinations = async () => {
       setLoading(true);
       try {
-        let url = 'http://localhost:5050/api/destinations';
+        let url = 'https://triptogether-backend-f1j9.onrender.com/api/destinations';
         const params = [];
         
         if (category && category !== 'All') {
@@ -114,7 +114,7 @@ export default function Destinations() {
     setFormSubmitting(true);
 
     try {
-      const res = await fetch('http://localhost:5050/api/trips', {
+      const res = await fetch('https://triptogether-backend-f1j9.onrender.com/api/trips', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -47,7 +47,7 @@ export default function Dashboard() {
   // Fetch Trips
   const fetchTrips = async () => {
     try {
-      const res = await fetch('http://localhost:5050/api/trips', {
+      const res = await fetch('https://triptogether-backend-f1j9.onrender.com/api/trips', {
         headers: {
           'Authorization': `Bearer ${user.token}`,
         },
@@ -102,7 +102,7 @@ export default function Dashboard() {
     }
 
     try {
-      const res = await fetch(`http://localhost:5050/api/trips/${tripId}`, {
+      const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${user.token}`,
@@ -195,8 +195,8 @@ export default function Dashboard() {
     
     try {
       const url = editingTripId 
-        ? `http://localhost:5050/api/trips/${editingTripId}` 
-        : 'http://localhost:5050/api/trips';
+        ? `https://triptogether-backend-f1j9.onrender.com/api/trips/${editingTripId}` 
+        : 'https://triptogether-backend-f1j9.onrender.com/api/trips';
       const method = editingTripId ? 'PUT' : 'POST';
 
       const res = await fetch(url, {
@@ -240,7 +240,7 @@ export default function Dashboard() {
     setJoinError(null);
 
     try {
-      const res = await fetch('http://localhost:5050/api/trips/join', {
+      const res = await fetch('https://triptogether-backend-f1j9.onrender.com/api/trips/join', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -557,7 +557,7 @@ function TripCard({
     const calculateTotal = async () => {
       if (!token) return;
       try {
-        const res = await fetch(`http://localhost:5050/api/trips/${trip._id}/expenses`, {
+        const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${trip._id}/expenses`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
