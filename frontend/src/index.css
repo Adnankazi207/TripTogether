@@ -4279,17 +4279,85 @@ p {
   justify-content: center;
 }
 
-/* Responsive tweaks */
+/* Responsive tweaks for mobile/tablet screens */
 @media (max-width: 991px) {
-  .explore-glass-container {
-    padding: 24px 20px !important;
+  .explore-slider-wrapper {
+    padding: 20px 10px !important;
   }
+  
+  .explore-glass-container {
+    padding: 30px 48px !important; /* Large left/right padding to clear nav buttons */
+  }
+
   .slider-grid {
     grid-template-columns: 1fr !important;
-    gap: 30px !important;
+    gap: 40px !important;
   }
+
   .explore-title {
     font-size: 2.15rem !important;
+  }
+
+  /* Scale down circular nav buttons and position them cleanly */
+  .explore-slider-wrapper .slider-nav-btn {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .explore-slider-wrapper .slider-nav-btn svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .explore-slider-wrapper .btn-prev {
+    left: 16px !important;
+  }
+
+  .explore-slider-wrapper .btn-next {
+    right: 16px !important;
+  }
+
+  .explore-slide-title {
+    font-size: 1.6rem !important;
+  }
+
+  .explore-slide-desc {
+    font-size: 0.92rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .slider-dot-indicator {
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  .slider-dot-indicator.active {
+    width: 18px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .explore-glass-container {
+    padding: 24px 40px !important; /* Slightly tighter padding on tiny mobile screen */
+  }
+
+  .explore-slider-wrapper .btn-prev {
+    left: 12px !important;
+  }
+
+  .explore-slider-wrapper .btn-next {
+    right: 12px !important;
+  }
+  
+  /* Mockup specific responsive tweaks */
+  .slider-mockup-window {
+    max-width: 100% !important;
+  }
+  
+  .budget-ledger-mockup, 
+  .timeline-mockup-card,
+  .room-code-share-widget {
+    padding: 12px !important;
   }
 }
 
