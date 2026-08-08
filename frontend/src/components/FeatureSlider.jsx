@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const SLIDES = [
   {
@@ -442,101 +443,261 @@ export default function FeatureSlider() {
   return (
     <section className="luxury-slider-section" style={{ margin: '100px 0', position: 'relative' }}>
       
-      {/* Section Header (Outside the banner) */}
-      <div className="section-header" style={{ position: 'relative', zIndex: 5, marginBottom: '40px' }}>
-        <span className="section-tag" style={{ color: 'var(--color-primary)', display: 'block', marginBottom: '8px' }}>
-          EXPLORE FUNCTIONALITY
-        </span>
-        <h2 className="section-title explore-title" style={{ fontSize: '2.85rem', fontWeight: '800' }}>
-          Visual Travel Toolkit
-        </h2>
-        <p className="section-desc explore-desc">
-          Experience the core interactive workflows built to coordinate and control your dream trip.
-        </p>
-        <div className="explore-title-accent-line"></div>
-      </div>
-
-      {/* Slider Wrapper (Contains the background banner, the overlapping gear, and the glass panel) */}
-      <div className="explore-slider-wrapper">
-
-        {/* Background Section Image with scenic coast */}
-        <div className="explore-section-bg" style={{ backgroundImage: "url('/explore_bg.png')" }}>
-          <div className="explore-section-bg-overlay"></div>
+      {/* Desktop Only Features Slider */}
+      <div className="desktop-only-features">
+        {/* Section Header (Outside the banner) */}
+        <div className="section-header" style={{ position: 'relative', zIndex: 5, marginBottom: '40px' }}>
+          <span className="section-tag" style={{ color: 'var(--color-primary)', display: 'block', marginBottom: '8px' }}>
+            EXPLORE FUNCTIONALITY
+          </span>
+          <h2 className="section-title explore-title" style={{ fontSize: '2.85rem', fontWeight: '800' }}>
+            Visual Travel Toolkit
+          </h2>
+          <p className="section-desc explore-desc">
+            Experience the core interactive workflows built to coordinate and control your dream trip.
+          </p>
+          <div className="explore-title-accent-line"></div>
         </div>
 
-        {/* Next & Previous Navigation Buttons (Placed here to avoid clipping by overflow: hidden) */}
-        <button className="slider-nav-btn btn-prev" onClick={handlePrev} aria-label="Previous Slide">
-          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
+        {/* Slider Wrapper (Contains the background banner, the overlapping gear, and the glass panel) */}
+        <div className="explore-slider-wrapper">
 
-        <button className="slider-nav-btn btn-next" onClick={handleNext} aria-label="Next Slide">
-          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
+          {/* Background Section Image with scenic coast */}
+          <div className="explore-section-bg" style={{ backgroundImage: "url('/explore_bg.png')" }}>
+            <div className="explore-section-bg-overlay"></div>
+          </div>
 
-        {/* Slider Viewport Frosted Glass Container */}
-        <div className="slider-viewport-container explore-glass-container">
-          
-          {/* Core Slide Wrapper */}
-          <div className={`slider-grid ${isAnimating ? 'slider-animating' : ''}`}>
+          {/* Next & Previous Navigation Buttons (Placed here to avoid clipping by overflow: hidden) */}
+          <button className="slider-nav-btn btn-prev" onClick={handlePrev} aria-label="Previous Slide">
+            <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <button className="slider-nav-btn btn-next" onClick={handleNext} aria-label="Next Slide">
+            <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* Slider Viewport Frosted Glass Container */}
+          <div className="slider-viewport-container explore-glass-container">
             
-            {/* Left Side: Editorial Content */}
-            <div className="slider-content-column explore-slider-content">
+            {/* Core Slide Wrapper */}
+            <div className={`slider-grid ${isAnimating ? 'slider-animating' : ''}`}>
               
-              <div className="slider-feature-badge" style={{ color: 'var(--color-primary)' }}>
-                <span style={{ marginRight: '8px', display: 'flex', alignItems: 'center' }}>{slide.icon}</span>
-                {slide.tag}
-              </div>
-              
-              <h3 className="slider-feature-title explore-slide-title">
-                {slide.title}
-              </h3>
-              
-              <p className="slider-feature-desc explore-slide-desc">
-                {slide.desc}
-              </p>
+              {/* Left Side: Editorial Content */}
+              <div className="slider-content-column explore-slider-content">
+                
+                <div className="slider-feature-badge" style={{ color: 'var(--color-primary)' }}>
+                  <span style={{ marginRight: '8px', display: 'flex', alignItems: 'center' }}>{slide.icon}</span>
+                  {slide.tag}
+                </div>
+                
+                <h3 className="slider-feature-title explore-slide-title">
+                  {slide.title}
+                </h3>
+                
+                <p className="slider-feature-desc explore-slide-desc">
+                  {slide.desc}
+                </p>
 
-              {/* Bottom highlights capsule containing tailored bullet stats */}
-              <div className="slide-highlights-capsule">
-                {slide.highlights.map((highlight, idx) => (
-                  <div key={idx} className="highlight-capsule-item">
-                    <div className="highlight-item-icon-wrapper">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4" />
-                      </svg>
+                {/* Bottom highlights capsule containing tailored bullet stats */}
+                <div className="slide-highlights-capsule">
+                  {slide.highlights.map((highlight, idx) => (
+                    <div key={idx} className="highlight-capsule-item">
+                      <div className="highlight-item-icon-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4" />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className="highlight-item-label">{highlight.label}</div>
+                        <div className="highlight-item-desc">{highlight.desc}</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="highlight-item-label">{highlight.label}</div>
-                      <div className="highlight-item-desc">{highlight.desc}</div>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+
+                {/* Dots navigation */}
+                <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+                  {SLIDES.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveSlide(i)}
+                      className={`slider-dot-indicator ${activeSlide === i ? 'active' : ''}`}
+                      aria-label={`Go to slide ${i + 1}`}
+                    />
+                  ))}
+                </div>
               </div>
 
-              {/* Dots navigation */}
-              <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-                {SLIDES.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setActiveSlide(i)}
-                    className={`slider-dot-indicator ${activeSlide === i ? 'active' : ''}`}
-                    aria-label={`Go to slide ${i + 1}`}
-                  />
-                ))}
+              {/* Right Side: Interactive GUI Mockup */}
+              <div className="slider-mockup-column">
+                {renderMockup(slide.type)}
               </div>
             </div>
+          </div>
 
-            {/* Right Side: Interactive GUI Mockup */}
-            <div className="slider-mockup-column">
-              {renderMockup(slide.type)}
+        </div>
+      </div>
+
+      {/* Mobile Only Features (Stacked list layout) */}
+      <div className="mobile-only-features">
+        <div className="mobile-features-header">
+          <span className="mobile-features-badge">FEATURES</span>
+          <h2 className="mobile-features-title">
+            Everything You Need <br />
+            For the <span className="highlight-perfect">Perfect</span> Trip
+          </h2>
+          <p className="mobile-features-desc">
+            Powerful tools to help you plan, organize and enjoy your trips together.
+          </p>
+          <div className="mobile-features-underline"></div>
+        </div>
+
+        <div className="mobile-features-list">
+          {/* Card 1: Smart Alerts */}
+          <div className="mobile-feature-card">
+            <div className="mobile-feature-media">
+              <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=150&h=100&q=80" alt="Smart Alerts" className="mobile-feature-thumb" />
+              <div className="mobile-feature-icon-badge badge-orange">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+              </div>
+            </div>
+            <div className="mobile-feature-info">
+              <h3 className="mobile-feature-card-title">Smart Alerts</h3>
+              <p className="mobile-feature-card-desc">Get instant updates and important alerts for your trip.</p>
+            </div>
+            <div className="mobile-feature-arrow arrow-orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="18" height="18">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Card 2: Budget Tracking */}
+          <div className="mobile-feature-card">
+            <div className="mobile-feature-media">
+              <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=150&h=100&q=80" alt="Budget Tracking" className="mobile-feature-thumb" />
+              <div className="mobile-feature-icon-badge badge-green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+              </div>
+            </div>
+            <div className="mobile-feature-info">
+              <h3 className="mobile-feature-card-title">Budget Tracking</h3>
+              <p className="mobile-feature-card-desc">Track expenses, split costs and stay within budget.</p>
+            </div>
+            <div className="mobile-feature-arrow arrow-green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="18" height="18">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Card 3: Group Management */}
+          <div className="mobile-feature-card">
+            <div className="mobile-feature-media">
+              <img src="https://images.unsplash.com/photo-1539635278303-d4002c07eae3?auto=format&fit=crop&w=150&h=100&q=80" alt="Group Management" className="mobile-feature-thumb" />
+              <div className="mobile-feature-icon-badge badge-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+            </div>
+            <div className="mobile-feature-info">
+              <h3 className="mobile-feature-card-title">Group Management</h3>
+              <p className="mobile-feature-card-desc">Invite friends, assign roles and manage your group easily.</p>
+            </div>
+            <div className="mobile-feature-arrow arrow-blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="18" height="18">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Card 4: Itinerary Planner */}
+          <div className="mobile-feature-card">
+            <div className="mobile-feature-media">
+              <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=150&h=100&q=80" alt="Itinerary Planner" className="mobile-feature-thumb" />
+              <div className="mobile-feature-icon-badge badge-purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+            <div className="mobile-feature-info">
+              <h3 className="mobile-feature-card-title">Itinerary Planner</h3>
+              <p className="mobile-feature-card-desc">Plan day-by-day itineraries in a simple and visual way.</p>
+            </div>
+            <div className="mobile-feature-arrow arrow-purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="18" height="18">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Card 5: Stay on Track */}
+          <div className="mobile-feature-card">
+            <div className="mobile-feature-media">
+              <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=150&h=100&q=80" alt="Stay on Track" className="mobile-feature-thumb" />
+              <div className="mobile-feature-icon-badge badge-yellow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+            </div>
+            <div className="mobile-feature-info">
+              <h3 className="mobile-feature-card-title">Stay on Track</h3>
+              <p className="mobile-feature-card-desc">Keep your trip organized and never miss a plan.</p>
+            </div>
+            <div className="mobile-feature-arrow arrow-yellow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="18" height="18">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
             </div>
           </div>
         </div>
 
+        {/* Bottom Banner */}
+        <div className="mobile-cta-banner">
+          <div className="mobile-cta-illustration">
+            <svg viewBox="0 0 160 160" width="100" height="100">
+              <path d="M20,110 Q5,90 15,70 Q25,85 30,105 Z" fill="var(--color-primary)" opacity="0.1" />
+              <path d="M140,115 Q155,95 145,75 Q135,90 130,110 Z" fill="var(--color-primary)" opacity="0.1" />
+              <path d="M15,40 Q60,15 125,25" fill="none" stroke="var(--border-color)" strokeWidth="2" strokeDasharray="4,4" />
+              <path d="M120,24 L135,27 L127,33 L124,31 Z" fill="var(--color-primary)" />
+              <ellipse cx="90" cy="118" rx="28" ry="12" fill="#EAB308" opacity="0.8" />
+              <path d="M75,115 C75,102 105,102 105,115 Z" fill="#CA8A04" />
+              <path d="M72,116 C78,114 102,114 108,116" fill="none" stroke="#854D0E" strokeWidth="2.5" />
+              <circle cx="45" cy="120" r="6" fill="#334155" />
+              <circle cx="65" cy="120" r="6" fill="#334155" />
+              <rect x="35" y="60" width="40" height="55" rx="8" ry="8" fill="var(--color-primary)" />
+              <rect x="47" y="40" width="16" height="20" rx="2" ry="2" fill="none" stroke="#64748B" strokeWidth="3" />
+              <rect x="51" y="36" width="8" height="4" rx="1" fill="#334155" />
+              <rect x="41" y="68" width="28" height="3" rx="1.5" fill="rgba(255,255,255,0.3)" />
+              <rect x="41" y="78" width="28" height="3" rx="1.5" fill="rgba(255,255,255,0.3)" />
+              <circle cx="55" cy="98" r="4" fill="rgba(255,255,255,0.3)" />
+            </svg>
+          </div>
+          <div className="mobile-cta-content">
+            <h3 className="mobile-cta-title">Ready to Plan Together?</h3>
+            <p className="mobile-cta-desc">Create your trip and start collaborating with your group.</p>
+            <Link to="/register" className="mobile-cta-btn">
+              Get Started
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="14" height="14">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+        </div>
       </div>
+
     </section>
   );
 }
