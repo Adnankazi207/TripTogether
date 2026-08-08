@@ -4,50 +4,52 @@
    DESIGN TOKENS & CSS VARIABLES
    ========================================================================== */
 :root {
-  /* Typography */
+  /* Fashion Typography */
   --font-heading: 'Outfit', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-serif: 'Playfair Display', serif;
 
-  /* Common Colors (Light Theme Primary - Classic Navy & Amber Gold) */
-  --color-primary: #1d4ed8; /* Royal Navy Blue */
-  --color-primary-hover: #1e3a8a;
-  --color-secondary: #b45309; /* Amber Gold */
-  --color-secondary-hover: #92400e;
+  /* Unified Theme Colors (Teal Emerald & Amber Gold Palette) */
+  --color-primary: #0d9488; /* Teal Emerald */
+  --color-primary-hover: #0f766e;
+  --color-secondary: #f59e0b; /* Amber Gold */
+  --color-secondary-hover: #d97706;
   --color-danger: #ef4444;
   --color-danger-hover: #dc2626;
   --color-warning: #f59e0b;
   --color-warning-hover: #d97706;
   
-  /* Gradients */
-  --gradient-accent: linear-gradient(135deg, #0a192f 0%, #1d4ed8 100%);
-  --gradient-accent-hover: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
-  --gradient-hero: linear-gradient(135deg, #fafafa 0%, #f1f5f9 100%);
-  --gradient-card-glow: radial-gradient(circle at top left, rgba(29, 78, 216, 0.04), transparent 70%);
+  /* Unified Gradients */
+  --gradient-accent: linear-gradient(135deg, #0d9488 0%, #0284c7 100%);
+  --gradient-accent-hover: linear-gradient(135deg, #0f766e 0%, #0369a1 100%);
+  --gradient-gold: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  --gradient-hero: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  --gradient-card-glow: radial-gradient(circle at top left, rgba(13, 148, 136, 0.08), transparent 70%);
 
   /* Light Theme Variables */
-  --bg-primary: #ffffff; /* Clean pure white background canvas */
-  --bg-secondary: #fafafa; /* Alabaster white for cards to pop out */
-  --bg-tertiary: #f1f5f9; /* Slate highlight block */
-  --text-primary: #0f172a; /* Deep slate slate-900 */
-  --text-secondary: #334155; /* Slate-700 */
-  --text-muted: #64748b; /* Slate-500 */
-  --border-color: #e2e8f0; /* Soft slate border lines */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
   --border-hover: #cbd5e1;
   
   /* Glassmorphism Light */
-  --glass-bg: rgba(255, 255, 255, 0.75); /* Frosted glass */
-  --glass-border: rgba(0, 0, 0, 0.05);
-  --glass-shadow: 0 8px 32px 0 rgba(10, 25, 47, 0.04);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-shadow: 0 12px 32px 0 rgba(15, 23, 42, 0.06);
 
   /* Shadow */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
-  --shadow-md: 0 4px 12px -1px rgba(10, 25, 47, 0.03), 0 2px 4px -2px rgba(10, 25, 47, 0.03);
-  --shadow-lg: 0 12px 24px -3px rgba(10, 25, 47, 0.04), 0 4px 12px -4px rgba(10, 25, 47, 0.04);
-  --shadow-glow: 0 0 25px rgba(29, 78, 216, 0.04);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 6px 16px -1px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 16px 32px -4px rgba(15, 23, 42, 0.08);
+  --shadow-glow: 0 0 30px rgba(13, 148, 136, 0.12);
 
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
   --radius-full: 9999px;
   
   --transition-fast: 0.15s ease;
@@ -57,34 +59,34 @@
 
 /* Dark Theme Variables */
 [data-theme='dark'] {
-  --color-primary: #2563eb; /* Electric Cobalt Blue */
-  --color-primary-hover: #1d4ed8;
-  --color-secondary: #38bdf8; /* Cyber Sky Blue */
-  --color-secondary-hover: #0ea5e9;
+  --color-primary: #14b8a6; /* Vibrant Teal Cyan */
+  --color-primary-hover: #0d9488;
+  --color-secondary: #fbbf24; /* Luminous Gold */
+  --color-secondary-hover: #f59e0b;
   
-  --gradient-accent: linear-gradient(135deg, #2563eb 0%, #38bdf8 100%);
-  --gradient-accent-hover: linear-gradient(135deg, #1d4ed8 0%, #0ea5e9 100%);
-  --gradient-hero: linear-gradient(135deg, #050505 0%, #0a0a0c 100%);
-  --gradient-card-glow: radial-gradient(circle at top left, rgba(37, 99, 235, 0.1), transparent 70%);
+  --gradient-accent: linear-gradient(135deg, #14b8a6 0%, #38bdf8 100%);
+  --gradient-accent-hover: linear-gradient(135deg, #0d9488 0%, #0ea5e9 100%);
+  --gradient-hero: linear-gradient(135deg, #0b0f19 0%, #0f172a 100%);
+  --gradient-card-glow: radial-gradient(circle at top left, rgba(20, 184, 166, 0.15), transparent 70%);
 
-  --bg-primary: #050505; /* Pitch Obsidian */
-  --bg-secondary: #0a0a0c; /* Deep card black */
-  --bg-tertiary: #16161a;
+  --bg-primary: #0b0f19; /* Obsidian Slate */
+  --bg-secondary: #111827; /* Rich Deep Slate Card */
+  --bg-tertiary: #1f2937;
   --text-primary: #f8fafc;
   --text-secondary: #cbd5e1;
   --text-muted: #94a3b8;
-  --border-color: rgba(255, 255, 255, 0.06);
-  --border-hover: rgba(255, 255, 255, 0.12);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.16);
 
   /* Glassmorphism Dark */
-  --glass-bg: rgba(10, 10, 12, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.05);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+  --glass-bg: rgba(15, 23, 42, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
 
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.35), 0 2px 4px -2px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.55), 0 4px 6px -4px rgba(0, 0, 0, 0.55);
-  --shadow-glow: 0 0 30px rgba(56, 189, 248, 0.15);
+  --shadow-md: 0 6px 16px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 32px -4px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 35px rgba(20, 184, 166, 0.2);
 }
 
 /* ==========================================================================

@@ -234,8 +234,8 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
         position: 'relative',
         width: '100%',
         minHeight: isMobile ? '78vh' : '85vh',
-        backgroundColor: isDark ? '#0a0b0e' : '#ffffff',
-        color: isDark ? '#ffffff' : '#0f172a',
+        backgroundColor: 'var(--bg-primary)',
+        color: 'var(--text-primary)',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
@@ -256,7 +256,7 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
               backgroundImage: `url(${item.image})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              opacity: idx === activeIndex ? (isDark ? 0.35 : 0.18) : 0,
+              opacity: idx === activeIndex ? (isDark ? 0.25 : 0.14) : 0,
               filter: 'blur(30px) contrast(1.15)',
               transform: 'scale(1.15)',
               transition: 'opacity 0.6s ease-out',
@@ -272,7 +272,7 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
           position: 'absolute',
           inset: 0,
           background: isDark 
-            ? 'radial-gradient(ellipse at center, rgba(10,11,14,0.1) 0%, rgba(10,11,14,0.85) 100%)'
+            ? 'radial-gradient(ellipse at center, rgba(11,15,25,0.1) 0%, rgba(11,15,25,0.85) 100%)'
             : 'radial-gradient(ellipse at center, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.92) 100%)',
           zIndex: 2,
           pointerEvents: 'none',
@@ -289,40 +289,40 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
           alignItems: 'center',
           textAlign: 'center',
           marginBottom: isMobile ? '16px' : '24px',
-          maxWidth: '750px',
+          maxWidth: '850px',
           padding: '0 20px',
         }}
       >
         <span
           style={{
-            fontSize: isMobile ? '0.68rem' : '0.75rem',
+            fontSize: isMobile ? '0.7rem' : '0.8rem',
             fontWeight: '700',
             letterSpacing: isMobile ? '3px' : '5px',
             textTransform: 'uppercase',
-            color: isDark ? '#f97316' : '#ea580c',
-            backgroundColor: isDark ? 'rgba(249, 115, 22, 0.12)' : 'rgba(234, 88, 12, 0.08)',
-            border: isDark ? '1px solid rgba(249, 115, 22, 0.25)' : '1px solid rgba(234, 88, 12, 0.2)',
-            padding: '5px 16px',
+            color: 'var(--color-primary)',
+            backgroundColor: 'rgba(13, 148, 136, 0.12)',
+            border: '1px solid rgba(13, 148, 136, 0.25)',
+            padding: '6px 18px',
             borderRadius: '100px',
-            marginBottom: '12px',
+            marginBottom: '14px',
           }}
         >
           CURATED EXPEDITIONS
         </span>
         <h1
           style={{
-            fontSize: 'clamp(1.8rem, 4.5vw, 3.6rem)',
+            fontSize: 'clamp(2.2rem, 5vw, 4.2rem)',
             fontWeight: '800',
-            letterSpacing: '-0.5px',
-            lineHeight: 1.12,
-            color: isDark ? '#ffffff' : '#0f172a',
-            margin: '0 0 8px 0',
+            letterSpacing: '-1px',
+            lineHeight: 1.1,
+            color: 'var(--text-primary)',
+            margin: '0 0 12px 0',
             fontFamily: 'var(--font-heading)',
           }}
         >
           Discover The World's Great Wonders
         </h1>
-        <p style={{ fontSize: isMobile ? '0.9rem' : '1.02rem', color: isDark ? 'rgba(255, 255, 255, 0.72)' : '#475569', margin: 0, maxWidth: '580px', lineHeight: '1.45' }}>
+        <p style={{ fontSize: isMobile ? '0.95rem' : '1.1rem', color: 'var(--text-muted)', margin: 0, maxWidth: '620px', lineHeight: '1.55' }}>
           Explore iconic destinations, plan shared itineraries, and calculate group budgets in one seamless experience.
         </p>
       </div>
