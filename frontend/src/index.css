@@ -824,40 +824,36 @@ p {
   gap: 24px;
 }
 
-/* Destination Card */
+/* Destination Card (Luxury Travel Aesthetic matching reference image) */
 .dest-card {
-  border-radius: var(--radius-md);
+  position: relative;
+  height: 390px;
+  border-radius: 24px;
   overflow: hidden;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  transition: all var(--transition-normal);
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), 
+              box-shadow 0.4s ease, 
+              border-color 0.4s ease;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  position: relative;
+  justify-content: flex-end;
   text-align: left;
-}
-
-.dest-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--gradient-card-glow);
-  pointer-events: none;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
 }
 
 .dest-card:hover {
-  transform: translateY(-8px) scale(1.01);
-  border-color: var(--color-primary);
-  box-shadow: 0 20px 40px rgba(99, 102, 241, 0.12), var(--shadow-glow);
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
 }
 
 .dest-image-wrapper {
-  position: relative;
-  height: 200px;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -865,98 +861,83 @@ p {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--transition-slow);
+  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dest-card:hover .dest-img {
-  transform: scale(1.1);
+  transform: scale(1.08);
 }
 
-.dest-category-badge {
+/* Gradient text dark overlay */
+.dest-card-gradient {
   position: absolute;
-  top: 16px;
-  left: 16px;
-  padding: 6px 12px;
-  border-radius: var(--radius-full);
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: white;
-  z-index: 10;
-  box-shadow: var(--shadow-sm);
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.4) 55%, transparent 100%);
+  pointer-events: none;
+  z-index: 2;
 }
 
-.badge-Adventure { background: #3b82f6; }
-.badge-Beach { background: #10b981; }
-.badge-Cultural { background: #8b5cf6; }
-.badge-Nature { background: #f59e0b; }
-.badge-Urban { background: #ec4899; }
-
-.dest-rating {
+/* Frosted glass top-right price tag */
+.starts-at-badge {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  background: rgba(15, 23, 42, 0.75);
-  color: #fbbf24;
-  backdrop-filter: blur(4px);
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
+  top: 18px;
+  right: 18px;
+  background: rgba(255, 255, 255, 0.28);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  color: #ffffff;
   font-size: 0.8rem;
   font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  z-index: 5;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  letter-spacing: 0.2px;
 }
 
+/* Bottom content body overlay */
 .dest-body {
-  padding: 24px;
+  position: relative;
+  z-index: 5;
+  padding: 22px 20px;
+  color: #ffffff;
   display: flex;
   flex-direction: column;
-  flex: 1;
-}
-
-.dest-meta {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  margin-bottom: 8px;
 }
 
 .dest-title {
-  font-size: 1.25rem;
-  margin-bottom: 12px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  line-height: 1.15;
+  color: #ffffff !important;
+  margin: 0 0 6px 0;
+  font-family: var(--font-heading);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
 }
 
-.dest-desc {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  line-height: 1.5;
-  margin-bottom: 20px;
-  flex: 1;
-}
-
-.dest-footer {
+.dest-meta {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid var(--border-color);
-  padding-top: 16px;
+  gap: 6px;
 }
 
-.dest-price {
+.dest-location {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 500;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
 
-.price-label {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-}
-
-.price-value {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--text-primary);
+.location-pin-icon {
+  color: #ef4444;
 }
 
 /* Dashboard Page */

@@ -85,6 +85,7 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
   const total = CAROUSEL_DATA.length;
+  const isDark = theme === 'dark';
 
   // Window resize handler for smooth multi-breakpoint responsive math
   useEffect(() => {
@@ -233,17 +234,18 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
         position: 'relative',
         width: '100%',
         minHeight: isMobile ? '78vh' : '85vh',
-        backgroundColor: '#0a0b0e',
-        color: '#ffffff',
+        backgroundColor: isDark ? '#0a0b0e' : '#ffffff',
+        color: isDark ? '#ffffff' : '#0f172a',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         padding: isMobile ? '24px 0 40px 0' : '40px 0 50px 0',
+        transition: 'background-color 0.4s ease, color 0.4s ease',
       }}
     >
-      {/* 1. GPU Composited 60FPS Atmosphere Backdrop Crossfade (0 Lag) */}
+      {/* 1. GPU Composited Atmosphere Backdrop Crossfade */}
       <div className="coverflow-backdrop-stack" style={{ position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none' }}>
         {CAROUSEL_DATA.map((item, idx) => (
           <div
@@ -254,7 +256,7 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
               backgroundImage: `url(${item.image})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              opacity: idx === activeIndex ? 0.35 : 0,
+              opacity: idx === activeIndex ? (isDark ? 0.35 : 0.18) : 0,
               filter: 'blur(30px) contrast(1.15)',
               transform: 'scale(1.15)',
               transition: 'opacity 0.6s ease-out',
@@ -264,12 +266,14 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
         ))}
       </div>
 
-      {/* Radial vignette gradient overlay */}
+      {/* Theme Vignette overlay */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'radial-gradient(ellipse at center, rgba(10,11,14,0.1) 0%, rgba(10,11,14,0.85) 100%)',
+          background: isDark 
+            ? 'radial-gradient(ellipse at center, rgba(10,11,14,0.1) 0%, rgba(10,11,14,0.85) 100%)'
+            : 'radial-gradient(ellipse at center, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.92) 100%)',
           zIndex: 2,
           pointerEvents: 'none',
         }}
@@ -295,9 +299,9 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
             fontWeight: '700',
             letterSpacing: isMobile ? '3px' : '5px',
             textTransform: 'uppercase',
-            color: '#f97316',
-            backgroundColor: 'rgba(249, 115, 22, 0.12)',
-            border: '1px solid rgba(249, 115, 22, 0.25)',
+            color: isDark ? '#f97316' : '#ea580c',
+            backgroundColor: isDark ? 'rgba(249, 115, 22, 0.12)' : 'rgba(234, 88, 12, 0.08)',
+            border: isDark ? '1px solid rgba(249, 115, 22, 0.25)' : '1px solid rgba(234, 88, 12, 0.2)',
             padding: '5px 16px',
             borderRadius: '100px',
             marginBottom: '12px',
@@ -311,14 +315,14 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
             fontWeight: '800',
             letterSpacing: '-0.5px',
             lineHeight: 1.12,
-            color: '#ffffff',
+            color: isDark ? '#ffffff' : '#0f172a',
             margin: '0 0 8px 0',
             fontFamily: 'var(--font-heading)',
           }}
         >
           Discover The World's Great Wonders
         </h1>
-        <p style={{ fontSize: isMobile ? '0.9rem' : '1.02rem', color: 'rgba(255, 255, 255, 0.72)', margin: 0, maxWidth: '580px', lineHeight: '1.45' }}>
+        <p style={{ fontSize: isMobile ? '0.9rem' : '1.02rem', color: isDark ? 'rgba(255, 255, 255, 0.72)' : '#475569', margin: 0, maxWidth: '580px', lineHeight: '1.45' }}>
           Explore iconic destinations, plan shared itineraries, and calculate group budgets in one seamless experience.
         </p>
       </div>
@@ -353,16 +357,16 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
             width: isMobile ? '42px' : '50px',
             height: isMobile ? '42px' : '50px',
             borderRadius: '50%',
-            backgroundColor: 'rgba(255, 255, 255, 0.14)',
-            border: '1px solid rgba(255, 255, 255, 0.28)',
-            color: '#ffffff',
+            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(15, 23, 42, 0.1)',
+            border: isDark ? '1px solid rgba(255, 255, 255, 0.28)' : '1px solid rgba(15, 23, 42, 0.18)',
+            color: isDark ? '#ffffff' : '#0f172a',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
             backdropFilter: 'blur(10px)',
             transition: 'all 0.25s ease',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            boxShadow: isDark ? '0 8px 24px rgba(0,0,0,0.4)' : '0 8px 24px rgba(0,0,0,0.1)',
           }}
           className="coverflow-arrow-btn"
         >
@@ -384,16 +388,16 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
             width: isMobile ? '42px' : '50px',
             height: isMobile ? '42px' : '50px',
             borderRadius: '50%',
-            backgroundColor: 'rgba(255, 255, 255, 0.14)',
-            border: '1px solid rgba(255, 255, 255, 0.28)',
-            color: '#ffffff',
+            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(15, 23, 42, 0.1)',
+            border: isDark ? '1px solid rgba(255, 255, 255, 0.28)' : '1px solid rgba(15, 23, 42, 0.18)',
+            color: isDark ? '#ffffff' : '#0f172a',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
             backdropFilter: 'blur(10px)',
             transition: 'all 0.25s ease',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            boxShadow: isDark ? '0 8px 24px rgba(0,0,0,0.4)' : '0 8px 24px rgba(0,0,0,0.1)',
           }}
           className="coverflow-arrow-btn"
         >
@@ -415,11 +419,11 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
                 position: 'absolute',
                 width: isMobile ? '230px' : isTablet ? '270px' : '310px',
                 height: isMobile ? '340px' : isTablet ? '380px' : '420px',
-                borderRadius: '18px',
+                borderRadius: '20px',
                 overflow: 'hidden',
-                boxShadow: isCenter ? '0 20px 45px rgba(0,0,0,0.65)' : '0 10px 25px rgba(0,0,0,0.45)',
+                boxShadow: isCenter ? '0 20px 45px rgba(0,0,0,0.65)' : '0 10px 25px rgba(0,0,0,0.35)',
                 transition: 'transform 0.5s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.5s ease',
-                border: isCenter ? '1.5px solid rgba(255, 255, 255, 0.45)' : '1px solid rgba(255, 255, 255, 0.18)',
+                border: isCenter ? '1.5px solid rgba(255, 255, 255, 0.5)' : '1px solid rgba(255, 255, 255, 0.2)',
                 willChange: 'transform, opacity',
                 WebkitBackfaceVisibility: 'hidden',
                 backfaceVisibility: 'hidden',
@@ -471,10 +475,10 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
                       fontWeight: '700',
                       letterSpacing: '1px',
                       color: '#ffffff',
-                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                      backdropFilter: 'blur(6px)',
-                      border: '1px solid rgba(255, 255, 255, 0.3)',
-                      padding: '3px 10px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.22)',
+                      backdropFilter: 'blur(8px)',
+                      border: '1px solid rgba(255, 255, 255, 0.32)',
+                      padding: '4px 12px',
                       borderRadius: '100px',
                     }}
                   >
@@ -587,15 +591,15 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
               width: '100%',
               display: 'flex',
               alignItems: 'center',
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.22)',
+              backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.85)',
+              border: isDark ? '1px solid rgba(255, 255, 255, 0.22)' : '1px solid rgba(0, 0, 0, 0.12)',
               borderRadius: '100px',
               padding: isMobile ? '4px 6px 4px 16px' : '6px 8px 6px 22px',
               backdropFilter: 'blur(12px)',
-              boxShadow: '0 10px 28px rgba(0,0,0,0.3)',
+              boxShadow: isDark ? '0 10px 28px rgba(0,0,0,0.3)' : '0 10px 28px rgba(0,0,0,0.08)',
             }}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" style={{ marginRight: '10px', flexShrink: 0 }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isDark ? "rgba(255,255,255,0.7)" : "#64748b"} strokeWidth="2.5" style={{ marginRight: '10px', flexShrink: 0 }}>
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
@@ -609,7 +613,7 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
                 background: 'transparent',
                 border: 'none',
                 outline: 'none',
-                color: '#ffffff',
+                color: isDark ? '#ffffff' : '#0f172a',
                 fontSize: isMobile ? '0.85rem' : '0.95rem',
                 fontWeight: '500',
               }}
@@ -646,7 +650,7 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
                 width: i === activeIndex ? '26px' : '8px',
                 height: '8px',
                 borderRadius: '100px',
-                backgroundColor: i === activeIndex ? '#f97316' : 'rgba(255, 255, 255, 0.3)',
+                backgroundColor: i === activeIndex ? '#f97316' : (isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)'),
                 border: 'none',
                 cursor: 'pointer',
                 transition: 'all 0.35s ease',
@@ -657,11 +661,12 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
         </div>
       </div>
 
-      {/* Embedded Responsive Styles */}
+      {/* Embedded Responsive & Hover Styles */}
       <style>{`
         .coverflow-arrow-btn:hover {
           background-color: rgba(249, 115, 22, 0.88) !important;
           border-color: #f97316 !important;
+          color: #ffffff !important;
           transform: translateY(-50%) scale(1.08) !important;
           box-shadow: 0 10px 30px rgba(249, 115, 22, 0.5) !important;
         }

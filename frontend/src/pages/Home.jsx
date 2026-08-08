@@ -18,36 +18,49 @@ export default function Home() {
 
   const trendingDestinations = [
     {
-      title: 'Paris',
-      country: 'France',
-      category: 'Urban',
-      costIndex: '₹₹₹',
+      title: 'El Nido',
+      country: 'Palawan, Region',
+      category: 'Beach paradise',
+      priceTag: 'starts at ₹4,999',
       rating: '4.8',
-      image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80',
-      description: 'Experience the magic of the City of Light. Walk the historical Champs-Élysées, explore the Louvre, and view the city from the top of the Eiffel Tower.'
+      reviews: '1.2k',
+      image: 'https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=800&q=80',
+      description: 'Crystal lagoons, limestone cliffs & turquoise paradise.'
     },
     {
-      title: 'Manali',
-      country: 'India',
-      category: 'Nature',
-      costIndex: '₹₹',
-      rating: '4.7',
-      image: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=600&q=80',
-      description: 'Nestled deep in the Himalayas, Manali is a sanctuary for adventure lovers. Enjoy winter snowsports, paragliding, and serene forest hiking trails.'
-    },
-    {
-      title: 'Bangalore',
-      country: 'India',
-      category: 'Urban',
-      costIndex: '₹₹',
+      title: 'Baguio City',
+      country: 'Benguet, Region',
+      category: 'Mount Getaway',
+      priceTag: 'starts at ₹3,200',
       rating: '4.6',
-      image: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=600&q=80',
-      description: 'The greenest tech metropolis in India. Explore spacious public parks, historic palace sites, and a thriving craft cafe and pub culture.'
+      reviews: '950',
+      image: 'https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?auto=format&fit=crop&w=800&q=80',
+      description: 'Cool pine breezes and mountain peak panoramas.'
+    },
+    {
+      title: 'Vigan',
+      country: 'Ilocos Sur, Region',
+      category: 'Heritage City',
+      priceTag: 'starts at ₹4,250',
+      rating: '4.7',
+      reviews: '780',
+      image: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80',
+      description: 'Historic cobblestone streets and Spanish colonial architecture.'
+    },
+    {
+      title: 'Siargao',
+      country: 'Surigao del Norte, Region',
+      category: 'Surf & Chill',
+      priceTag: 'starts at ₹5,500',
+      rating: '4.9',
+      reviews: '2k',
+      image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+      description: 'Pristine white sand beaches and world-class surfing waves.'
     }
   ];
 
   return (
-    <div className="page-container animate-fade-in" style={{ paddingBottom: '80px', background: 'var(--bg-primary)', paddingTop: '80px' }}>
+    <div className="page-container animate-fade-in" style={{ paddingBottom: '80px', background: 'var(--bg-primary)', paddingTop: '0px' }}>
       
       {/* Cinematic 3D Hero Section */}
       <Cinematic3DHero 
@@ -156,24 +169,39 @@ export default function Home() {
           <p className="section-desc">Explore some of the most sought-after spots booked by travelers this month.</p>
         </div>
 
-        <div className="destinations-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '30px' }}>
+        <div className="destinations-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '28px' }}>
           {trendingDestinations.map((dest, i) => (
-            <div key={i} className="dest-card" style={{ cursor: 'pointer' }} onClick={() => navigate(`/destinations?search=${dest.title}`)}>
+            <div 
+              key={i} 
+              className="dest-card" 
+              onClick={() => navigate(`/destinations?search=${dest.title}`)}
+            >
+              {/* Cover Image */}
               <div className="dest-image-wrapper">
                 <img src={dest.image} alt={dest.title} className="dest-img" />
-                <span className={`dest-category-badge badge-${dest.category}`}>{dest.category}</span>
-                <span className="dest-rating">⭐ {dest.rating}</span>
               </div>
+
+              {/* Gradient Text Overlay */}
+              <div className="dest-card-gradient" />
+
+              {/* Top Glass Price Badge */}
+              <div className="starts-at-badge">
+                {dest.priceTag}
+              </div>
+
+              {/* Bottom Content Body */}
               <div className="dest-body">
-                <div className="dest-meta">📍 {dest.country}</div>
-                <h3 className="dest-title" style={{ fontSize: '1.4rem', margin: '8px 0', fontWeight: '700' }}>{dest.title}</h3>
-                <p className="dest-desc" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', minHeight: '60px', lineHeight: '1.5' }}>{dest.description}</p>
-                <div className="dest-footer" style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px', marginTop: '12px' }}>
-                  <div className="dest-price">
-                    <span className="price-label">Cost Index</span>
-                    <span className="price-value" style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>{dest.costIndex}</span>
-                  </div>
-                  <span className="btn btn-secondary" style={{ padding: '6px 12px', fontSize: '0.8rem', borderRadius: 'var(--radius-sm)' }}>View Details</span>
+                <h3 className="dest-title">{dest.title}</h3>
+                
+                <div className="dest-meta">
+                  <span>{dest.category}</span>
+                  <span style={{ opacity: 0.5 }}>|</span>
+                  <span>⭐ {dest.rating} ({dest.reviews})</span>
+                </div>
+
+                <div className="dest-location">
+                  <span className="location-pin-icon">📍</span>
+                  <span>{dest.country}</span>
                 </div>
               </div>
             </div>
