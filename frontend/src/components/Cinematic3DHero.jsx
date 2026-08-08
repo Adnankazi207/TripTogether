@@ -9,7 +9,7 @@ const CAROUSEL_DATA = [
     location: 'Peru',
     tag: '#South_America',
     tagline: 'Adventure is never far away',
-    image: 'https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=1200&q=85',
+    image: 'https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=800&q=75',
     category: 'Adventure',
     searchQuery: 'Peru'
   },
@@ -19,7 +19,7 @@ const CAROUSEL_DATA = [
     location: 'India',
     tag: '#Himalayan_Passes',
     tagline: 'Where the earth touches the sky',
-    image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=85',
+    image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=75',
     category: 'Mountains',
     searchQuery: 'Ladakh'
   },
@@ -29,7 +29,7 @@ const CAROUSEL_DATA = [
     location: 'India',
     tag: '#Pine_Valleys',
     tagline: 'Serenity among snowy mountain peaks',
-    image: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=1200&q=85',
+    image: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=800&q=75',
     category: 'Nature',
     searchQuery: 'Manali'
   },
@@ -39,7 +39,7 @@ const CAROUSEL_DATA = [
     location: 'India',
     tag: '#Tropical_Backwaters',
     tagline: 'Sailing through emerald coconut groves',
-    image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=85',
+    image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=75',
     category: 'Tropics',
     searchQuery: 'Kerala'
   },
@@ -49,7 +49,7 @@ const CAROUSEL_DATA = [
     location: 'India',
     tag: '#Royal_Heritage',
     tagline: 'An eternal monument to love & wonder',
-    image: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1200&q=85',
+    image: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=800&q=75',
     category: 'Culture',
     searchQuery: 'Agra'
   },
@@ -59,7 +59,7 @@ const CAROUSEL_DATA = [
     location: 'Greece',
     tag: '#Aegean_Cliffs',
     tagline: 'Whitewashed horizons & endless sunsets',
-    image: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=1200&q=85',
+    image: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=800&q=75',
     category: 'Coastline',
     searchQuery: 'Greece'
   },
@@ -69,7 +69,7 @@ const CAROUSEL_DATA = [
     location: 'Japan',
     tag: '#East_Asia',
     tagline: 'Tranquil temples & blooming cherry gardens',
-    image: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=85',
+    image: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&q=75',
     category: 'Heritage',
     searchQuery: 'Japan'
   }
@@ -80,10 +80,18 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
   const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
-
   const total = CAROUSEL_DATA.length;
+
+  // Window resize handler for smooth multi-breakpoint responsive math
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const nextSlide = () => {
     setActiveIndex((prev) => (prev + 1) % total);
@@ -119,13 +127,14 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
   const handleTouchEnd = (e) => {
     touchEndX.current = e.changedTouches[0].clientX;
     const diff = touchStartX.current - touchEndX.current;
-    if (diff > 50) nextSlide();
-    if (diff < -50) prevSlide();
+    if (diff > 40) nextSlide();
+    if (diff < -40) prevSlide();
   };
 
-  const activeSlide = CAROUSEL_DATA[activeIndex];
+  const isMobile = windowWidth < 640;
+  const isTablet = windowWidth >= 640 && windowWidth < 1024;
 
-  // Compute offset for 3D card layout (-2, -1, 0, 1, 2)
+  // GPU Hardware-accelerated Coverflow Card Styles
   const getCardStyle = (index) => {
     let offset = index - activeIndex;
 
@@ -133,71 +142,80 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
     if (offset > Math.floor(total / 2)) offset -= total;
     if (offset < -Math.floor(total / 2)) offset += total;
 
-    const absOffset = Math.abs(offset);
-
-    // Active center card
+    // Responsive offsets based on viewport width
     if (offset === 0) {
       return {
-        transform: 'translateX(0%) translateZ(120px) rotateY(0deg) scale(1.05)',
+        transform: isMobile 
+          ? 'translate3d(0, 0, 50px) rotateY(0deg) scale(1.02)'
+          : isTablet 
+            ? 'translate3d(0, 0, 80px) rotateY(0deg) scale(1.04)'
+            : 'translate3d(0, 0, 110px) rotateY(0deg) scale(1.06)',
         zIndex: 20,
         opacity: 1,
-        filter: 'brightness(1.08) drop-shadow(0 20px 40px rgba(0,0,0,0.5))',
         cursor: 'default',
         pointerEvents: 'auto',
       };
     }
 
-    // Left card (-1)
     if (offset === -1) {
       return {
-        transform: 'translateX(-65%) translateZ(0px) rotateY(28deg) scale(0.85)',
+        transform: isMobile
+          ? 'translate3d(-34%, 0, 0) rotateY(22deg) scale(0.76)'
+          : isTablet
+            ? 'translate3d(-52%, 0, 0) rotateY(26deg) scale(0.82)'
+            : 'translate3d(-60%, 0, 0) rotateY(28deg) scale(0.86)',
         zIndex: 14,
-        opacity: 0.85,
-        filter: 'brightness(0.7) contrast(1.1)',
+        opacity: isMobile ? 0.65 : 0.85,
         cursor: 'pointer',
         pointerEvents: 'auto',
       };
     }
 
-    // Right card (+1)
     if (offset === 1) {
       return {
-        transform: 'translateX(65%) translateZ(0px) rotateY(-28deg) scale(0.85)',
+        transform: isMobile
+          ? 'translate3d(34%, 0, 0) rotateY(-22deg) scale(0.76)'
+          : isTablet
+            ? 'translate3d(52%, 0, 0) rotateY(-26deg) scale(0.82)'
+            : 'translate3d(60%, 0, 0) rotateY(-28deg) scale(0.86)',
         zIndex: 14,
-        opacity: 0.85,
-        filter: 'brightness(0.7) contrast(1.1)',
+        opacity: isMobile ? 0.65 : 0.85,
         cursor: 'pointer',
         pointerEvents: 'auto',
       };
     }
 
-    // Outer Left card (-2)
     if (offset === -2) {
       return {
-        transform: 'translateX(-120%) translateZ(-100px) rotateY(42deg) scale(0.68)',
+        transform: isMobile
+          ? 'translate3d(-65%, 0, -50px) rotateY(35deg) scale(0.55)'
+          : isTablet
+            ? 'translate3d(-92%, 0, -60px) rotateY(38deg) scale(0.62)'
+            : 'translate3d(-112%, 0, -80px) rotateY(40deg) scale(0.68)',
         zIndex: 8,
-        opacity: 0.5,
-        filter: 'brightness(0.45)',
+        opacity: isMobile ? 0 : 0.45,
         cursor: 'pointer',
-        pointerEvents: 'auto',
+        pointerEvents: isMobile ? 'none' : 'auto',
       };
     }
 
-    // Outer Right card (+2)
     if (offset === 2) {
       return {
-        transform: 'translateX(120%) translateZ(-100px) rotateY(-42deg) scale(0.68)',
+        transform: isMobile
+          ? 'translate3d(65%, 0, -50px) rotateY(-35deg) scale(0.55)'
+          : isTablet
+            ? 'translate3d(92%, 0, -60px) rotateY(-38deg) scale(0.62)'
+            : 'translate3d(112%, 0, -80px) rotateY(-40deg) scale(0.68)',
         zIndex: 8,
-        opacity: 0.5,
-        filter: 'brightness(0.45)',
+        opacity: isMobile ? 0 : 0.45,
         cursor: 'pointer',
-        pointerEvents: 'auto',
+        pointerEvents: isMobile ? 'none' : 'auto',
       };
     }
 
-    // Far cards (hidden)
+    // Hidden far slides
     return {
-      transform: `translateX(${offset > 0 ? 180 : -180}%) translateZ(-200px) scale(0.5)`,
+      transform: `translate3d(${offset > 0 ? 150 : -150}%, 0, -150px) scale(0.4)`,
       zIndex: 1,
       opacity: 0,
       pointerEvents: 'none',
@@ -214,7 +232,7 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
       style={{
         position: 'relative',
         width: '100%',
-        minHeight: '85vh',
+        minHeight: isMobile ? '78vh' : '85vh',
         backgroundColor: '#0a0b0e',
         color: '#ffffff',
         overflow: 'hidden',
@@ -222,43 +240,42 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '40px 0 60px 0',
+        padding: isMobile ? '24px 0 40px 0' : '40px 0 50px 0',
       }}
     >
-      {/* 1. Dynamic Cinematic Blurred Backdrop */}
-      <div
-        className="coverflow-backdrop"
-        style={{
-          position: 'absolute',
-          inset: '-20px',
-          backgroundImage: `url(${activeSlide.image})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          filter: 'blur(36px) brightness(0.35) contrast(1.2)',
-          transform: 'scale(1.15)',
-          transition: 'background-image 0.8s ease-in-out',
-          zIndex: 1,
-        }}
-      />
+      {/* 1. GPU Composited 60FPS Atmosphere Backdrop Crossfade (0 Lag) */}
+      <div className="coverflow-backdrop-stack" style={{ position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none' }}>
+        {CAROUSEL_DATA.map((item, idx) => (
+          <div
+            key={item.id}
+            style={{
+              position: 'absolute',
+              inset: '-20px',
+              backgroundImage: `url(${item.image})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              opacity: idx === activeIndex ? 0.35 : 0,
+              filter: 'blur(30px) contrast(1.15)',
+              transform: 'scale(1.15)',
+              transition: 'opacity 0.6s ease-out',
+              willChange: 'opacity',
+            }}
+          />
+        ))}
+      </div>
 
       {/* Radial vignette gradient overlay */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'radial-gradient(ellipse at center, rgba(10,11,14,0.2) 0%, rgba(10,11,14,0.85) 100%)',
+          background: 'radial-gradient(ellipse at center, rgba(10,11,14,0.1) 0%, rgba(10,11,14,0.85) 100%)',
           zIndex: 2,
           pointerEvents: 'none',
         }}
       />
 
-      {/* Floating subtle ambient particles */}
-      <div className="ambient-orbs" style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
-        <div style={{ position: 'absolute', top: '15%', left: '20%', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(255,145,0,0.12) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(40px)' }} />
-        <div style={{ position: 'absolute', bottom: '15%', right: '20%', width: '350px', height: '350px', background: 'radial-gradient(circle, rgba(56,189,248,0.12) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(40px)' }} />
-      </div>
-
-      {/* 2. Top Nav / Subheader integrated branding */}
+      {/* 2. Top Header integrated branding */}
       <div
         style={{
           position: 'relative',
@@ -267,42 +284,41 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
           flexDirection: 'column',
           alignItems: 'center',
           textAlign: 'center',
-          marginBottom: '28px',
+          marginBottom: isMobile ? '16px' : '24px',
           maxWidth: '750px',
           padding: '0 20px',
         }}
       >
         <span
           style={{
-            fontSize: '0.75rem',
+            fontSize: isMobile ? '0.68rem' : '0.75rem',
             fontWeight: '700',
-            letterSpacing: '5px',
+            letterSpacing: isMobile ? '3px' : '5px',
             textTransform: 'uppercase',
             color: '#f97316',
             backgroundColor: 'rgba(249, 115, 22, 0.12)',
             border: '1px solid rgba(249, 115, 22, 0.25)',
-            padding: '6px 18px',
+            padding: '5px 16px',
             borderRadius: '100px',
-            marginBottom: '14px',
-            backdropFilter: 'blur(8px)',
+            marginBottom: '12px',
           }}
         >
           CURATED EXPEDITIONS
         </span>
         <h1
           style={{
-            fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)',
+            fontSize: 'clamp(1.8rem, 4.5vw, 3.6rem)',
             fontWeight: '800',
-            letterSpacing: '-1px',
-            lineHeight: 1.1,
+            letterSpacing: '-0.5px',
+            lineHeight: 1.12,
             color: '#ffffff',
-            margin: '0 0 10px 0',
+            margin: '0 0 8px 0',
             fontFamily: 'var(--font-heading)',
           }}
         >
           Discover The World's Great Wonders
         </h1>
-        <p style={{ fontSize: '1.05rem', color: 'rgba(255, 255, 255, 0.72)', margin: 0, maxWidth: '600px', lineHeight: '1.5' }}>
+        <p style={{ fontSize: isMobile ? '0.9rem' : '1.02rem', color: 'rgba(255, 255, 255, 0.72)', margin: 0, maxWidth: '580px', lineHeight: '1.45' }}>
           Explore iconic destinations, plan shared itineraries, and calculate group budgets in one seamless experience.
         </p>
       </div>
@@ -314,14 +330,14 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
           position: 'relative',
           width: '100%',
           maxWidth: '1100px',
-          height: '460px',
+          height: isMobile ? '360px' : isTablet ? '400px' : '440px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          perspective: '1200px',
+          perspective: isMobile ? '800px' : '1200px',
           transformStyle: 'preserve-3d',
           zIndex: 10,
-          margin: '10px 0 30px 0',
+          margin: '10px 0 20px 0',
         }}
       >
         {/* Left Arrow Nav Button */}
@@ -330,27 +346,27 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
           aria-label="Previous Slide"
           style={{
             position: 'absolute',
-            left: '20px',
+            left: isMobile ? '8px' : '20px',
             top: '50%',
             transform: 'translateY(-50%)',
             zIndex: 35,
-            width: '52px',
-            height: '52px',
+            width: isMobile ? '42px' : '50px',
+            height: isMobile ? '42px' : '50px',
             borderRadius: '50%',
-            backgroundColor: 'rgba(255, 255, 255, 0.12)',
-            border: '1px solid rgba(255, 255, 255, 0.25)',
+            backgroundColor: 'rgba(255, 255, 255, 0.14)',
+            border: '1px solid rgba(255, 255, 255, 0.28)',
             color: '#ffffff',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            backdropFilter: 'blur(12px)',
-            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
+            backdropFilter: 'blur(10px)',
+            transition: 'all 0.25s ease',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
           }}
           className="coverflow-arrow-btn"
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width={isMobile ? "20" : "24"} height={isMobile ? "20" : "24"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
@@ -361,32 +377,32 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
           aria-label="Next Slide"
           style={{
             position: 'absolute',
-            right: '20px',
+            right: isMobile ? '8px' : '20px',
             top: '50%',
             transform: 'translateY(-50%)',
             zIndex: 35,
-            width: '52px',
-            height: '52px',
+            width: isMobile ? '42px' : '50px',
+            height: isMobile ? '42px' : '50px',
             borderRadius: '50%',
-            backgroundColor: 'rgba(255, 255, 255, 0.12)',
-            border: '1px solid rgba(255, 255, 255, 0.25)',
+            backgroundColor: 'rgba(255, 255, 255, 0.14)',
+            border: '1px solid rgba(255, 255, 255, 0.28)',
             color: '#ffffff',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            backdropFilter: 'blur(12px)',
-            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
+            backdropFilter: 'blur(10px)',
+            transition: 'all 0.25s ease',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
           }}
           className="coverflow-arrow-btn"
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width={isMobile ? "20" : "24"} height={isMobile ? "20" : "24"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="9 18 15 12 9 6" />
           </svg>
         </button>
 
-        {/* Render 3D Coverflow Cards */}
+        {/* Render Hardware Accelerated 3D Coverflow Cards */}
         {CAROUSEL_DATA.map((item, idx) => {
           const style = getCardStyle(idx);
           const isCenter = idx === activeIndex;
@@ -397,13 +413,17 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
               onClick={() => setActiveIndex(idx)}
               style={{
                 position: 'absolute',
-                width: '310px',
-                height: '430px',
-                borderRadius: '20px',
+                width: isMobile ? '230px' : isTablet ? '270px' : '310px',
+                height: isMobile ? '340px' : isTablet ? '380px' : '420px',
+                borderRadius: '18px',
                 overflow: 'hidden',
-                boxShadow: isCenter ? '0 25px 50px -12px rgba(0,0,0,0.7)' : '0 15px 30px rgba(0,0,0,0.5)',
-                transition: 'transform 0.65s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.65s ease, filter 0.65s ease, border-color 0.4s ease',
-                border: isCenter ? '1px solid rgba(255, 255, 255, 0.4)' : '1px solid rgba(255, 255, 255, 0.15)',
+                boxShadow: isCenter ? '0 20px 45px rgba(0,0,0,0.65)' : '0 10px 25px rgba(0,0,0,0.45)',
+                transition: 'transform 0.5s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.5s ease',
+                border: isCenter ? '1.5px solid rgba(255, 255, 255, 0.45)' : '1px solid rgba(255, 255, 255, 0.18)',
+                willChange: 'transform, opacity',
+                WebkitBackfaceVisibility: 'hidden',
+                backfaceVisibility: 'hidden',
+                transformStyle: 'preserve-3d',
                 ...style,
               }}
               className="coverflow-card"
@@ -412,30 +432,30 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
               <img
                 src={item.image}
                 alt={item.title}
+                loading="eager"
                 style={{
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
                   display: 'block',
-                  transition: 'transform 0.8s ease',
                 }}
               />
 
-              {/* Gradient Dark Overlay */}
+              {/* Dark Gradient Text Overlay */}
               <div
                 style={{
                   position: 'absolute',
                   inset: 0,
-                  background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.3) 55%, transparent 100%)',
+                  background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.3) 60%, transparent 100%)',
                 }}
               />
 
-              {/* Active Center Card Text Content Overlay */}
+              {/* Text Content Overlay */}
               <div
                 style={{
                   position: 'absolute',
                   inset: 0,
-                  padding: '28px 24px',
+                  padding: isMobile ? '20px 16px' : '26px 22px',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
@@ -447,14 +467,14 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <span
                     style={{
-                      fontSize: '0.72rem',
+                      fontSize: isMobile ? '0.65rem' : '0.72rem',
                       fontWeight: '700',
                       letterSpacing: '1px',
                       color: '#ffffff',
-                      backgroundColor: 'rgba(255, 255, 255, 0.18)',
-                      backdropFilter: 'blur(8px)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                      backdropFilter: 'blur(6px)',
                       border: '1px solid rgba(255, 255, 255, 0.3)',
-                      padding: '4px 12px',
+                      padding: '3px 10px',
                       borderRadius: '100px',
                     }}
                   >
@@ -466,13 +486,13 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
                 <div>
                   <h3
                     style={{
-                      fontSize: '1.65rem',
+                      fontSize: isMobile ? '1.35rem' : '1.65rem',
                       fontWeight: '800',
                       letterSpacing: '0.5px',
                       lineHeight: 1.15,
                       color: '#ffffff',
-                      margin: '0 0 10px 0',
-                      textShadow: '0 4px 12px rgba(0,0,0,0.6)',
+                      margin: '0 0 8px 0',
+                      textShadow: '0 3px 10px rgba(0,0,0,0.7)',
                       fontFamily: 'var(--font-heading)',
                     }}
                   >
@@ -482,20 +502,20 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
                   {/* Horizontal Accent Line */}
                   <div
                     style={{
-                      width: '45px',
+                      width: '40px',
                       height: '3px',
                       backgroundColor: '#f97316',
                       borderRadius: '2px',
-                      marginBottom: '10px',
+                      marginBottom: '8px',
                     }}
                   />
 
                   <p
                     style={{
-                      fontSize: '0.88rem',
-                      color: 'rgba(255, 255, 255, 0.85)',
-                      margin: '0 0 16px 0',
-                      lineHeight: '1.4',
+                      fontSize: isMobile ? '0.8rem' : '0.88rem',
+                      color: 'rgba(255, 255, 255, 0.88)',
+                      margin: '0 0 14px 0',
+                      lineHeight: '1.35',
                       fontWeight: '400',
                     }}
                   >
@@ -513,26 +533,26 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
                         navigate(`/destinations?search=${encodeURIComponent(item.searchQuery)}`);
                       }}
                       style={{
-                        padding: '10px 20px',
+                        padding: isMobile ? '8px 16px' : '10px 20px',
                         backgroundColor: '#f97316',
                         color: '#ffffff',
                         border: 'none',
                         borderRadius: '100px',
-                        fontSize: '0.82rem',
+                        fontSize: isMobile ? '0.75rem' : '0.82rem',
                         fontWeight: '700',
                         letterSpacing: '1px',
                         textTransform: 'uppercase',
                         cursor: 'pointer',
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: '8px',
+                        gap: '6px',
                         boxShadow: '0 6px 20px rgba(249, 115, 22, 0.4)',
-                        transition: 'all 0.3s ease',
+                        transition: 'all 0.25s ease',
                       }}
                       className="coverflow-cta-btn"
                     >
-                      <span>Explore Destination</span>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                      <span>Explore</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                         <line x1="5" y1="12" x2="19" y2="12" />
                         <polyline points="12 5 19 12 12 19" />
                       </svg>
@@ -545,7 +565,7 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
         })}
       </div>
 
-      {/* 4. Bottom Search Bar Integration & Pagination Dots */}
+      {/* 4. Bottom Search Bar & Carousel Indicators */}
       <div
         style={{
           position: 'relative',
@@ -556,7 +576,7 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '20px',
+          gap: '16px',
         }}
       >
         {/* Search Bar */}
@@ -570,18 +590,18 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
               backgroundColor: 'rgba(255, 255, 255, 0.1)',
               border: '1px solid rgba(255, 255, 255, 0.22)',
               borderRadius: '100px',
-              padding: '6px 8px 6px 22px',
-              backdropFilter: 'blur(16px)',
-              boxShadow: '0 12px 32px rgba(0,0,0,0.3)',
+              padding: isMobile ? '4px 6px 4px 16px' : '6px 8px 6px 22px',
+              backdropFilter: 'blur(12px)',
+              boxShadow: '0 10px 28px rgba(0,0,0,0.3)',
             }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" style={{ marginRight: '12px', flexShrink: 0 }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" style={{ marginRight: '10px', flexShrink: 0 }}>
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
             <input
               type="text"
-              placeholder="Search any destination worldwide (e.g. Manali, Paris, Goa)..."
+              placeholder={isMobile ? "Search destinations..." : "Search any destination worldwide (e.g. Manali, Paris, Goa)..."}
               value={searchQuery || ''}
               onChange={(e) => setSearchQuery && setSearchQuery(e.target.value)}
               style={{
@@ -590,7 +610,7 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
                 border: 'none',
                 outline: 'none',
                 color: '#ffffff',
-                fontSize: '0.95rem',
+                fontSize: isMobile ? '0.85rem' : '0.95rem',
                 fontWeight: '500',
               }}
             />
@@ -601,11 +621,11 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
                 color: '#ffffff',
                 border: 'none',
                 borderRadius: '100px',
-                padding: '10px 24px',
-                fontSize: '0.88rem',
+                padding: isMobile ? '8px 18px' : '10px 24px',
+                fontSize: isMobile ? '0.8rem' : '0.88rem',
                 fontWeight: '700',
                 cursor: 'pointer',
-                transition: 'all 0.3s ease',
+                transition: 'all 0.25s ease',
                 boxShadow: '0 4px 14px rgba(249, 115, 22, 0.35)',
               }}
               className="coverflow-search-btn"
@@ -623,13 +643,13 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
               onClick={() => setActiveIndex(i)}
               aria-label={`Go to slide ${i + 1}`}
               style={{
-                width: i === activeIndex ? '28px' : '8px',
+                width: i === activeIndex ? '26px' : '8px',
                 height: '8px',
                 borderRadius: '100px',
                 backgroundColor: i === activeIndex ? '#f97316' : 'rgba(255, 255, 255, 0.3)',
                 border: 'none',
                 cursor: 'pointer',
-                transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                transition: 'all 0.35s ease',
                 padding: 0,
               }}
             />
@@ -637,13 +657,13 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
         </div>
       </div>
 
-      {/* Embedded Custom Styles */}
+      {/* Embedded Responsive Styles */}
       <style>{`
         .coverflow-arrow-btn:hover {
-          background-color: rgba(249, 115, 22, 0.85) !important;
+          background-color: rgba(249, 115, 22, 0.88) !important;
           border-color: #f97316 !important;
-          transform: translateY(-50%) scale(1.1) !important;
-          box-shadow: 0 12px 35px rgba(249, 115, 22, 0.5) !important;
+          transform: translateY(-50%) scale(1.08) !important;
+          box-shadow: 0 10px 30px rgba(249, 115, 22, 0.5) !important;
         }
 
         .coverflow-cta-btn:hover {
@@ -655,24 +675,6 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
         .coverflow-search-btn:hover {
           background-color: #ea580c !important;
           transform: scale(1.03);
-        }
-
-        .coverflow-card:hover img {
-          transform: scale(1.05);
-        }
-
-        @media (max-width: 768px) {
-          .coverflow-stage {
-            height: 380px !important;
-          }
-          .coverflow-card {
-            width: 250px !important;
-            height: 360px !important;
-          }
-          .coverflow-arrow-btn {
-            width: 44px !important;
-            height: 44px !important;
-          }
         }
       `}</style>
     </section>
