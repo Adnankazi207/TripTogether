@@ -4,6 +4,7 @@ import Cinematic3DHero from '../components/Cinematic3DHero';
 import FeatureSlider from '../components/FeatureSlider';
 import DestinationCard from '../components/DestinationCard';
 import CategoryCapsulesSection from '../components/CategoryCapsulesSection';
+import PaperCutFeaturesSection from '../components/PaperCutFeaturesSection';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -68,47 +69,8 @@ export default function Home() {
         {/* Categories Stadium Capsules Section */}
         <CategoryCapsulesSection />
 
-        {/* Core Features Grid */}
-        <section style={{ margin: '100px 0' }}>
-        <div className="section-header">
-          <span className="section-tag">Key Features</span>
-          <h2 className="section-title" style={{ fontSize: '2.5rem' }}>Everything You Need to Plan</h2>
-          <p className="section-desc">
-            We simplify travel planning, budget control, and group coordination into a unified visual experience.
-          </p>
-        </div>
-
-        <div className="features-grid">
-          <div className="feature-card">
-            <div className="feature-icon">🔍</div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '8px' }}>Smart Destination Search</h3>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-              Search for any city worldwide. If it's not in our database, our Gemini AI integration automatically generates description guides, ideal stay durations, categories, and matches beautiful Unsplash photos on the fly.
-            </p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon">💸</div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '8px' }}>Indian Rupee (₹) Financials</h3>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-              Log transactions, allocate travel expenses, and track category ratios (Food, Lodging, Transit). Includes warning meters that alert you if you have used 75% or 100% of your budget.
-            </p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon">📅</div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '8px' }}>Day-by-Day Timeline</h3>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-              Plan out daily schedules, define specific event times, leave detailed reminder notes, and maintain a shared checklists log so you never miss flight boarding, dining bookings, or hiking trailheads.
-            </p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon">👥</div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '8px' }}>Cooperative Trip Rooms</h3>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-              Generate secure 6-character room codes. Share codes with travel partners to let them view itineraries, edit checklists, log expenses, and upload vacation pictures in a shared photo gallery.
-            </p>
-          </div>
-        </div>
-      </section>
+        {/* Paper-Torn Edge Cut Key Features Section */}
+        <PaperCutFeaturesSection />
 
          <FeatureSlider />
 
