@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import Cinematic3DHero from '../components/Cinematic3DHero';
 import FeatureSlider from '../components/FeatureSlider';
 import DestinationCard from '../components/DestinationCard';
+import CategoryCapsulesSection from '../components/CategoryCapsulesSection';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -64,6 +65,9 @@ export default function Home() {
       />
 
       <div className="container" style={{ marginTop: '60px' }}>
+        {/* Categories Stadium Capsules Section */}
+        <CategoryCapsulesSection />
+
         {/* Core Features Grid */}
         <section style={{ margin: '100px 0' }}>
         <div className="section-header">
