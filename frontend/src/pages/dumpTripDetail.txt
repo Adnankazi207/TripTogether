@@ -1,0 +1,109 @@
+Created At: 2026-08-07T15:53:28Z
+Completed At: 2026-08-07T15:53:28Z
+File Path: `file:///c:/Users/Adnan%20Kazi/OneDrive/Desktop/Git_Hub/TripTogether/frontend/src/pages/TripDetail.jsx`
+Total Lines: 2258
+Total Bytes: 95580
+Showing lines 1 to 800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import React, { useState, useEffect, useRef } from 'react';
+2: import { useParams, Link, useNavigate } from 'react-router-dom';
+3: import { useAuth } from '../context/AuthContext';
+4: import { createPortal } from 'react-dom';
+5: 
+6: export default function TripDetail() {
+7:   const { tripId } = useParams();
+8:   const { user } = useAuth();
+9:   const navigate = useNavigate();
+10: 
+11:   // State Management
+12:   const [trip, setTrip] = useState(null);
+13:   const [expenses, setExpenses] = useState([]);
+14:   const [loading, setLoading] = useState(true);
+15:   const [error, setError] = useState(null);
+16: 
+17:   // Active planning states
+18:   const [activeTab, setActiveTab] = useState('expenses'); // expenses | itinerary | packing | gallery
+19:   const [activeDay, setActiveDay] = useState(1);
+20: 
+21:   // Expense Form State
+22:   const [expenseForm, setExpenseForm] = useState({
+23:     title: '',
+24:     amount: '',
+25:     category: 'Food',
+26:   });
+27:   const [expenseSubmitting, setExpenseSubmitting] = useState(false);
+28: 
+29:   // Itinerary Form State
+30:   const [itineraryForm, setItineraryForm] = useState({
+31:     time: '',
+32:     activity: '',
+33:     desc: '',
+34:   });
+35: 
+36:   // Packing Form State
+37:   const [packingItem, setPackingItem] = useState('');
+38:   const [packingCategory, setPackingCategory] = useState('Other');
+39: 
+40:   // Persistent Notes State
+41:   const [notesText, setNotesText] = useState('');
+42:   const [notesSaving, setNotesSaving] = useState(false);
+43: 
+44:   // Shared Gallery States
+45:   co
+<truncated 24833 bytes>
+
+747:         },
+748:         body: JSON.stringify({
+749:           packingList: currentPacking,
+750:         }),
+751:       });
+752:       if (!res.ok) throw new Error('Failed to toggle item');
+753:       const updated = await res.json();
+754:       setTrip(updated);
+755:     } catch (err) {
+756:       alert(err.message);
+757:     }
+758:   };
+759: 
+760:   const handleDeletePackingItem = async (itemId) => {
+761:     const currentPacking = (trip.packingList || []).filter((item) => item._id !== itemId);
+762: 
+763:     try {
+764:       const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}`, {
+765:         method: 'PUT',
+766:         headers: {
+767:           'Content-Type': 'application/json',
+768:           'Authorization': `Bearer ${user.token}`,
+769:         },
+770:         body: JSON.stringify({
+771:           packingList: currentPacking,
+772:         }),
+773:       });
+774:       if (!res.ok) throw new Error('Failed to delete item');
+775:       const updated = await res.json();
+776:       setTrip(updated);
+777:     } catch (err) {
+778:       alert(err.message);
+779:     }
+780:   };
+781: 
+782:   // Actions: Shared Gallery Upload/Submit
+783:   const handlePhotoSubmit = async (e) => {
+784:     e.preventDefault();
+785:     if (!photoUrl.trim()) return;
+786: 
+787:     setPhotoSubmitting(true);
+788:     try {
+789:       const res = await fetch(`https://triptogether-backend-f1j9.onrender.com/api/trips/${tripId}/photos`, {
+790:         method: 'POST',
+791:         headers: {
+792:           'Content-Type': 'application/json',
+793:           'Authorization': `Bearer ${user.token}`,
+794:         },
+795:         body: JSON.stringify({ url: photoUrl.trim() }),
+796:       });
+797: 
+798:       if (!res.ok) throw new Error('Failed to upload photo');
+799:       const newPhoto = await res.json();
+800:       
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
