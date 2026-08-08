@@ -3407,6 +3407,19 @@ p {
     align-items: flex-start !important;
   }
 
+  .trip-pie-legend {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .glass-panel input,
+  .glass-panel select,
+  .glass-panel button,
+  .input-field {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
   .packing-category-grid,
   .gallery-grid-photos {
     grid-template-columns: 1fr !important;

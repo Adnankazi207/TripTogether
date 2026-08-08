@@ -1222,7 +1222,7 @@ export default function TripDetail() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
           
           {/* Tab Selection Bar */}
-          <div style={{ display: 'flex', gap: '12px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px', flexWrap: 'wrap' }}>
+          <div className="trip-tabs-bar" style={{ display: 'flex', gap: '12px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}>
             <button 
               onClick={() => setActiveTab('expenses')}
               className={`tab-btn ${activeTab === 'expenses' ? 'active' : ''}`}
