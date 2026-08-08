@@ -4,6 +4,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import GlobalCursorSpotlight from './components/GlobalCursorSpotlight';
 import Home from './pages/Home';
 import Destinations from './pages/Destinations';
 import Dashboard from './pages/Dashboard';
@@ -51,6 +52,7 @@ function App() {
       <AuthProvider>
         <Router>
           <ScrollToTop />
+          <GlobalCursorSpotlight />
           <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             {/* Top Navigation Bar */}
             <Navbar />
