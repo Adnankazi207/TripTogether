@@ -3446,21 +3446,32 @@ p {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 
-  .mobile-tab-select-wrapper {
-    display: block !important;
+  .trip-tabs-bar {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    padding-bottom: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
-  .desktop-tabs-bar {
-    display: none !important;
+  .tab-btn {
+    font-size: 0.78rem !important;
+    padding: 8px 12px !important;
+    border-radius: 100px !important;
+    flex: 1 1 calc(50% - 6px) !important;
+    justify-content: center !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
   }
 }
 
 @media (min-width: 769px) {
-  .mobile-tab-select-wrapper {
-    display: none !important;
-  }
-
-  .desktop-tabs-bar {
+  .trip-tabs-bar {
     display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
   }
 }
