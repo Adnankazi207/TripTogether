@@ -3486,7 +3486,7 @@ p {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1;
+  z-index: -1; /* Stack behind wrapper's content */
   background-size: cover;
   background-position: center;
   border-radius: var(--radius-lg);
@@ -3499,6 +3499,7 @@ p {
   left: 0;
   width: 100%;
   height: 100%;
+  z-index: -1;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.75) 100%);
   backdrop-filter: blur(2px);
 }
@@ -3518,6 +3519,7 @@ p {
 
 .explore-slider-wrapper {
   position: relative;
+  z-index: 1; /* Establishes a local stacking context for z-index -1 children */
   width: 100%;
   padding: 50px 70px;
   overflow: visible; /* Crucial: allows gear and buttons to overlap boundaries */
