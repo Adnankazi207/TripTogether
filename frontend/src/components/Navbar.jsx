@@ -224,8 +224,8 @@ export default function Navbar() {
         }
 
         .full-sticky-navbar.is-scrolled {
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-          border-bottom-color: rgba(56, 189, 248, 0.25);
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+          border-bottom-color: rgba(249, 115, 22, 0.3);
         }
 
         .full-navbar-container {
@@ -237,7 +237,7 @@ export default function Navbar() {
           justify-content: space-between;
         }
 
-        /* Solid Color Logo (NO Gradient) */
+        /* Solid Color Logo (Orange & Black / White) */
         .solid-brand-logo {
           display: flex;
           align-items: center;
@@ -250,17 +250,21 @@ export default function Navbar() {
           width: 38px;
           height: 38px;
           border-radius: 10px;
-          background: #0284c7; /* Solid Glacier Blue - NO gradient */
+          background: #ff6b00; /* Vivid Electric Orange */
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
-          transition: transform 0.3s ease;
+          box-shadow: 0 4px 14px rgba(255, 107, 0, 0.4);
+          transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        [data-theme='light'] .solid-logo-icon {
+          background: #ea580c;
         }
 
         .solid-brand-logo:hover .solid-logo-icon {
           transform: rotate(12deg) scale(1.08);
-          background: #0369a1;
+          background: #ff8533;
         }
 
         .solid-logo-text {
@@ -272,12 +276,12 @@ export default function Navbar() {
         }
 
         .solid-logo-accent {
-          color: #38bdf8; /* Solid Glacier Blue Accent - NO gradient */
+          color: #ff6b00; /* Vivid Electric Orange - NO gradient */
           font-weight: 800;
         }
 
         [data-theme='light'] .solid-logo-accent {
-          color: #0284c7;
+          color: #ea580c;
         }
 
         /* Desktop Nav Menu */
@@ -300,20 +304,20 @@ export default function Navbar() {
 
         .full-nav-link:hover {
           color: var(--text-primary);
-          background: rgba(56, 189, 248, 0.08);
+          background: rgba(249, 115, 22, 0.1);
         }
 
         .full-nav-link.active {
-          color: #0284c7 !important;
-          background: rgba(2, 132, 199, 0.12);
-          border: 1px solid rgba(2, 132, 199, 0.25);
+          color: #ea580c !important;
+          background: rgba(234, 88, 12, 0.12);
+          border: 1px solid rgba(234, 88, 12, 0.25);
           font-weight: 700;
         }
 
         [data-theme='dark'] .full-nav-link.active {
-          color: #38bdf8 !important;
-          background: rgba(56, 189, 248, 0.14);
-          border-color: rgba(56, 189, 248, 0.3);
+          color: #ff6b00 !important;
+          background: rgba(255, 107, 0, 0.16);
+          border-color: rgba(255, 107, 0, 0.35);
         }
 
         /* Right Actions */
@@ -339,8 +343,8 @@ export default function Navbar() {
 
         .theme-pill-btn:hover {
           transform: scale(1.08);
-          border-color: #0284c7;
-          color: #0284c7;
+          border-color: #ff6b00;
+          color: #ff6b00;
         }
 
         .user-profile-menu {
@@ -367,7 +371,7 @@ export default function Navbar() {
           width: 32px;
           height: 32px;
           border-radius: 50%;
-          background: #0284c7;
+          background: #ff6b00;
           color: #ffffff;
           font-weight: 800;
           font-size: 0.88rem;
@@ -395,7 +399,7 @@ export default function Navbar() {
         }
 
         .solid-btn-ghost:hover {
-          border-color: #0284c7;
+          border-color: #ff6b00;
           transform: translateY(-2px);
         }
 
@@ -403,12 +407,22 @@ export default function Navbar() {
           text-decoration: none;
           padding: 9px 24px;
           border-radius: 100px;
-          background: #0284c7; /* Solid Glacier Blue */
+          background: #ff6b00; /* Vivid Neon Orange */
           color: #ffffff;
           font-weight: 700;
           font-size: 0.9rem;
-          box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+          box-shadow: 0 4px 14px rgba(255, 107, 0, 0.4);
           transition: all 0.25s ease;
+        }
+
+        [data-theme='light'] .solid-btn-action {
+          background: #ea580c;
+        }
+
+        .solid-btn-action:hover {
+          background: #ff8533;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 22px rgba(255, 107, 0, 0.6);
         }
 
         .solid-btn-action:hover {

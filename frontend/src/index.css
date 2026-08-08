@@ -9,43 +9,43 @@
   --font-body: 'Plus Jakarta Sans', sans-serif;
   --font-serif: 'Playfair Display', serif;
 
-  /* Unified Theme Colors (Teal Emerald & Amber Gold Palette) */
-  --color-primary: #0d9488; /* Teal Emerald */
-  --color-primary-hover: #0f766e;
-  --color-secondary: #f59e0b; /* Amber Gold */
+  /* Theme Colors (White & Electric Orange Light Theme) */
+  --color-primary: #ea580c; /* Vivid Orange */
+  --color-primary-hover: #c2410c;
+  --color-secondary: #f59e0b; /* Amber Accent */
   --color-secondary-hover: #d97706;
   --color-danger: #ef4444;
   --color-danger-hover: #dc2626;
   --color-warning: #f59e0b;
   --color-warning-hover: #d97706;
   
-  /* Unified Gradients */
-  --gradient-accent: linear-gradient(135deg, #0d9488 0%, #0284c7 100%);
-  --gradient-accent-hover: linear-gradient(135deg, #0f766e 0%, #0369a1 100%);
+  /* Light Theme Gradients */
+  --gradient-accent: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+  --gradient-accent-hover: linear-gradient(135deg, #c2410c 0%, #ea580c 100%);
   --gradient-gold: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-  --gradient-hero: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  --gradient-card-glow: radial-gradient(circle at top left, rgba(13, 148, 136, 0.08), transparent 70%);
+  --gradient-hero: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  --gradient-card-glow: radial-gradient(circle at top left, rgba(249, 115, 22, 0.1), transparent 70%);
 
-  /* Light Theme Variables */
+  /* Light Theme Canvas */
   --bg-primary: #ffffff;
   --bg-secondary: #f8fafc;
   --bg-tertiary: #f1f5f9;
-  --text-primary: #0f172a;
-  --text-secondary: #334155;
-  --text-muted: #64748b;
-  --border-color: #e2e8f0;
-  --border-hover: #cbd5e1;
+  --text-primary: #09090b;
+  --text-secondary: #3f3f46;
+  --text-muted: #71717a;
+  --border-color: #e4e4e7;
+  --border-hover: #d4d4d8;
   
   /* Glassmorphism Light */
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(0, 0, 0, 0.08);
-  --glass-shadow: 0 12px 32px 0 rgba(15, 23, 42, 0.06);
+  --glass-bg: rgba(255, 255, 255, 0.92);
+  --glass-border: rgba(234, 88, 12, 0.12);
+  --glass-shadow: 0 12px 32px 0 rgba(9, 9, 11, 0.06);
 
-  /* Shadow */
+  /* Shadows */
   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 6px 16px -1px rgba(15, 23, 42, 0.06);
-  --shadow-lg: 0 16px 32px -4px rgba(15, 23, 42, 0.08);
-  --shadow-glow: 0 0 30px rgba(13, 148, 136, 0.12);
+  --shadow-md: 0 6px 16px -1px rgba(9, 9, 11, 0.06);
+  --shadow-lg: 0 16px 32px -4px rgba(9, 9, 11, 0.08);
+  --shadow-glow: 0 0 30px rgba(249, 115, 22, 0.18);
 
   --radius-sm: 10px;
   --radius-md: 16px;
@@ -57,36 +57,36 @@
   --transition-slow: 0.5s ease;
 }
 
-/* Dark Theme Variables */
+/* Pitch Black & Electric Orange Dark Theme */
 [data-theme='dark'] {
-  --color-primary: #14b8a6; /* Vibrant Teal Cyan */
-  --color-primary-hover: #0d9488;
-  --color-secondary: #fbbf24; /* Luminous Gold */
-  --color-secondary-hover: #f59e0b;
+  --color-primary: #ff6b00; /* Vivid Neon Orange */
+  --color-primary-hover: #ff8533;
+  --color-secondary: #ffaa00; /* Luminous Warm Gold */
+  --color-secondary-hover: #ff9500;
   
-  --gradient-accent: linear-gradient(135deg, #14b8a6 0%, #38bdf8 100%);
-  --gradient-accent-hover: linear-gradient(135deg, #0d9488 0%, #0ea5e9 100%);
-  --gradient-hero: linear-gradient(135deg, #0b0f19 0%, #0f172a 100%);
-  --gradient-card-glow: radial-gradient(circle at top left, rgba(20, 184, 166, 0.15), transparent 70%);
+  --gradient-accent: linear-gradient(135deg, #ff6b00 0%, #f97316 100%);
+  --gradient-accent-hover: linear-gradient(135deg, #ff8533 0%, #ea580c 100%);
+  --gradient-hero: linear-gradient(135deg, #000000 0%, #09090b 100%);
+  --gradient-card-glow: radial-gradient(circle at top left, rgba(255, 107, 0, 0.2), transparent 70%);
 
-  --bg-primary: #0b0f19; /* Obsidian Slate */
-  --bg-secondary: #111827; /* Rich Deep Slate Card */
-  --bg-tertiary: #1f2937;
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-hover: rgba(255, 255, 255, 0.16);
+  --bg-primary: #000000; /* Pitch Pure Obsidian Black */
+  --bg-secondary: #09090b; /* Deep Black Card */
+  --bg-tertiary: #18181b;
+  --text-primary: #ffffff;
+  --text-secondary: #e4e4e7;
+  --text-muted: #a1a1aa;
+  --border-color: rgba(255, 255, 255, 0.12);
+  --border-hover: rgba(255, 107, 0, 0.4);
 
   /* Glassmorphism Dark */
-  --glass-bg: rgba(15, 23, 42, 0.82);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+  --glass-bg: rgba(9, 9, 11, 0.88);
+  --glass-border: rgba(255, 107, 0, 0.2);
+  --glass-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.7);
 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 6px 16px -1px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 16px 32px -4px rgba(0, 0, 0, 0.6);
-  --shadow-glow: 0 0 35px rgba(20, 184, 166, 0.2);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 6px 16px -1px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 32px -4px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 35px rgba(255, 107, 0, 0.3);
 }
 
 /* ==========================================================================

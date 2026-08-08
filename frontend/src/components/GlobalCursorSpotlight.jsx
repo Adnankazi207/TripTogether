@@ -27,7 +27,7 @@ export default function GlobalCursorSpotlight() {
         inset: 0,
         pointerEvents: 'none',
         zIndex: 2,
-        background: `radial-gradient(650px circle at ${pos.x}px ${pos.y}px, rgba(56, 189, 248, 0.13) 0%, rgba(212, 163, 115, 0.07) 40%, transparent 80%)`,
+        background: `radial-gradient(650px circle at ${pos.x}px ${pos.y}px, rgba(255, 107, 0, 0.15) 0%, rgba(249, 115, 22, 0.08) 40%, transparent 80%)`,
         transition: 'opacity 0.5s ease',
       }}
     />
