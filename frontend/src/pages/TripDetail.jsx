@@ -1225,50 +1225,84 @@ export default function TripDetail() {
         {/* RIGHT COLUMN: Tab views (Expenses list, Itinerary, Packing Checklist) & Notes */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
           
-          {/* Tab Selection Bar */}
-          <div className="trip-tabs-bar" style={{ display: 'flex', gap: '12px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}>
-            <button 
-              onClick={() => setActiveTab('expenses')}
-              className={`tab-btn ${activeTab === 'expenses' ? 'active' : ''}`}
-            >
-              📊 Expense Log
-            </button>
-            <button 
-              onClick={() => setActiveTab('itinerary')}
-              className={`tab-btn ${activeTab === 'itinerary' ? 'active' : ''}`}
-            >
-              📅 Timeline Itinerary
-            </button>
-            <button 
-              onClick={() => setActiveTab('packing')}
-              className={`tab-btn ${activeTab === 'packing' ? 'active' : ''}`}
-            >
-              🎒 Packing List
-            </button>
-            <button 
-              onClick={() => setActiveTab('gallery')}
-              className={`tab-btn ${activeTab === 'gallery' ? 'active' : ''}`}
-            >
-              📸 Shared Gallery
-            </button>
-            <button 
-              onClick={() => setActiveTab('weather')}
-              className={`tab-btn ${activeTab === 'weather' ? 'active' : ''}`}
-            >
-              ⛅ Weather Forecast
-            </button>
-            <button 
-              onClick={() => setActiveTab('ai')}
-              className={`tab-btn ${activeTab === 'ai' ? 'active' : ''}`}
-            >
-              ✨ AI Planner
-            </button>
-            <button 
-              onClick={() => setActiveTab('locations')}
-              className={`tab-btn ${activeTab === 'locations' ? 'active' : ''}`}
-            >
-              📍 Safety Radar
-            </button>
+          {/* Tab Selection Bar & Mobile Dropdown */}
+          <div className="trip-tabs-container" style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}>
+            
+            {/* Mobile Dropdown Selector */}
+            <div className="mobile-tab-select-wrapper">
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '600', marginBottom: '6px', display: 'block' }}>
+                Select Section:
+              </label>
+              <select
+                className="input-field mobile-tab-select"
+                value={activeTab}
+                onChange={(e) => setActiveTab(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '12px 14px',
+                  fontWeight: '700',
+                  fontSize: '0.92rem',
+                  borderRadius: 'var(--radius-sm)',
+                  background: 'var(--bg-secondary)',
+                  border: '2px solid var(--color-primary)',
+                  color: 'var(--text-primary)',
+                }}
+              >
+                <option value="expenses">📊 Expense Log ({expenses.length})</option>
+                <option value="itinerary">📅 Timeline Itinerary</option>
+                <option value="packing">🎒 Packing List ({packedCount}/{totalPackingCount})</option>
+                <option value="gallery">📸 Shared Gallery ({(trip.photos || []).length})</option>
+                <option value="weather">⛅ Weather Forecast</option>
+                <option value="ai">✨ AI Planner</option>
+                <option value="locations">📍 Safety Radar</option>
+              </select>
+            </div>
+
+            {/* Desktop & Tablet Capsule Row */}
+            <div className="trip-tabs-bar desktop-tabs-bar" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <button 
+                onClick={() => setActiveTab('expenses')}
+                className={`tab-btn ${activeTab === 'expenses' ? 'active' : ''}`}
+              >
+                📊 Expense Log
+              </button>
+              <button 
+                onClick={() => setActiveTab('itinerary')}
+                className={`tab-btn ${activeTab === 'itinerary' ? 'active' : ''}`}
+              >
+                📅 Timeline Itinerary
+              </button>
+              <button 
+                onClick={() => setActiveTab('packing')}
+                className={`tab-btn ${activeTab === 'packing' ? 'active' : ''}`}
+              >
+                🎒 Packing List ({packedCount}/{totalPackingCount})
+              </button>
+              <button 
+                onClick={() => setActiveTab('gallery')}
+                className={`tab-btn ${activeTab === 'gallery' ? 'active' : ''}`}
+              >
+                📸 Shared Gallery
+              </button>
+              <button 
+                onClick={() => setActiveTab('weather')}
+                className={`tab-btn ${activeTab === 'weather' ? 'active' : ''}`}
+              >
+                ⛅ Weather Forecast
+              </button>
+              <button 
+                onClick={() => setActiveTab('ai')}
+                className={`tab-btn ${activeTab === 'ai' ? 'active' : ''}`}
+              >
+                ✨ AI Planner
+              </button>
+              <button 
+                onClick={() => setActiveTab('locations')}
+                className={`tab-btn ${activeTab === 'locations' ? 'active' : ''}`}
+              >
+                📍 Safety Radar
+              </button>
+            </div>
           </div>
 
           {/* TAB 1: EXPENSE LOG LIST */}

@@ -3402,7 +3402,14 @@ p {
   }
 
   .expense-table {
-    min-width: 440px !important;
+    min-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .expense-table th,
+  .expense-table td {
+    padding: 8px 10px !important;
+    font-size: 0.8rem !important;
   }
 
   .budget-meter-labels {
@@ -3437,5 +3444,23 @@ p {
 
   .weather-cards-grid {
     grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .mobile-tab-select-wrapper {
+    display: block !important;
+  }
+
+  .desktop-tabs-bar {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-tab-select-wrapper {
+    display: none !important;
+  }
+
+  .desktop-tabs-bar {
+    display: flex !important;
   }
 }
