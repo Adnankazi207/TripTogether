@@ -4,7 +4,6 @@ import Cinematic3DHero from '../components/Cinematic3DHero';
 import FeatureSlider from '../components/FeatureSlider';
 import DestinationCard from '../components/DestinationCard';
 import CategoryCapsulesSection from '../components/CategoryCapsulesSection';
-import PaperCutFeaturesSection from '../components/PaperCutFeaturesSection';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -69,10 +68,7 @@ export default function Home() {
         {/* Categories Stadium Capsules Section */}
         <CategoryCapsulesSection />
 
-        {/* Paper-Torn Edge Cut Key Features Section */}
-        <PaperCutFeaturesSection />
-
-         <FeatureSlider />
+        <FeatureSlider />
 
       {/* Visual Walkthrough: How it Works */}
       <section style={{ margin: '100px 0' }}>

@@ -470,8 +470,9 @@ export default function Navbar() {
         .mobile-drawer-backdrop {
           position: fixed;
           inset: 0;
-          background: rgba(0, 0, 0, 0.65);
-          backdrop-filter: blur(10px);
+          background: rgba(0, 0, 0, 0.75);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
           z-index: 1200;
           display: flex;
           justify-content: flex-end;
@@ -480,12 +481,13 @@ export default function Navbar() {
         .mobile-drawer-sheet {
           width: 320px;
           height: 100%;
-          background: var(--bg-primary);
+          background: var(--bg-secondary);
+          border-left: 1px solid var(--border-color);
           padding: 24px;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          box-shadow: -10px 0 35px rgba(0, 0, 0, 0.4);
+          box-shadow: -10px 0 40px rgba(0, 0, 0, 0.7);
         }
 
         .drawer-header-top {
@@ -496,26 +498,44 @@ export default function Navbar() {
         }
 
         .drawer-close-icon {
-          background: none;
-          border: none;
-          font-size: 1.5rem;
+          background: var(--bg-tertiary);
+          border: 1px solid var(--border-color);
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          font-size: 1.2rem;
           color: var(--text-primary);
+          display: flex;
+          align-items: center;
+          justify-content: center;
           cursor: pointer;
         }
 
         .drawer-menu-links {
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 12px;
         }
 
         .drawer-nav-item {
           font-size: 1.05rem;
-          font-weight: 600;
-          color: var(--text-secondary);
+          font-weight: 700;
+          color: var(--text-primary) !important;
           text-decoration: none;
           padding: 12px 18px;
           border-radius: 14px;
+          background: var(--bg-tertiary);
+          border: 1px solid var(--border-color);
+          transition: all 0.25s ease;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .drawer-nav-item:hover, .drawer-nav-item.active {
+          background: rgba(255, 107, 0, 0.15) !important;
+          color: var(--color-primary) !important;
+          border-color: rgba(255, 107, 0, 0.3) !important;
         }
 
         .drawer-nav-item.active {
