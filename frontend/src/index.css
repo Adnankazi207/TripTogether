@@ -4291,7 +4291,7 @@ p {
 
   .slider-grid {
     grid-template-columns: 1fr !important;
-    gap: 40px !important;
+    gap: 30px !important;
   }
 
   .explore-title {
@@ -4336,20 +4336,65 @@ p {
   }
 }
 
+@media (max-width: 768px) {
+  /* Budget Mockup height reduction */
+  .ledger-items-list .ledger-list-item:nth-child(n+3) {
+    display: none !important; /* Hide 3rd and 4th rows to save vertical space */
+  }
+  .ledger-sync-badge span {
+    display: none !important;
+  }
+  .ledger-sync-badge {
+    background: transparent !important;
+    padding: 0 !important;
+  }
+  .ledger-mockup-footer {
+    flex-direction: column !important;
+    gap: 8px !important;
+    align-items: center !important;
+    padding-top: 10px !important;
+  }
+
+  /* Timeline Mockup height reduction */
+  .timeline-mockup-list .timeline-mockup-item:nth-child(n+2) {
+    display: none !important; /* Hide CDG check-in and second card */
+  }
+  .timeline-checklist-box {
+    display: none !important; /* Hide packing checklist */
+  }
+
+  /* Rooms Mockup height reduction */
+  .room-gallery-widget {
+    display: none !important; /* Hide group photo gallery widget */
+  }
+  .room-activity-log {
+    display: none !important; /* Hide bottom status bar */
+  }
+
+  /* Chat Mockup height reduction */
+  .chat-mockup-body {
+    height: 170px !important;
+  }
+  .chat-conversation-wrapper {
+    max-height: 110px !important;
+    overflow-y: auto !important;
+  }
+  .chat-bubble {
+    padding: 6px 10px !important;
+    font-size: 0.78rem !important;
+    margin-bottom: 6px !important;
+  }
+}
+
 @media (max-width: 576px) {
+  .explore-slider-wrapper .slider-nav-btn {
+    display: none !important; /* Hide arrows completely on tiny screens to maximize content width */
+  }
+
   .explore-glass-container {
-    padding: 24px 40px !important; /* Slightly tighter padding on tiny mobile screen */
-  }
-
-  .explore-slider-wrapper .btn-prev {
-    left: 12px !important;
-  }
-
-  .explore-slider-wrapper .btn-next {
-    right: 12px !important;
+    padding: 24px 20px !important; /* Reclaim space: no padding margin needed for arrows */
   }
   
-  /* Mockup specific responsive tweaks */
   .slider-mockup-window {
     max-width: 100% !important;
   }
