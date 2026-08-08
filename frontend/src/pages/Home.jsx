@@ -95,24 +95,120 @@ export default function Home() {
       </section>
 
       {/* Final Call to Action Section */}
-      <section className="glass-panel cta-banner" style={{ padding: '60px 40px', borderRadius: 'var(--radius-lg)', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-        <div className="cta-glow-1"></div>
-        <div className="cta-glow-2"></div>
-        
-        <div style={{ position: 'relative', zIndex: 2, maxWidth: '600px', margin: '0 auto' }}>
-          <span className="section-tag" style={{ marginBottom: '12px' }}>Start planning</span>
-          <h2 style={{ fontSize: '2.5rem', marginBottom: '16px', fontWeight: '800' }}>Ready for Your Next Adventure?</h2>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', fontSize: '1.05rem', lineHeight: '1.6' }}>
+      <section className="glass-panel premium-cta-section">
+        {/* Left Side Content Column */}
+        <div className="cta-content-column">
+          
+          {/* Tagline Header with map icon and plane path */}
+          <div className="cta-tagline-row">
+            <div className="cta-map-icon-wrapper">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+              </svg>
+            </div>
+            <span className="cta-tagline">START PLANNING</span>
+            
+            {/* Plane Dotted Path */}
+            <div className="cta-plane-trail">
+              <svg viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg" width="80" height="30">
+                <path d="M5,25 Q40,5 85,15" stroke="var(--color-primary)" strokeWidth="1.5" strokeDasharray="3,4" opacity="0.4" />
+                <g transform="translate(80, 14) rotate(15)">
+                  <path d="M0,0 L10,4 L6,6 L4,10 Z" fill="var(--color-primary)" opacity="0.6" />
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          {/* Symmetrical Two-Tone Heading */}
+          <h2 className="cta-main-title">
+            Ready for Your <span className="highlight-text-orange">Next Adventure?</span>
+          </h2>
+          <div className="cta-title-accent-line"></div>
+
+          <p className="cta-description">
             Join thousands of travelers who plan, collaborate, and track their expenses with TripTogether. Create a secure, group-accessible room code in seconds.
           </p>
-          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link to="/register" className="btn btn-primary" style={{ padding: '14px 28px' }}>
+
+          {/* CTA Buttons */}
+          <div className="cta-buttons-row">
+            <Link to="/register" className="btn btn-primary cta-btn-primary">
               Create Account Free
+              <svg fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" width="16" height="16">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
             </Link>
-            <Link to="/destinations" className="btn btn-secondary" style={{ padding: '14px 28px' }}>
+            <Link to="/destinations" className="btn btn-secondary cta-btn-secondary">
               Browse Catalog
+              <svg fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" width="16" height="16">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
             </Link>
           </div>
+
+          {/* Three highlights capsule footer */}
+          <div className="cta-footer-highlights">
+            <div className="cta-highlight-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="12" height="12">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Secure & Private</span>
+            </div>
+            <div className="cta-highlight-item-divider"></div>
+            <div className="cta-highlight-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="12" height="12">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Group Collaboration</span>
+            </div>
+            <div className="cta-highlight-item-divider"></div>
+            <div className="cta-highlight-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="12" height="12">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Instant Access</span>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Background Image of travelers on the right */}
+        <div className="cta-image-wrapper">
+          <div className="cta-image-bg" style={{ backgroundImage: "url('/workflow_step3.png')" }}></div>
+          <div className="cta-image-overlay"></div>
+          
+          {/* Top Floating Widget: 50K+ Travelers */}
+          <div className="cta-floating-widget widget-top animate-fade-in">
+            <div className="avatar-group">
+              <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80" alt="Traveler 1" className="avatar" />
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80" alt="Traveler 2" className="avatar" />
+              <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=80&q=80" alt="Traveler 3" className="avatar" />
+            </div>
+            <div>
+              <div className="widget-title">50K+ Travelers</div>
+              <div className="widget-desc">already planning together</div>
+            </div>
+          </div>
+
+          {/* Bottom Floating Widget: Your plans. Your people. */}
+          <div className="cta-floating-widget widget-bottom animate-fade-in">
+            <div className="widget-lock-circle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0110 0v4" />
+              </svg>
+            </div>
+            <div>
+              <div className="widget-title">Your plans. Your people.</div>
+              <div className="widget-desc">Always private, always yours.</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Floating Center Backpack Badge */}
+        <div className="cta-center-backpack-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
         </div>
       </section>
 
@@ -221,16 +317,348 @@ export default function Home() {
           transform: scale(1.08);
         }
         
-        /* CTA Hover Effects */
-        .cta-banner {
-          background: var(--bg-secondary);
-          border: 1px solid var(--border-color);
-          box-shadow: var(--shadow-lg);
-          transition: border-color 0.4s ease, box-shadow 0.4s ease;
+        /* Premium CTA Section Redesign */
+        .premium-cta-section {
+          display: grid;
+          grid-template-columns: 1fr;
+          border-radius: var(--radius-lg);
+          overflow: hidden;
+          position: relative;
+          background: var(--bg-secondary) !important;
+          border: 1px solid var(--border-color) !important;
+          box-shadow: var(--shadow-lg) !important;
+          margin-top: 100px;
         }
-        .cta-banner:hover {
+
+        @media (min-width: 992px) {
+          .premium-cta-section {
+            grid-template-columns: 1.2fr 1fr;
+          }
+        }
+
+        .cta-content-column {
+          padding: 40px 24px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          text-align: left;
+          z-index: 5;
+        }
+
+        @media (min-width: 576px) {
+          .cta-content-column {
+            padding: 50px 40px;
+          }
+        }
+
+        @media (min-width: 1200px) {
+          .cta-content-column {
+            padding: 60px 50px;
+          }
+        }
+
+        .cta-tagline-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 16px;
+        }
+
+        .cta-map-icon-wrapper {
+          background: rgba(234, 88, 12, 0.1);
+          color: var(--color-primary);
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        [data-theme='dark'] .cta-map-icon-wrapper {
+          background: rgba(255, 107, 0, 0.15);
+        }
+
+        .cta-tagline {
+          font-family: var(--font-heading);
+          font-weight: 700;
+          font-size: 0.82rem;
+          letter-spacing: 2px;
+          color: var(--color-primary);
+        }
+
+        .cta-plane-trail {
+          margin-left: 4px;
+        }
+
+        .cta-main-title {
+          font-family: var(--font-heading);
+          font-size: 2.5rem !important;
+          font-weight: 800;
+          line-height: 1.15;
+          letter-spacing: -0.02em;
+          color: var(--text-primary);
+          margin-bottom: 12px;
+        }
+
+        .highlight-text-orange {
+          color: var(--color-primary);
+        }
+
+        .cta-title-accent-line {
+          width: 50px;
+          height: 3px;
+          background: var(--color-primary);
+          border-radius: 1.5px;
+          margin-bottom: 24px;
+        }
+
+        .cta-description {
+          font-size: 0.95rem;
+          color: var(--text-secondary);
+          line-height: 1.6;
+          margin-bottom: 32px;
+        }
+
+        .cta-buttons-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 16px;
+          margin-bottom: 32px;
+          width: 100%;
+        }
+
+        .cta-btn-primary {
+          background: var(--gradient-accent);
+          color: white;
+          padding: 14px 28px !important;
+          box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
+        }
+
+        .cta-btn-primary:hover {
+          background: var(--gradient-accent-hover);
+          transform: translateY(-3px) scale(1.02);
+          box-shadow: 0 6px 20px rgba(234, 88, 12, 0.45);
+        }
+
+        .cta-btn-secondary {
+          background: var(--bg-primary);
+          color: var(--text-primary);
+          border: 1px solid var(--border-color);
+          padding: 14px 28px !important;
+        }
+
+        .cta-btn-secondary:hover {
+          background: var(--bg-tertiary);
           border-color: var(--color-primary);
-          box-shadow: var(--shadow-lg), var(--shadow-glow);
+          transform: translateY(-3px) scale(1.02);
+        }
+
+        .cta-btn-primary svg, .cta-btn-secondary svg {
+          transition: transform 0.3s ease;
+        }
+
+        .cta-btn-primary:hover svg, .cta-btn-secondary:hover svg {
+          transform: translateX(4px);
+        }
+
+        /* 3 highlights footer */
+        .cta-footer-highlights {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 12px;
+          padding-top: 20px;
+          border-top: 1px solid var(--border-color);
+          width: 100%;
+        }
+
+        .cta-highlight-item {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 0.8rem;
+          font-weight: 700;
+          color: var(--text-secondary);
+        }
+
+        .cta-highlight-item svg {
+          color: #10B981; /* Green check */
+        }
+
+        .cta-highlight-item-divider {
+          width: 1px;
+          height: 12px;
+          background: var(--border-color);
+          display: none;
+        }
+
+        @media (min-width: 576px) {
+          .cta-highlight-item-divider {
+            display: block;
+          }
+        }
+
+        /* Right image wrapper */
+        .cta-image-wrapper {
+          position: relative;
+          min-height: 250px;
+          overflow: hidden;
+        }
+
+        @media (min-width: 992px) {
+          .cta-image-wrapper {
+            height: 100%;
+            min-height: 100%;
+          }
+        }
+
+        .cta-image-bg {
+          width: 100%;
+          height: 100%;
+          background-size: cover;
+          background-position: center;
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+
+        .cta-image-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(180deg, var(--bg-secondary) 0%, transparent 40%, transparent 70%, var(--bg-secondary) 100%);
+        }
+
+        @media (min-width: 992px) {
+          .cta-image-overlay {
+            background: linear-gradient(90deg, var(--bg-secondary) 0%, rgba(248, 250, 252, 0.4) 30%, transparent 60%, transparent 90%, var(--bg-secondary) 100%);
+          }
+          [data-theme='dark'] .cta-image-overlay {
+            background: linear-gradient(90deg, var(--bg-secondary) 0%, rgba(9, 9, 11, 0.4) 30%, transparent 60%, transparent 90%, var(--bg-secondary) 100%);
+          }
+        }
+
+        /* Floating Center Backpack Badge */
+        .cta-center-backpack-badge {
+          position: absolute;
+          top: 50%;
+          left: 54.5%;
+          transform: translate(-50%, -50%);
+          background: var(--bg-secondary);
+          border: 1.5px solid var(--color-primary);
+          color: var(--color-primary);
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: var(--shadow-md);
+          z-index: 10;
+          display: none;
+        }
+
+        @media (min-width: 992px) {
+          .cta-center-backpack-badge {
+            display: flex;
+          }
+        }
+
+        /* Floating widgets inside image */
+        .cta-floating-widget {
+          position: absolute;
+          background: var(--glass-bg);
+          backdrop-filter: blur(12px);
+          border: 1px solid var(--glass-border);
+          box-shadow: var(--glass-shadow);
+          padding: 10px 16px;
+          border-radius: var(--radius-md);
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          z-index: 10;
+        }
+
+        .widget-top {
+          top: 24px;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+
+        @media (min-width: 992px) {
+          .widget-top {
+            top: 40px;
+            left: 30px;
+            transform: none;
+          }
+        }
+
+        .widget-bottom {
+          bottom: 24px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 90%;
+          max-width: 280px;
+        }
+
+        @media (min-width: 992px) {
+          .widget-bottom {
+            bottom: 40px;
+            right: 30px;
+            left: auto;
+            transform: none;
+            width: auto;
+            max-width: none;
+          }
+        }
+
+        .widget-top .avatar-group {
+          display: flex;
+        }
+
+        .widget-top .avatar {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          border: 1.5px solid var(--bg-primary);
+          margin-left: -6px;
+        }
+
+        .widget-top .avatar:first-child {
+          margin-left: 0;
+        }
+
+        .widget-title {
+          font-family: var(--font-heading);
+          font-weight: 700;
+          font-size: 0.88rem;
+          color: var(--text-primary);
+          line-height: 1.1;
+          margin-bottom: 2px;
+        }
+
+        .widget-desc {
+          font-size: 0.72rem;
+          color: var(--text-muted);
+          line-height: 1.1;
+        }
+
+        .widget-lock-circle {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: rgba(234, 88, 12, 0.1);
+          color: var(--color-primary);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        [data-theme='dark'] .widget-lock-circle {
+          background: rgba(255, 107, 0, 0.15);
         }
         .cta-glow-1 {
           position: absolute;
