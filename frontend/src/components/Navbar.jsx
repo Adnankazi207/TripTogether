@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
@@ -147,9 +148,9 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Menu Drawer */}
-      {isOpen && (
-        <div className="mobile-drawer-backdrop animate-fade-in">
-          <div className="mobile-drawer-sheet">
+      {isOpen && createPortal(
+        <div className="mobile-drawer-backdrop animate-fade-in" onClick={() => setIsOpen(false)}>
+          <div className="mobile-drawer-sheet" onClick={(e) => e.stopPropagation()}>
             <div className="drawer-header-top">
               <Link to="/" className="solid-brand-logo" onClick={() => setIsOpen(false)}>
                 <div className="solid-logo-icon">✈</div>
@@ -203,7 +204,8 @@ export default function Navbar() {
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       <style>{`
@@ -466,49 +468,71 @@ export default function Navbar() {
           transition: all 0.3s ease;
         }
 
-        /* Mobile Drawer */
+        /* Mobile Drawer Portal Styles */
         .mobile-drawer-backdrop {
-          position: fixed;
-          inset: 0;
-          background: rgba(0, 0, 0, 0.75);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          z-index: 1200;
-          display: flex;
-          justify-content: flex-end;
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          height: 100dvh !important;
+          background: rgba(0, 0, 0, 0.85) !important;
+          backdrop-filter: blur(14px) !important;
+          -webkit-backdrop-filter: blur(14px) !important;
+          z-index: 999999 !important;
+          display: flex !important;
+          justify-content: flex-end !important;
         }
 
         .mobile-drawer-sheet {
-          width: 320px;
-          height: 100%;
-          background: var(--bg-secondary);
-          border-left: 1px solid var(--border-color);
-          padding: 24px;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          box-shadow: -10px 0 40px rgba(0, 0, 0, 0.7);
+          width: 85vw !important;
+          max-width: 320px !important;
+          height: 100% !important;
+          background: #09090b !important;
+          color: #ffffff !important;
+          border-left: 1px solid rgba(255, 255, 255, 0.12) !important;
+          padding: 24px 20px !important;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: space-between !important;
+          box-shadow: -15px 0 45px rgba(0, 0, 0, 0.9) !important;
+          overflow-y: auto !important;
+          z-index: 1000000 !important;
+        }
+
+        [data-theme='light'] .mobile-drawer-sheet {
+          background: #ffffff !important;
+          color: #09090b !important;
+          border-left: 1px solid #e4e4e7 !important;
         }
 
         .drawer-header-top {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 30px;
+          margin-bottom: 24px;
         }
 
         .drawer-close-icon {
-          background: var(--bg-tertiary);
-          border: 1px solid var(--border-color);
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.15);
           width: 36px;
           height: 36px;
           border-radius: 50%;
           font-size: 1.2rem;
-          color: var(--text-primary);
+          color: #ffffff;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
+        }
+
+        [data-theme='light'] .drawer-close-icon {
+          background: #f1f5f9;
+          border-color: #e2e8f0;
+          color: #0f172a;
         }
 
         .drawer-menu-links {
@@ -520,27 +544,30 @@ export default function Navbar() {
         .drawer-nav-item {
           font-size: 1.05rem;
           font-weight: 700;
-          color: var(--text-primary) !important;
+          color: #ffffff !important;
           text-decoration: none;
-          padding: 12px 18px;
+          padding: 14px 18px;
           border-radius: 14px;
-          background: var(--bg-tertiary);
-          border: 1px solid var(--border-color);
+          background: #18181b !important;
+          border: 1px solid rgba(255, 255, 255, 0.08) !important;
           transition: all 0.25s ease;
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 12px;
+          width: 100%;
+        }
+
+        [data-theme='light'] .drawer-nav-item {
+          background: #f8fafc !important;
+          color: #0f172a !important;
+          border-color: #e2e8f0 !important;
         }
 
         .drawer-nav-item:hover, .drawer-nav-item.active {
-          background: rgba(255, 107, 0, 0.15) !important;
-          color: var(--color-primary) !important;
-          border-color: rgba(255, 107, 0, 0.3) !important;
-        }
-
-        .drawer-nav-item.active {
-          background: rgba(2, 132, 199, 0.12);
-          color: #0284c7;
+          background: #ff6b00 !important;
+          color: #ffffff !important;
+          border-color: #ff6b00 !important;
+          box-shadow: 0 4px 14px rgba(255, 107, 0, 0.4) !important;
         }
 
         @media (max-width: 992px) {
