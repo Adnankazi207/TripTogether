@@ -442,18 +442,8 @@ export default function FeatureSlider() {
   return (
     <section className="luxury-slider-section" style={{ margin: '100px 0', position: 'relative' }}>
       
-      {/* Background Section Image with scenic coast */}
-      <div className="explore-section-bg" style={{ backgroundImage: "url('/explore_bg.png')" }}>
-        <div className="explore-section-bg-overlay"></div>
-      </div>
-
-      {/* Decorative overlapping travel flatlay backpack on the left */}
-      <div className="explore-overlapping-gear">
-        <img src="/explore_gear.png" alt="Travel Gear Flatlay" className="explore-gear-img" />
-      </div>
-
-      {/* Section Header */}
-      <div className="section-header" style={{ position: 'relative', zIndex: 5 }}>
+      {/* Section Header (Outside the banner) */}
+      <div className="section-header" style={{ position: 'relative', zIndex: 5, marginBottom: '40px' }}>
         <span className="section-tag" style={{ color: 'var(--color-primary)', display: 'block', marginBottom: '8px' }}>
           EXPLORE FUNCTIONALITY
         </span>
@@ -466,10 +456,20 @@ export default function FeatureSlider() {
         <div className="explore-title-accent-line"></div>
       </div>
 
-      {/* Slider Viewport Frosted Glass Container */}
-      <div className="slider-viewport-container explore-glass-container">
-        
-        {/* Next & Previous Navigation Buttons */}
+      {/* Slider Wrapper (Contains the background banner, the overlapping gear, and the glass panel) */}
+      <div className="explore-slider-wrapper">
+
+        {/* Background Section Image with scenic coast */}
+        <div className="explore-section-bg" style={{ backgroundImage: "url('/explore_bg.png')" }}>
+          <div className="explore-section-bg-overlay"></div>
+        </div>
+
+        {/* Decorative overlapping travel flatlay backpack on the left */}
+        <div className="explore-overlapping-gear">
+          <img src="/explore_gear.png" alt="Travel Gear Flatlay" className="explore-gear-img" />
+        </div>
+
+        {/* Next & Previous Navigation Buttons (Placed here to avoid clipping by overflow: hidden) */}
         <button className="slider-nav-btn btn-prev" onClick={handlePrev} aria-label="Previous Slide">
           <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -482,75 +482,79 @@ export default function FeatureSlider() {
           </svg>
         </button>
 
-        {/* Dynamic Dotted connector wave and floating active icon */}
-        <div className="slider-wave-connector-wrapper">
-          <svg viewBox="0 0 600 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="slider-wave-connector-svg">
-            <path d="M 50,100 C 150,150 250,50 350,100 C 450,150 500,100 550,100" stroke="var(--color-primary)" strokeWidth="1.5" strokeDasharray="4,6" opacity="0.35"/>
-          </svg>
-          {/* Floating Orange active token badge (e.g. ₹) */}
-          <div className="slider-floating-token-badge">
-            {slide.type === 'budget' ? '₹' : (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.286L13 21l-2.286-6.857L5 12l5.714-2.286L13 3z" />
-              </svg>
-            )}
-          </div>
-        </div>
-
-        {/* Core Slide Wrapper */}
-        <div className={`slider-grid ${isAnimating ? 'slider-animating' : ''}`}>
+        {/* Slider Viewport Frosted Glass Container */}
+        <div className="slider-viewport-container explore-glass-container">
           
-          {/* Left Side: Editorial Content */}
-          <div className="slider-content-column explore-slider-content">
-            
-            <div className="slider-feature-badge" style={{ color: 'var(--color-primary)' }}>
-              <span style={{ marginRight: '8px', display: 'flex', alignItems: 'center' }}>{slide.icon}</span>
-              {slide.tag}
-            </div>
-            
-            <h3 className="slider-feature-title explore-slide-title">
-              {slide.title}
-            </h3>
-            
-            <p className="slider-feature-desc explore-slide-desc">
-              {slide.desc}
-            </p>
-
-            {/* Bottom highlights capsule containing tailored bullet stats */}
-            <div className="slide-highlights-capsule">
-              {slide.highlights.map((highlight, idx) => (
-                <div key={idx} className="highlight-capsule-item">
-                  <div className="highlight-item-icon-wrapper">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="highlight-item-label">{highlight.label}</div>
-                    <div className="highlight-item-desc">{highlight.desc}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Dots navigation */}
-            <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-              {SLIDES.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveSlide(i)}
-                  className={`slider-dot-indicator ${activeSlide === i ? 'active' : ''}`}
-                  aria-label={`Go to slide ${i + 1}`}
-                />
-              ))}
+          {/* Dynamic Dotted connector wave and floating active icon */}
+          <div className="slider-wave-connector-wrapper">
+            <svg viewBox="0 0 600 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="slider-wave-connector-svg">
+              <path d="M 50,100 C 150,150 250,50 350,100 C 450,150 500,100 550,100" stroke="var(--color-primary)" strokeWidth="1.5" strokeDasharray="4,6" opacity="0.35"/>
+            </svg>
+            <div className="slider-floating-token-badge">
+              {slide.type === 'budget' ? '₹' : (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.286L13 21l-2.286-6.857L5 12l5.714-2.286L13 3z" />
+                </svg>
+              )}
             </div>
           </div>
 
-          {/* Right Side: Interactive GUI Mockup */}
-          <div className="slider-mockup-column">
-            {renderMockup(slide.type)}
+          {/* Core Slide Wrapper */}
+          <div className={`slider-grid ${isAnimating ? 'slider-animating' : ''}`}>
+            
+            {/* Left Side: Editorial Content */}
+            <div className="slider-content-column explore-slider-content">
+              
+              <div className="slider-feature-badge" style={{ color: 'var(--color-primary)' }}>
+                <span style={{ marginRight: '8px', display: 'flex', alignItems: 'center' }}>{slide.icon}</span>
+                {slide.tag}
+              </div>
+              
+              <h3 className="slider-feature-title explore-slide-title">
+                {slide.title}
+              </h3>
+              
+              <p className="slider-feature-desc explore-slide-desc">
+                {slide.desc}
+              </p>
+
+              {/* Bottom highlights capsule containing tailored bullet stats */}
+              <div className="slide-highlights-capsule">
+                {slide.highlights.map((highlight, idx) => (
+                  <div key={idx} className="highlight-capsule-item">
+                    <div className="highlight-item-icon-wrapper">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="highlight-item-label">{highlight.label}</div>
+                      <div className="highlight-item-desc">{highlight.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Dots navigation */}
+              <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+                {SLIDES.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveSlide(i)}
+                    className={`slider-dot-indicator ${activeSlide === i ? 'active' : ''}`}
+                    aria-label={`Go to slide ${i + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Right Side: Interactive GUI Mockup */}
+            <div className="slider-mockup-column">
+              {renderMockup(slide.type)}
+            </div>
           </div>
         </div>
+
       </div>
     </section>
   );

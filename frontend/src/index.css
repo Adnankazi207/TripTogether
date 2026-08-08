@@ -3516,12 +3516,25 @@ p {
   margin: 12px auto 0 auto;
 }
 
-/* Overlapping travel gear */
+.explore-slider-wrapper {
+  position: relative;
+  width: 100%;
+  padding: 50px 70px;
+  overflow: visible; /* Crucial: allows gear and buttons to overlap boundaries */
+}
+
+@media (max-width: 991px) {
+  .explore-slider-wrapper {
+    padding: 20px;
+  }
+}
+
+/* Overlapping travel gear positioned relative to slider wrapper */
 .explore-overlapping-gear {
   position: absolute;
-  bottom: -45px;
-  left: -55px;
-  width: 250px;
+  bottom: 0px;
+  left: -40px;
+  width: 260px;
   z-index: 10;
   pointer-events: none;
   display: none;
@@ -3535,8 +3548,28 @@ p {
 
 @media (min-width: 1200px) {
   .explore-overlapping-gear {
-    width: 290px;
-    left: -75px;
+    width: 310px;
+    left: -60px;
+  }
+}
+
+/* Nav Button placements relative to wrapper boundary */
+.explore-slider-wrapper .btn-prev {
+  left: 46px;
+  z-index: 20;
+}
+
+.explore-slider-wrapper .btn-next {
+  right: 46px;
+  z-index: 20;
+}
+
+@media (max-width: 991px) {
+  .explore-slider-wrapper .btn-prev {
+    left: 10px;
+  }
+  .explore-slider-wrapper .btn-next {
+    right: 10px;
   }
 }
 
