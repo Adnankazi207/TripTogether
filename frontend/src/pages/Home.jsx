@@ -4,6 +4,7 @@ import Cinematic3DHero from '../components/Cinematic3DHero';
 import FeatureSlider from '../components/FeatureSlider';
 import DestinationCard from '../components/DestinationCard';
 import CategoryCapsulesSection from '../components/CategoryCapsulesSection';
+import WorkflowSection from '../components/WorkflowSection';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -71,51 +72,7 @@ export default function Home() {
         <FeatureSlider />
 
       {/* Visual Walkthrough: How it Works */}
-      <section style={{ margin: '100px 0' }}>
-        <div className="section-header">
-          <span className="section-tag">Workflow</span>
-          <h2 className="section-title" style={{ fontSize: '2.5rem' }}>How TripTogether Works</h2>
-          <p className="section-desc">Follow these four simple steps to structure and launch your collaborative dream trip.</p>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px', margin: '40px 0' }}>
-          <div className="step-card">
-            <div className="step-num">1</div>
-            <div style={{ fontSize: '2.5rem', marginBottom: '16px', textAlign: 'center' }}>🗺️</div>
-            <h4 style={{ fontSize: '1.15rem', marginBottom: '8px', fontWeight: '700', textAlign: 'center' }}>Select Destination</h4>
-            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: '1.5', textAlign: 'center' }}>
-              Search our global catalog or type in a new city to seed its travel profile instantly.
-            </p>
-          </div>
-
-          <div className="step-card">
-            <div className="step-num">2</div>
-            <div style={{ fontSize: '2.5rem', marginBottom: '16px', textAlign: 'center' }}>📅</div>
-            <h4 style={{ fontSize: '1.15rem', marginBottom: '8px', fontWeight: '700', textAlign: 'center' }}>Define Budget & Dates</h4>
-            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: '1.5', textAlign: 'center' }}>
-              Input your trip dates and set budget ceilings in Rupees (₹) to prevent overspending.
-            </p>
-          </div>
-
-          <div className="step-card">
-            <div className="step-num">3</div>
-            <div style={{ fontSize: '2.5rem', marginBottom: '16px', textAlign: 'center' }}>👥</div>
-            <h4 style={{ fontSize: '1.15rem', marginBottom: '8px', fontWeight: '700', textAlign: 'center' }}>Invite Group Members</h4>
-            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: '1.5', textAlign: 'center' }}>
-              Share unique 6-character room codes with friends to edit itineraries collaboratively.
-            </p>
-          </div>
-
-          <div className="step-card">
-            <div className="step-num">4</div>
-            <div style={{ fontSize: '2.5rem', marginBottom: '16px', textAlign: 'center' }}>🎒</div>
-            <h4 style={{ fontSize: '1.15rem', marginBottom: '8px', fontWeight: '700', textAlign: 'center' }}>Track Live & Go</h4>
-            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: '1.5', textAlign: 'center' }}>
-              Log food, transit, and lodging costs live on the go, check off packing items, and share photos.
-            </p>
-          </div>
-        </div>
-      </section>
+      <WorkflowSection />
 
       {/* Trending Destinations Section */}
       <section style={{ margin: '100px 0' }}>
