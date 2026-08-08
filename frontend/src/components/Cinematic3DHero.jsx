@@ -293,22 +293,6 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
           padding: '0 20px',
         }}
       >
-        <span
-          style={{
-            fontSize: isMobile ? '0.7rem' : '0.8rem',
-            fontWeight: '700',
-            letterSpacing: isMobile ? '3px' : '5px',
-            textTransform: 'uppercase',
-            color: 'var(--color-primary)',
-            backgroundColor: 'rgba(13, 148, 136, 0.12)',
-            border: '1px solid rgba(13, 148, 136, 0.25)',
-            padding: '6px 18px',
-            borderRadius: '100px',
-            marginBottom: '14px',
-          }}
-        >
-          CURATED EXPEDITIONS
-        </span>
         <h1
           style={{
             fontSize: 'clamp(2.2rem, 5vw, 4.2rem)',
