@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Cinematic3DHero from '../components/Cinematic3DHero';
 import FeatureSlider from '../components/FeatureSlider';
+import DestinationCard from '../components/DestinationCard';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -18,44 +19,37 @@ export default function Home() {
 
   const trendingDestinations = [
     {
-      title: 'El Nido',
-      country: 'Palawan, Region',
-      category: 'Beach paradise',
-      priceTag: 'starts at ₹4,999',
-      rating: '4.8',
+      title: 'Bali Jungle Villa',
+      country: 'Ubud, Indonesia',
+      category: 'Nature Stay',
+      priceTag: '$620',
+      rating: '4.7',
       reviews: '1.2k',
       image: 'https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=800&q=80',
-      description: 'Crystal lagoons, limestone cliffs & turquoise paradise.'
+      description: 'Escape to a peaceful retreat tucked in Ubud\'s lush jungle, perfect for a slow, mindful reset.',
+      duration: '3 Day Escape'
     },
     {
-      title: 'Baguio City',
-      country: 'Benguet, Region',
-      category: 'Mount Getaway',
-      priceTag: 'starts at ₹3,200',
-      rating: '4.6',
+      title: 'Santorini Sunset Loft',
+      country: 'Oia, Greece',
+      category: 'Romantic Stay',
+      priceTag: '$890',
+      rating: '4.8',
       reviews: '950',
-      image: 'https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?auto=format&fit=crop&w=800&q=80',
-      description: 'Cool pine breezes and mountain peak panoramas.'
+      image: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=800&q=80',
+      description: 'Experience a cliffside loft with iconic white walls, blue domes, and magical sunset views.',
+      duration: '2 Night Trip'
     },
     {
-      title: 'Vigan',
-      country: 'Ilocos Sur, Region',
-      category: 'Heritage City',
-      priceTag: 'starts at ₹4,250',
-      rating: '4.7',
-      reviews: '780',
-      image: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80',
-      description: 'Historic cobblestone streets and Spanish colonial architecture.'
-    },
-    {
-      title: 'Siargao',
-      country: 'Surigao del Norte, Region',
-      category: 'Surf & Chill',
-      priceTag: 'starts at ₹5,500',
+      title: 'Dubai Skyline Suite',
+      country: 'Downtown, Dubai',
+      category: 'Couples Stay',
+      priceTag: '$1,050',
       rating: '4.9',
       reviews: '2k',
-      image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
-      description: 'Pristine white sand beaches and world-class surfing waves.'
+      image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80',
+      description: 'Romantic views of the Burj Khalifa with floor-to-ceiling windows and a private balcony.',
+      duration: 'City Lights'
     }
   ];
 
@@ -169,42 +163,14 @@ export default function Home() {
           <p className="section-desc">Explore some of the most sought-after spots booked by travelers this month.</p>
         </div>
 
-        <div className="destinations-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '28px' }}>
+        <div className="destinations-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '28px' }}>
           {trendingDestinations.map((dest, i) => (
-            <div 
-              key={i} 
-              className="dest-card" 
-              onClick={() => navigate(`/destinations?search=${dest.title}`)}
-            >
-              {/* Cover Image */}
-              <div className="dest-image-wrapper">
-                <img src={dest.image} alt={dest.title} className="dest-img" />
-              </div>
-
-              {/* Gradient Text Overlay */}
-              <div className="dest-card-gradient" />
-
-              {/* Top Glass Price Badge */}
-              <div className="starts-at-badge">
-                {dest.priceTag}
-              </div>
-
-              {/* Bottom Content Body */}
-              <div className="dest-body">
-                <h3 className="dest-title">{dest.title}</h3>
-                
-                <div className="dest-meta">
-                  <span>{dest.category}</span>
-                  <span style={{ opacity: 0.5 }}>|</span>
-                  <span>⭐ {dest.rating} ({dest.reviews})</span>
-                </div>
-
-                <div className="dest-location">
-                  <span className="location-pin-icon">📍</span>
-                  <span>{dest.country}</span>
-                </div>
-              </div>
-            </div>
+            <DestinationCard
+              key={i}
+              destination={dest}
+              actionLabel="Book now"
+              onActionClick={() => navigate(`/destinations?search=${encodeURIComponent(dest.title)}`)}
+            />
           ))}
         </div>
       </section>

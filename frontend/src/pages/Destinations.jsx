@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Modal from '../components/Modal';
+import DestinationCard from '../components/DestinationCard';
 
 export default function Destinations() {
   const { user } = useAuth();
@@ -257,67 +258,19 @@ export default function Destinations() {
               </button>
             </div>
           ) : (
-            <div className="destinations-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '28px' }}>
+            <div className="destinations-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '28px' }}>
               {destinations.map((dest) => (
-                <div key={dest._id} className="dest-card animate-fade-in" onClick={() => handleAddTripClick(dest)}>
-                  
-                  {/* Card Image */}
-                  <div className="dest-image-wrapper">
-                    <img 
-                      src={dest.image || 'https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?auto=format&fit=crop&w=600&q=80'} 
-                      alt={dest.title} 
-                      className="dest-img" 
-                      onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?auto=format&fit=crop&w=600&q=80'; }}
-                    />
-                  </div>
-
-                  {/* Gradient Text Overlay */}
-                  <div className="dest-card-gradient" />
-
-                  {/* Top Glass Price Badge */}
-                  <div className="starts-at-badge">
-                    starts at {dest.costIndex ? dest.costIndex.replace(/\$/g, '₹') : '₹3,500'}
-                  </div>
-
-                  {/* Card Body */}
-                  <div className="dest-body">
-                    <h3 className="dest-title">{dest.title}</h3>
-                    
-                    <div className="dest-meta">
-                      <span>{dest.category || 'Travel'}</span>
-                      <span style={{ opacity: 0.5 }}>|</span>
-                      <span>⭐ {Number(dest.rating || 4.7).toFixed(1)} (1k+)</span>
-                    </div>
-
-                    <div className="dest-location" style={{ justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <span className="location-pin-icon">📍</span>
-                        <span>{dest.country}</span>
-                      </div>
-                      
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleAddTripClick(dest);
-                        }}
-                        style={{
-                          backgroundColor: '#f97316',
-                          color: '#ffffff',
-                          border: 'none',
-                          borderRadius: '100px',
-                          padding: '6px 14px',
-                          fontSize: '0.78rem',
-                          fontWeight: '700',
-                          cursor: 'pointer',
-                          boxShadow: '0 4px 12px rgba(249, 115, 22, 0.3)',
-                        }}
-                      >
-                        + Plan Trip
-                      </button>
-                    </div>
-                  </div>
-
-                </div>
+                <DestinationCard
+                  key={dest._id}
+                  destination={{
+                    ...dest,
+                    costIndex: dest.costIndex ? dest.costIndex.replace(/\$/g, '₹') : '₹3,500',
+                    duration: dest.idealDuration || '3 Day Escape',
+                    description: dest.description || `Explore the incredible sights and serene atmosphere of ${dest.title}, ${dest.country}.`
+                  }}
+                  actionLabel="Book now"
+                  onActionClick={(d) => handleAddTripClick(d)}
+                />
               ))}
             </div>
           )}
