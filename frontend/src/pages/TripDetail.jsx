@@ -501,8 +501,9 @@ export default function TripDetail() {
     if (grandTotal === 0) {
       return (
         <div style={{
-          width: '180px',
-          height: '180px',
+          width: '140px',
+          height: '140px',
+          maxWidth: '100%',
           borderRadius: '50%',
           border: '3px dashed var(--border-color)',
           display: 'flex',
@@ -513,6 +514,7 @@ export default function TripDetail() {
           margin: '0 auto 20px',
           textAlign: 'center',
           padding: '16px',
+          boxSizing: 'border-box'
         }}>
           No expenses logged yet.
         </div>
@@ -533,12 +535,14 @@ export default function TripDetail() {
 
     return (
       <div style={{
-        width: '180px',
-        height: '180px',
+        width: '140px',
+        height: '140px',
+        maxWidth: '100%',
         borderRadius: '50%',
         background: `conic-gradient(${slices.join(', ')})`,
         margin: '0 auto 20px',
         boxShadow: 'var(--shadow-md), var(--shadow-glow)',
+        boxSizing: 'border-box'
       }}></div>
     );
   };

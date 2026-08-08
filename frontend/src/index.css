@@ -3420,6 +3420,12 @@ p {
     box-sizing: border-box !important;
   }
 
+  .glass-panel {
+    padding: 16px !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
   .packing-category-grid,
   .gallery-grid-photos {
     grid-template-columns: 1fr !important;
