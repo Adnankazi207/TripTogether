@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 export default function DestinationCard({ 
   destination, 
@@ -7,6 +7,9 @@ export default function DestinationCard({
   showBookmark = true
 }) {
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [transformStyle, setTransformStyle] = useState('');
+  const [shineStyle, setShineStyle] = useState({ opacity: 0, x: '50%', y: '50%' });
+  const cardRef = useRef(null);
 
   // Extract properties with fallbacks
   const {
@@ -41,6 +44,31 @@ export default function DestinationCard({
 
   const tintClass = getGradientClass(category, title);
 
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    // Calculate rotation angles (max +/- 9 degrees)
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -9;
+    const rotateY = ((x - centerX) / centerX) * 9;
+
+    setTransformStyle(`perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-8px) scale(1.025)`);
+    setShineStyle({
+      opacity: 1,
+      x: `${((x / rect.width) * 100).toFixed(1)}%`,
+      y: `${((y / rect.height) * 100).toFixed(1)}%`
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTransformStyle('perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px) scale(1)');
+    setShineStyle({ opacity: 0, x: '50%', y: '50%' });
+  };
+
   const handleBookmarkToggle = (e) => {
     e.stopPropagation();
     setIsBookmarked(!isBookmarked);
@@ -48,9 +76,22 @@ export default function DestinationCard({
 
   return (
     <div 
+      ref={cardRef}
       className={`luxury-dest-card ${tintClass} animate-fade-in`}
+      style={{ transform: transformStyle }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       onClick={() => onActionClick && onActionClick(destination)}
     >
+      {/* Dynamic Cursor Light Beam Glare Reflection */}
+      <div 
+        className="card-shine-glare"
+        style={{
+          opacity: shineStyle.opacity,
+          background: `radial-gradient(circle at ${shineStyle.x} ${shineStyle.y}, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.08) 40%, transparent 70%)`
+        }}
+      />
+
       {/* Background Image Wrapper */}
       <div className="card-img-wrapper">
         <img 
@@ -77,7 +118,7 @@ export default function DestinationCard({
             height="18" 
             viewBox="0 0 24 24" 
             fill={isBookmarked ? "#ffffff" : "none"} 
-            stroke="#ffffff" 
+            stroke={isBookmarked ? "#0f172a" : "#ffffff"} 
             strokeWidth="2.2" 
             strokeLinecap="round" 
             strokeLinejoin="round"
@@ -128,7 +169,8 @@ export default function DestinationCard({
             if (onActionClick) onActionClick(destination);
           }}
         >
-          {actionLabel}
+          <span>{actionLabel}</span>
+          <span className="cta-arrow-icon">→</span>
         </button>
       </div>
     </div>
