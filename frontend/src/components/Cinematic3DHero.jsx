@@ -1,489 +1,680 @@
 import React, { useState, useEffect, useRef } from 'react';
-import * as THREE from 'three';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 
-// Destinations matching the sequence of frames with geographic coordinates
-const DESTINATIONS = [
-  { name: 'LADAKH MOUNTAINS', coords: "34°09'09\" N · 77°34'37\" E" },
-  { name: 'KASHMIR VALLEYS', coords: "34°05'01\" N · 74°47'50\" E" },
-  { name: 'KERALA BACKWATERS', coords: "09°29'52\" N · 76°19'19\" E" },
-  { name: 'MUNNAR TEA GARDENS', coords: "10°05'20\" N · 77°03'34\" E" },
-  { name: 'GOA BEACHES', coords: "15°17'56\" N · 73°58'37\" E" },
-  { name: 'MEGHALAYA WATERFALLS', coords: "25°27'57\" N · 91°43'29\" E" },
-  { name: 'RAJASTHAN DUNES', coords: "26°55'11\" N · 70°54'08\" E" },
-  { name: 'UDAIPUR LAKES', coords: "24°34'55\" N · 73°40'55\" E" },
-  { name: 'ANDAMAN ISLANDS', coords: "11°40'11\" N · 92°43'53\" E" },
-  { name: 'TAJ MAHAL', coords: "27°10'30\" N · 78°02'31\" E" },
-  { name: 'HIMACHAL PRADESH', coords: "32°13'01\" N · 77°10'22\" E" },
-  { name: 'SIKKIM MOUNTAINS', coords: "27°19'53\" N · 88°37'11\" E" }
+const CAROUSEL_DATA = [
+  {
+    id: 1,
+    title: 'MACHU PICCHU - PERU',
+    location: 'Peru',
+    tag: '#South_America',
+    tagline: 'Adventure is never far away',
+    image: 'https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=1200&q=85',
+    category: 'Adventure',
+    searchQuery: 'Peru'
+  },
+  {
+    id: 2,
+    title: 'LADAKH - INDIA',
+    location: 'India',
+    tag: '#Himalayan_Passes',
+    tagline: 'Where the earth touches the sky',
+    image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=85',
+    category: 'Mountains',
+    searchQuery: 'Ladakh'
+  },
+  {
+    id: 3,
+    title: 'MANALI - INDIA',
+    location: 'India',
+    tag: '#Pine_Valleys',
+    tagline: 'Serenity among snowy mountain peaks',
+    image: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=1200&q=85',
+    category: 'Nature',
+    searchQuery: 'Manali'
+  },
+  {
+    id: 4,
+    title: 'KERALA - INDIA',
+    location: 'India',
+    tag: '#Tropical_Backwaters',
+    tagline: 'Sailing through emerald coconut groves',
+    image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=85',
+    category: 'Tropics',
+    searchQuery: 'Kerala'
+  },
+  {
+    id: 5,
+    title: 'TAJ MAHAL - AGRA',
+    location: 'India',
+    tag: '#Royal_Heritage',
+    tagline: 'An eternal monument to love & wonder',
+    image: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1200&q=85',
+    category: 'Culture',
+    searchQuery: 'Agra'
+  },
+  {
+    id: 6,
+    title: 'SANTORINI - GREECE',
+    location: 'Greece',
+    tag: '#Aegean_Cliffs',
+    tagline: 'Whitewashed horizons & endless sunsets',
+    image: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=1200&q=85',
+    category: 'Coastline',
+    searchQuery: 'Greece'
+  },
+  {
+    id: 7,
+    title: 'KYOTO - JAPAN',
+    location: 'Japan',
+    tag: '#East_Asia',
+    tagline: 'Tranquil temples & blooming cherry gardens',
+    image: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=85',
+    category: 'Heritage',
+    searchQuery: 'Japan'
+  }
 ];
 
-export default function Cinematic3DHero() {
+export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSearchSubmit }) {
   const { theme } = useTheme();
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentDest, setCurrentDest] = useState(DESTINATIONS[0]);
-  
-  const containerRef = useRef(null);
-  const canvasRef = useRef(null);
-  const videoRef = useRef(null);
-  
-  // Easing values for mouse coordinates (orbit camera parallax)
-  const mouseRef = useRef({ targetX: 0, targetY: 0, currentX: 0, currentY: 0 });
-  // Scroll target & current position for Z-axis camera zoom
-  const scrollRef = useRef({ targetPercent: 0, currentPercent: 0 });
-  
-  // Smooth Scroll past Hero section
-  const handleExploreScroll = () => {
-    window.scrollTo({
-      top: window.innerHeight,
-      behavior: 'smooth'
-    });
+  const navigate = useNavigate();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
+  const total = CAROUSEL_DATA.length;
+
+  const nextSlide = () => {
+    setActiveIndex((prev) => (prev + 1) % total);
   };
 
-  // 1. Preload the MP4 Video
+  const prevSlide = () => {
+    setActiveIndex((prev) => (prev - 1 + total) % total);
+  };
+
+  // Auto advance timer
   useEffect(() => {
-    const video = document.createElement('video');
-    video.src = '/Travel_montage_showcasing_India_1080p_202608071922.mp4';
-    video.loop = true;
-    video.muted = true;
-    video.playsInline = true;
-    video.autoplay = true;
+    if (!isAutoPlaying) return;
+    const timer = setInterval(() => {
+      nextSlide();
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [activeIndex, isAutoPlaying]);
 
-    // Smoothly progress the load meter mockup
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 8;
-      if (progress >= 96) {
-        clearInterval(interval);
-      } else {
-        setLoadingProgress(progress);
-      }
-    }, 80);
-
-    const handleCanPlay = () => {
-      clearInterval(interval);
-      setLoadingProgress(100);
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 300);
+  // Keyboard arrow controls
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowRight') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
     };
-
-    video.addEventListener('loadeddata', handleCanPlay);
-    videoRef.current = video;
-
-    return () => {
-      clearInterval(interval);
-      video.removeEventListener('loadeddata', handleCanPlay);
-      video.pause();
-      video.src = '';
-      video.load();
-    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // 2. Window Event Listeners (Mouse Parallax & Scroll Zoom)
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (!containerRef.current) return;
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      mouseRef.current.targetX = (e.clientX / width) - 0.5;
-      mouseRef.current.targetY = (e.clientY / height) - 0.5;
-    };
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
 
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const height = window.innerHeight;
-      const percent = Math.min(Math.max(scrollY / height, 0), 1);
-      scrollRef.current.targetPercent = percent;
-    };
+  const handleTouchEnd = (e) => {
+    touchEndX.current = e.changedTouches[0].clientX;
+    const diff = touchStartX.current - touchEndX.current;
+    if (diff > 50) nextSlide();
+    if (diff < -50) prevSlide();
+  };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+  const activeSlide = CAROUSEL_DATA[activeIndex];
 
-  // 3. Three.js WebGL Rendering Loop
-  useEffect(() => {
-    if (isLoading || !videoRef.current || !canvasRef.current) return;
+  // Compute offset for 3D card layout (-2, -1, 0, 1, 2)
+  const getCardStyle = (index) => {
+    let offset = index - activeIndex;
 
-    const container = containerRef.current;
-    const canvas = canvasRef.current;
-    const video = videoRef.current;
+    // Handle circular wrapping for seamless coverflow loop
+    if (offset > Math.floor(total / 2)) offset -= total;
+    if (offset < -Math.floor(total / 2)) offset += total;
 
-    // Explicitly trigger play (safeguard)
-    video.play().catch(err => console.log('Video play triggered:', err));
+    const absOffset = Math.abs(offset);
 
-    // A. Three.js Core Setup
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-    
-    const scene = new THREE.Scene();
-    const initialFogColor = theme === 'light' ? 0xffffff : 0x050505;
-    scene.fog = new THREE.FogExp2(initialFogColor, 0.0);
-
-    const camera = new THREE.PerspectiveCamera(55, width / height, 0.1, 100);
-    camera.position.z = 5.0; // Base depth position
-
-    const renderer = new THREE.WebGLRenderer({
-      canvas: canvas,
-      antialias: true,
-      alpha: true,
-      powerPreference: "high-performance"
-    });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(initialFogColor, 1.0);
-
-    // B. Projection Plane with VideoTexture Map
-    const texture = new THREE.VideoTexture(video);
-    texture.minFilter = THREE.LinearFilter;
-    texture.magFilter = THREE.LinearFilter;
-    texture.colorSpace = THREE.SRGBColorSpace;
-
-    const planeGeo = new THREE.PlaneGeometry(2, 2);
-    const planeMat = new THREE.MeshBasicMaterial({
-      map: texture,
-      depthWrite: false,
-      depthTest: false,
-      transparent: true,
-      opacity: 1.0
-    });
-    const backgroundPlane = new THREE.Mesh(planeGeo, planeMat);
-    scene.add(backgroundPlane);
-
-    // Scale background plane to cover full screen (object-fit: cover equivalent in WebGL space)
-    const scaleBackgroundPlane = () => {
-      const fovRad = (camera.fov * Math.PI) / 180;
-      const visibleHeight = 2 * Math.tan(fovRad / 2) * camera.position.z;
-      const visibleWidth = visibleHeight * camera.aspect;
-      
-      const videoWidth = video.videoWidth || 1920;
-      const videoHeight = video.videoHeight || 1080;
-      const imgAspect = videoWidth / videoHeight;
-      const planeAspect = visibleWidth / visibleHeight;
-      
-      const baseZoom = 1.03; 
-      if (planeAspect > imgAspect) {
-        backgroundPlane.scale.set(visibleWidth * baseZoom, (visibleWidth / imgAspect) * baseZoom, 1);
-      } else {
-        backgroundPlane.scale.set((visibleHeight * imgAspect) * baseZoom, visibleHeight * baseZoom, 1);
-      }
-    };
-    scaleBackgroundPlane();
-    
-    video.addEventListener('loadedmetadata', scaleBackgroundPlane);
-
-    // C. Volumetric glowing 3D particle points system
-    const particleGeo = new THREE.BufferGeometry();
-    const particleCount = 75;
-    const posArray = new Float32Array(particleCount * 3);
-    const speedsArray = new Float32Array(particleCount);
-    
-    for (let i = 0; i < particleCount * 3; i += 3) {
-      posArray[i] = (Math.random() - 0.5) * 8.0;     // X coordinate
-      posArray[i + 1] = (Math.random() - 0.5) * 5.0; // Y coordinate
-      posArray[i + 2] = (Math.random() * 4.0) - 1.0; // Z depth
-      speedsArray[i / 3] = Math.random() * 0.006 + 0.002; // Vertical speed
+    // Active center card
+    if (offset === 0) {
+      return {
+        transform: 'translateX(0%) translateZ(120px) rotateY(0deg) scale(1.05)',
+        zIndex: 20,
+        opacity: 1,
+        filter: 'brightness(1.08) drop-shadow(0 20px 40px rgba(0,0,0,0.5))',
+        cursor: 'default',
+        pointerEvents: 'auto',
+      };
     }
 
-    particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-    
-    const particleMat = new THREE.PointsMaterial({
-      size: 0.024,
-      transparent: true,
-      opacity: theme === 'light' ? 0.45 : 0.6,
-      blending: THREE.AdditiveBlending,
-      color: theme === 'light' ? 0x2563EB : 0x38BDF8,
-      depthWrite: false
-    });
+    // Left card (-1)
+    if (offset === -1) {
+      return {
+        transform: 'translateX(-65%) translateZ(0px) rotateY(28deg) scale(0.85)',
+        zIndex: 14,
+        opacity: 0.85,
+        filter: 'brightness(0.7) contrast(1.1)',
+        cursor: 'pointer',
+        pointerEvents: 'auto',
+      };
+    }
 
-    const particles = new THREE.Points(particleGeo, particleMat);
-    scene.add(particles);
+    // Right card (+1)
+    if (offset === 1) {
+      return {
+        transform: 'translateX(65%) translateZ(0px) rotateY(-28deg) scale(0.85)',
+        zIndex: 14,
+        opacity: 0.85,
+        filter: 'brightness(0.7) contrast(1.1)',
+        cursor: 'pointer',
+        pointerEvents: 'auto',
+      };
+    }
 
-    // D. Lighting Setup
-    const ambientLight = new THREE.AmbientLight(0xffffff, theme === 'light' ? 0.95 : 0.45);
-    scene.add(ambientLight);
-    
-    const dirLight = new THREE.DirectionalLight(theme === 'light' ? 0x2563EB : 0x38BDF8, 0.4);
-    dirLight.position.set(0, 2, 4);
-    scene.add(dirLight);
+    // Outer Left card (-2)
+    if (offset === -2) {
+      return {
+        transform: 'translateX(-120%) translateZ(-100px) rotateY(42deg) scale(0.68)',
+        zIndex: 8,
+        opacity: 0.5,
+        filter: 'brightness(0.45)',
+        cursor: 'pointer',
+        pointerEvents: 'auto',
+      };
+    }
 
-    // E. Frame resize handler
-    const handleResize = () => {
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-      scaleBackgroundPlane();
+    // Outer Right card (+2)
+    if (offset === 2) {
+      return {
+        transform: 'translateX(120%) translateZ(-100px) rotateY(-42deg) scale(0.68)',
+        zIndex: 8,
+        opacity: 0.5,
+        filter: 'brightness(0.45)',
+        cursor: 'pointer',
+        pointerEvents: 'auto',
+      };
+    }
+
+    // Far cards (hidden)
+    return {
+      transform: `translateX(${offset > 0 ? 180 : -180}%) translateZ(-200px) scale(0.5)`,
+      zIndex: 1,
+      opacity: 0,
+      pointerEvents: 'none',
     };
-    window.addEventListener('resize', handleResize);
-
-    // F. WebGL Rendering Easing Loop
-    let animationFrameId;
-    const render = (time) => {
-      // 1. Cycle location tag coordinates synchronized with video playtime progress
-      if (video.duration) {
-        const currentTime = video.currentTime;
-        const duration = video.duration;
-        const destIndex = Math.min(
-          Math.floor((currentTime / duration) * DESTINATIONS.length),
-          DESTINATIONS.length - 1
-        );
-        setCurrentDest(DESTINATIONS[destIndex]);
-      }
-
-      // 2. Snappy Camera Orbit Parallax Easing
-      const mouse = mouseRef.current;
-      const spring = 0.06;
-      mouse.currentX += (mouse.targetX - mouse.currentX) * spring;
-      mouse.currentY += (mouse.targetY - mouse.currentY) * spring;
-
-      const breatheX = Math.sin(time * 0.0006) * 0.008;
-      const breatheY = Math.cos(time * 0.0008) * 0.008;
-      const orbitX = mouse.currentX + breatheX;
-      const orbitY = mouse.currentY + breatheY;
-
-      camera.position.x = orbitX * 0.75;
-      camera.position.y = -orbitY * 0.75;
-
-      // 3. Scroll-driven camera Z-depth zoom
-      const scroll = scrollRef.current;
-      scroll.currentPercent += (scroll.targetPercent - scroll.currentPercent) * 0.08;
-      camera.position.z = 5.0 - (scroll.currentPercent * 2.0);
-
-      // Rotate plane slightly to enhance depth speed-ramp
-      backgroundPlane.rotation.y = orbitX * 0.08;
-      backgroundPlane.rotation.x = -orbitY * 0.08;
-      backgroundPlane.rotation.z = scroll.currentPercent * 0.03;
-
-      // 4. Animate Volumetric 3D Particles
-      const positions = particleGeo.attributes.position.array;
-      for (let i = 0; i < particleCount; i++) {
-        const yIndex = i * 3 + 1;
-        const xIndex = i * 3;
-        
-        positions[yIndex] += speedsArray[i];
-        positions[xIndex] += Math.sin(time * 0.001 + i) * 0.0008;
-
-        if (positions[yIndex] > 3.0) {
-          positions[yIndex] = -3.0;
-          positions[xIndex] = (Math.random() - 0.5) * 8.0;
-        }
-      }
-      particleGeo.attributes.position.needsUpdate = true;
-      particles.rotation.y = time * 0.0001;
-
-      camera.lookAt(0, 0, 0);
-      
-      renderer.render(scene, camera);
-      animationFrameId = requestAnimationFrame(render);
-    };
-    
-    animationFrameId = requestAnimationFrame(render);
-
-    // Cleanups on unmount
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      video.removeEventListener('loadedmetadata', scaleBackgroundPlane);
-      cancelAnimationFrame(animationFrameId);
-      
-      renderer.dispose();
-      planeGeo.dispose();
-      planeMat.dispose();
-      texture.dispose();
-      particleGeo.dispose();
-      particleMat.dispose();
-    };
-  }, [isLoading]);
-
-  // 4. Dynamic WebGL Fog & Lighting color transitions (reacting to context theme updates)
-  useEffect(() => {
-    if (isLoading || !canvasRef.current) return;
-    const canvas = canvasRef.current;
-    
-    // We can't access WebGL context variables directly outside render loop easily, 
-    // but React's state effect will trigger scene updates by matching page styles.
-    // CSS-based styles below will handle text contrast and preloader clearances.
-  }, [theme]);
+  };
 
   return (
-    <section 
-      ref={containerRef}
-      className="hero-3d-container" 
+    <section
+      className="coverflow-hero-container"
+      onMouseEnter={() => setIsAutoPlaying(false)}
+      onMouseLeave={() => setIsAutoPlaying(true)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       style={{
         position: 'relative',
         width: '100%',
-        height: '84vh',
-        backgroundColor: theme === 'light' ? '#ffffff' : '#050505',
+        minHeight: '85vh',
+        backgroundColor: '#0a0b0e',
+        color: '#ffffff',
         overflow: 'hidden',
-        perspective: '1200px',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        transition: 'background-color 0.4s ease',
+        padding: '40px 0 60px 0',
       }}
     >
-      {/* 1. Cinematic Preloader Screen (Theme Adaptive) */}
-      {isLoading && (
-        <div 
-          className="hero-loader-overlay"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            zIndex: 100,
-            backgroundColor: theme === 'light' ? '#ffffff' : '#050505',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '24px',
-            color: theme === 'light' ? '#0a0a0c' : '#ffffff',
-            transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s',
-          }}
-        >
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '1.6rem', fontWeight: '800', letterSpacing: '6px', textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>
-              Trip<span style={{ color: '#2563EB' }}>Together</span>
-            </span>
-            <span style={{ fontSize: '0.75rem', letterSpacing: '8px', color: theme === 'light' ? 'rgba(0,0,0,0.45)' : 'rgba(255,255,255,0.4)', textTransform: 'uppercase', fontWeight: '500' }}>
-              EXPEDITION CO-PILOT
-            </span>
-          </div>
+      {/* 1. Dynamic Cinematic Blurred Backdrop */}
+      <div
+        className="coverflow-backdrop"
+        style={{
+          position: 'absolute',
+          inset: '-20px',
+          backgroundImage: `url(${activeSlide.image})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'blur(36px) brightness(0.35) contrast(1.2)',
+          transform: 'scale(1.15)',
+          transition: 'background-image 0.8s ease-in-out',
+          zIndex: 1,
+        }}
+      />
 
-          <div style={{ width: '180px', height: '2px', backgroundColor: theme === 'light' ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)', borderRadius: '4px', overflow: 'hidden', position: 'relative' }}>
-            <div 
-              style={{
-                width: `${loadingProgress}%`,
-                height: '100%',
-                background: 'linear-gradient(90deg, #2563EB 0%, #38BDF8 100%)',
-                transition: 'width 0.15s ease-out',
-                boxShadow: theme === 'light' ? '0 0 10px rgba(37, 99, 235, 0.4)' : '0 0 10px rgba(56, 189, 248, 0.7)'
-              }}
-            ></div>
-          </div>
-          
-          <span style={{ fontSize: '0.8rem', fontWeight: '600', color: theme === 'light' ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.6)', fontVariantNumeric: 'tabular-nums' }}>
-            {loadingProgress}%
-          </span>
-        </div>
-      )}
-
-      {/* 2. Three.js WebGL Canvas (GPU hardware-accelerated viewport) */}
-      <div 
-        id="hero-3d-wrapper"
+      {/* Radial vignette gradient overlay */}
+      <div
         style={{
           position: 'absolute',
           inset: 0,
-          zIndex: 1,
-          width: '100%',
-          height: '100%',
-          transformStyle: 'preserve-3d',
-          transition: 'transform 0.1s ease-out',
-        }}
-      >
-        <canvas 
-          ref={canvasRef} 
-          style={{ 
-            width: '100%', 
-            height: '100%', 
-            display: 'block'
-          }} 
-        />
-
-        {/* 3. Flying Birds Flock Layer */}
-        <div 
-          className="birds-flock"
-          style={{
-            position: 'absolute',
-            top: '22%',
-            left: '10%',
-            width: '120px',
-            height: '60px',
-            opacity: theme === 'light' ? 0.35 : 0.22,
-            pointerEvents: 'none',
-            zIndex: 3,
-            transform: 'translateZ(40px)',
-            animation: 'flyAcross 52s linear infinite'
-          }}
-        >
-          <svg viewBox="0 0 100 50" fill={theme === 'light' ? '#444444' : '#dddddd'}>
-            <path className="bird-svg" d="M10,20 Q15,10 20,20 Q25,10 30,20 Q20,18 10,20 Z" style={{ animation: 'flap 0.85s ease-in-out infinite' }} />
-            <path className="bird-svg" d="M40,25 Q43,17 47,25 Q51,17 55,25 Q47,23 40,25 Z" style={{ animation: 'flap 0.85s ease-in-out infinite 0.2s' }} />
-            <path className="bird-svg" d="M25,35 Q28,29 32,35 Q36,29 40,35 Q32,33 25,35 Z" style={{ animation: 'flap 0.85s ease-in-out infinite 0.1s' }} />
-          </svg>
-        </div>
-      </div>
-
-      {/* 4. Swiss design coordinates ticker overlay */}
-      <div 
-        id="hero-3d-location-tag"
-        className="luxury-location-tag"
-        style={{
-          position: 'absolute',
-          bottom: '8%',
-          right: '6%',
-          zIndex: 4,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-end',
+          background: 'radial-gradient(ellipse at center, rgba(10,11,14,0.2) 0%, rgba(10,11,14,0.85) 100%)',
+          zIndex: 2,
           pointerEvents: 'none',
-          transformStyle: 'preserve-3d',
-          transition: 'transform 0.1s ease-out',
         }}
-      >
-        <span className="coordinate-ticker" style={{ color: theme === 'light' ? '#2563EB' : '#38BDF8' }}>
-          {currentDest.coords}
-        </span>
-        <span className="location-name" style={{ color: theme === 'light' ? '#1e0004' : '#ffffff' }}>
-          {currentDest.name}
-        </span>
+      />
+
+      {/* Floating subtle ambient particles */}
+      <div className="ambient-orbs" style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
+        <div style={{ position: 'absolute', top: '15%', left: '20%', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(255,145,0,0.12) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(40px)' }} />
+        <div style={{ position: 'absolute', bottom: '15%', right: '20%', width: '350px', height: '350px', background: 'radial-gradient(circle, rgba(56,189,248,0.12) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(40px)' }} />
       </div>
 
-      {/* 5. Editorial Content Overlay (Reacts to camera tilt) */}
-      <div 
-        id="hero-3d-content"
-        className="container"
+      {/* 2. Top Nav / Subheader integrated branding */}
+      <div
         style={{
           position: 'relative',
-          zIndex: 5,
-          color: theme === 'light' ? '#0a0a0c' : '#ffffff',
+          zIndex: 10,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
           textAlign: 'center',
-          maxWidth: '850px',
-          padding: '0 24px',
-          transformStyle: 'preserve-3d',
-          transition: 'transform 0.1s ease-out',
-          pointerEvents: 'auto',
+          marginBottom: '28px',
+          maxWidth: '750px',
+          padding: '0 20px',
         }}
       >
-        {/* Subtle radial ambient lighting */}
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '280px', height: '280px', background: theme === 'light' ? 'radial-gradient(circle, rgba(37, 99, 235, 0.05) 0%, transparent 70%)' : 'radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%)', filter: 'blur(30px)', pointerEvents: 'none', zIndex: -1 }}></div>
-
-        <h1 className="hero-3d-title" style={{ color: theme === 'light' ? '#0a0a0c' : '#ffffff', letterSpacing: '4px', textTransform: 'uppercase' }}>
-          EXPLORE THE BEAUTY OF <br />
-          <span className="hero-3d-title-gradient">INDIA</span>
+        <span
+          style={{
+            fontSize: '0.75rem',
+            fontWeight: '700',
+            letterSpacing: '5px',
+            textTransform: 'uppercase',
+            color: '#f97316',
+            backgroundColor: 'rgba(249, 115, 22, 0.12)',
+            border: '1px solid rgba(249, 115, 22, 0.25)',
+            padding: '6px 18px',
+            borderRadius: '100px',
+            marginBottom: '14px',
+            backdropFilter: 'blur(8px)',
+          }}
+        >
+          CURATED EXPEDITIONS
+        </span>
+        <h1
+          style={{
+            fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)',
+            fontWeight: '800',
+            letterSpacing: '-1px',
+            lineHeight: 1.1,
+            color: '#ffffff',
+            margin: '0 0 10px 0',
+            fontFamily: 'var(--font-heading)',
+          }}
+        >
+          Discover The World's Great Wonders
         </h1>
+        <p style={{ fontSize: '1.05rem', color: 'rgba(255, 255, 255, 0.72)', margin: 0, maxWidth: '600px', lineHeight: '1.5' }}>
+          Explore iconic destinations, plan shared itineraries, and calculate group budgets in one seamless experience.
+        </p>
+      </div>
 
-        {/* Start Expedition Scroll button */}
-        <div style={{ animation: 'scaleInFade 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards', opacity: 0, display: 'inline-block' }}>
-          <button 
-            onClick={handleExploreScroll} 
-            className="hero-luxury-btn"
+      {/* 3. 3D Coverflow Carousel Stage */}
+      <div
+        className="coverflow-stage"
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: '1100px',
+          height: '460px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          perspective: '1200px',
+          transformStyle: 'preserve-3d',
+          zIndex: 10,
+          margin: '10px 0 30px 0',
+        }}
+      >
+        {/* Left Arrow Nav Button */}
+        <button
+          onClick={prevSlide}
+          aria-label="Previous Slide"
+          style={{
+            position: 'absolute',
+            left: '20px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            zIndex: 35,
+            width: '52px',
+            height: '52px',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255, 255, 255, 0.12)',
+            border: '1px solid rgba(255, 255, 255, 0.25)',
+            color: '#ffffff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            backdropFilter: 'blur(12px)',
+            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
+          }}
+          className="coverflow-arrow-btn"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+
+        {/* Right Arrow Nav Button */}
+        <button
+          onClick={nextSlide}
+          aria-label="Next Slide"
+          style={{
+            position: 'absolute',
+            right: '20px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            zIndex: 35,
+            width: '52px',
+            height: '52px',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255, 255, 255, 0.12)',
+            border: '1px solid rgba(255, 255, 255, 0.25)',
+            color: '#ffffff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            backdropFilter: 'blur(12px)',
+            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
+          }}
+          className="coverflow-arrow-btn"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+
+        {/* Render 3D Coverflow Cards */}
+        {CAROUSEL_DATA.map((item, idx) => {
+          const style = getCardStyle(idx);
+          const isCenter = idx === activeIndex;
+
+          return (
+            <div
+              key={item.id}
+              onClick={() => setActiveIndex(idx)}
+              style={{
+                position: 'absolute',
+                width: '310px',
+                height: '430px',
+                borderRadius: '20px',
+                overflow: 'hidden',
+                boxShadow: isCenter ? '0 25px 50px -12px rgba(0,0,0,0.7)' : '0 15px 30px rgba(0,0,0,0.5)',
+                transition: 'transform 0.65s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.65s ease, filter 0.65s ease, border-color 0.4s ease',
+                border: isCenter ? '1px solid rgba(255, 255, 255, 0.4)' : '1px solid rgba(255, 255, 255, 0.15)',
+                ...style,
+              }}
+              className="coverflow-card"
+            >
+              {/* Card Image */}
+              <img
+                src={item.image}
+                alt={item.title}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block',
+                  transition: 'transform 0.8s ease',
+                }}
+              />
+
+              {/* Gradient Dark Overlay */}
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.3) 55%, transparent 100%)',
+                }}
+              />
+
+              {/* Active Center Card Text Content Overlay */}
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  padding: '28px 24px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  zIndex: 2,
+                  textAlign: 'left',
+                }}
+              >
+                {/* Top Hashtag / Category Badge */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <span
+                    style={{
+                      fontSize: '0.72rem',
+                      fontWeight: '700',
+                      letterSpacing: '1px',
+                      color: '#ffffff',
+                      backgroundColor: 'rgba(255, 255, 255, 0.18)',
+                      backdropFilter: 'blur(8px)',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      padding: '4px 12px',
+                      borderRadius: '100px',
+                    }}
+                  >
+                    {item.tag}
+                  </span>
+                </div>
+
+                {/* Bottom Content Header & Subtitle */}
+                <div>
+                  <h3
+                    style={{
+                      fontSize: '1.65rem',
+                      fontWeight: '800',
+                      letterSpacing: '0.5px',
+                      lineHeight: 1.15,
+                      color: '#ffffff',
+                      margin: '0 0 10px 0',
+                      textShadow: '0 4px 12px rgba(0,0,0,0.6)',
+                      fontFamily: 'var(--font-heading)',
+                    }}
+                  >
+                    {item.title}
+                  </h3>
+
+                  {/* Horizontal Accent Line */}
+                  <div
+                    style={{
+                      width: '45px',
+                      height: '3px',
+                      backgroundColor: '#f97316',
+                      borderRadius: '2px',
+                      marginBottom: '10px',
+                    }}
+                  />
+
+                  <p
+                    style={{
+                      fontSize: '0.88rem',
+                      color: 'rgba(255, 255, 255, 0.85)',
+                      margin: '0 0 16px 0',
+                      lineHeight: '1.4',
+                      fontWeight: '400',
+                    }}
+                  >
+                    {item.tagline}
+                  </p>
+
+                  {/* Action button visible on center active slide */}
+                  {isCenter && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (searchQuery !== undefined && setSearchQuery) {
+                          setSearchQuery(item.searchQuery);
+                        }
+                        navigate(`/destinations?search=${encodeURIComponent(item.searchQuery)}`);
+                      }}
+                      style={{
+                        padding: '10px 20px',
+                        backgroundColor: '#f97316',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '100px',
+                        fontSize: '0.82rem',
+                        fontWeight: '700',
+                        letterSpacing: '1px',
+                        textTransform: 'uppercase',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        boxShadow: '0 6px 20px rgba(249, 115, 22, 0.4)',
+                        transition: 'all 0.3s ease',
+                      }}
+                      className="coverflow-cta-btn"
+                    >
+                      <span>Explore Destination</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 4. Bottom Search Bar Integration & Pagination Dots */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 10,
+          width: '100%',
+          maxWidth: '650px',
+          padding: '0 20px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '20px',
+        }}
+      >
+        {/* Search Bar */}
+        {handleSearchSubmit && (
+          <form
+            onSubmit={handleSearchSubmit}
             style={{
-              transform: 'translateZ(15px)',
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.22)',
+              borderRadius: '100px',
+              padding: '6px 8px 6px 22px',
+              backdropFilter: 'blur(16px)',
+              boxShadow: '0 12px 32px rgba(0,0,0,0.3)',
             }}
           >
-            <span>Start Expedition</span>
-            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="btn-arrow" style={{ transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" style={{ marginRight: '12px', flexShrink: 0 }}>
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
-          </button>
+            <input
+              type="text"
+              placeholder="Search any destination worldwide (e.g. Manali, Paris, Goa)..."
+              value={searchQuery || ''}
+              onChange={(e) => setSearchQuery && setSearchQuery(e.target.value)}
+              style={{
+                flex: 1,
+                background: 'transparent',
+                border: 'none',
+                outline: 'none',
+                color: '#ffffff',
+                fontSize: '0.95rem',
+                fontWeight: '500',
+              }}
+            />
+            <button
+              type="submit"
+              style={{
+                backgroundColor: '#f97316',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '100px',
+                padding: '10px 24px',
+                fontSize: '0.88rem',
+                fontWeight: '700',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 14px rgba(249, 115, 22, 0.35)',
+              }}
+              className="coverflow-search-btn"
+            >
+              Search
+            </button>
+          </form>
+        )}
+
+        {/* Carousel Dot Indicators */}
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          {CAROUSEL_DATA.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveIndex(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              style={{
+                width: i === activeIndex ? '28px' : '8px',
+                height: '8px',
+                borderRadius: '100px',
+                backgroundColor: i === activeIndex ? '#f97316' : 'rgba(255, 255, 255, 0.3)',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                padding: 0,
+              }}
+            />
+          ))}
         </div>
       </div>
+
+      {/* Embedded Custom Styles */}
+      <style>{`
+        .coverflow-arrow-btn:hover {
+          background-color: rgba(249, 115, 22, 0.85) !important;
+          border-color: #f97316 !important;
+          transform: translateY(-50%) scale(1.1) !important;
+          box-shadow: 0 12px 35px rgba(249, 115, 22, 0.5) !important;
+        }
+
+        .coverflow-cta-btn:hover {
+          background-color: #ea580c !important;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(249, 115, 22, 0.55) !important;
+        }
+
+        .coverflow-search-btn:hover {
+          background-color: #ea580c !important;
+          transform: scale(1.03);
+        }
+
+        .coverflow-card:hover img {
+          transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+          .coverflow-stage {
+            height: 380px !important;
+          }
+          .coverflow-card {
+            width: 250px !important;
+            height: 360px !important;
+          }
+          .coverflow-arrow-btn {
+            width: 44px !important;
+            height: 44px !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }
