@@ -589,35 +589,58 @@ function TripCard({
     meterColorClass = 'bg-warning';
   }
 
+  const getDurationInfo = (start, end) => {
+    const s = new Date(start);
+    const e = new Date(end);
+    const diff = Math.abs(e - s);
+    const days = Math.ceil(diff / (1000 * 60 * 60 * 24)) + 1;
+    const nights = Math.max(0, days - 1);
+    return {
+      daysStr: `${days} ${days === 1 ? 'Day' : 'Days'}`,
+      nightsStr: `${nights} ${nights === 1 ? 'Night' : 'Nights'}`
+    };
+  };
+
+  const getWeekdayInterval = (start, end) => {
+    const s = new Date(start);
+    const e = new Date(end);
+    const options = { weekday: 'long' };
+    const startDay = s.toLocaleDateString('en-US', options);
+    const endDay = e.toLocaleDateString('en-US', options);
+    return `${startDay} to ${endDay}`;
+  };
+
+  const duration = getDurationInfo(trip.startDate, trip.endDate);
+  const weekdayInterval = getWeekdayInterval(trip.startDate, trip.endDate);
+  const isGroup = (trip.members && trip.members.length > 1) || (trip.user !== user?._id);
+
   return (
-    <div className="trip-card animate-fade-in" style={{ marginBottom: '24px' }}>
+    <div className="dashboard-trip-card animate-fade-in">
       
-      {/* Left side: destination thumbnail */}
-      <div className="trip-image-side">
-        <img src={trip.destination.image} alt={trip.destination.title} />
-        <div className="trip-image-overlay">
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <span className="trip-badge">{trip.destination.category}</span>
-            {trip.user !== user?._id ? (
-              <span className="trip-badge" style={{ background: 'var(--color-secondary)' }}>
+      {/* Top Main Split Section */}
+      <div className="trip-main-split">
+        
+        {/* Left Panel: Graphic Thumb Card */}
+        <div className="trip-graphic-panel" style={{ backgroundImage: `url(${trip.destination.image})` }}>
+          <div className="trip-graphic-overlay"></div>
+          
+          {/* Top Badges */}
+          <div className="trip-graphic-top-badges">
+            <span className="graphic-badge badge-category">
+              {trip.destination.category === 'Adventure' ? '🧗' : 
+               trip.destination.category === 'Beach' ? '🏖️' : 
+               trip.destination.category === 'Nature' ? '🌲' : 
+               trip.destination.category === 'Cultural' ? '🏛️' : '🏙️'}{' '}
+              {trip.destination.category}
+            </span>
+            {isGroup && (
+              <span className="graphic-badge badge-group">
                 👥 Joined Group
               </span>
-            ) : (trip.members && trip.members.length > 1 && (
-              <span className="trip-badge" style={{ background: 'var(--color-primary)' }}>
-                👑 Owner (Group)
-              </span>
-            ))}
+            )}
             {trip.inviteCode && (
-              <span 
-                className="trip-badge" 
-                style={{ 
-                  background: 'rgba(15, 23, 42, 0.85)', 
-                  border: '1px solid rgba(255, 255, 255, 0.25)',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}
+              <button 
+                className="graphic-badge badge-copy-code"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -627,134 +650,207 @@ function TripCard({
                 title="Click to copy invite code"
               >
                 🔑 {trip.inviteCode} (Copy)
-              </span>
+              </button>
             )}
           </div>
-          <div className="trip-dest-info">
-            <h2>{trip.destination.title}</h2>
-            <p>📍 {trip.destination.country}</p>
+
+          {/* Bottom Destination Info */}
+          <div className="trip-graphic-bottom-info">
+            <h2 className="dest-title-lc">{trip.destination.title.toLowerCase()}</h2>
+            <p className="dest-country-row">
+              <span className="pin-icon">📍</span> {trip.destination.country}
+            </p>
             
             {/* Weather Widget */}
-            <div className="trip-weather-widget" style={{
-              background: 'rgba(15, 23, 42, 0.75)',
-              backdropFilter: 'blur(6px)',
-              WebkitBackdropFilter: 'blur(6px)',
-              padding: '6px 12px',
-              borderRadius: 'var(--radius-sm)',
-              fontSize: '0.85rem',
-              color: '#f8fafc',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              marginTop: '10px',
-              border: '1px solid rgba(255, 255, 255, 0.15)'
-            }}>
-              <span>{weather.icon}</span>
-              <span><strong>{weather.temp}</strong> • {weather.desc}</span>
+            <div className="trip-weather-pill">
+              <span className="weather-icon">{weather.icon}</span>
+              <span className="weather-stats"><strong>{weather.temp}</strong> • {weather.desc}</span>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Right Panel: Metrics Details */}
+        <div className="trip-metrics-panel">
+          
+          {/* Header Metric Grid */}
+          <div className="metrics-header-grid">
+            
+            {/* Duration */}
+            <div className="metric-col">
+              <div className="metric-label">DURATION</div>
+              <div className="metric-value-row">
+                <span className="metric-icon clock-orange">⏱️</span>
+                <div>
+                  <div className="metric-main-value">{duration.daysStr}</div>
+                  <div className="metric-sub-value">{duration.nightsStr}</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="metric-col-divider"></div>
+
+            {/* Date Interval */}
+            <div className="metric-col">
+              <div className="metric-label">DATE INTERVAL</div>
+              <div className="metric-value-row">
+                <span className="metric-icon calendar-orange">📅</span>
+                <div>
+                  <div className="metric-main-value">
+                    {formatDate(trip.startDate)} – {formatDate(trip.endDate)}
+                  </div>
+                  <div className="metric-sub-value">{weekdayInterval}</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="metric-col-divider"></div>
+
+            {/* Total Budget */}
+            <div className="metric-col">
+              <div className="metric-label">TOTAL BUDGET</div>
+              <div className="metric-value-row">
+                <span className="metric-icon wallet-orange">👛</span>
+                <div>
+                  <div className="metric-main-value">₹{budget.toLocaleString()}</div>
+                  <div className="metric-sub-value">{isGroup ? 'Group Budget' : 'Personal Budget'}</div>
+                </div>
+              </div>
             </div>
 
           </div>
+
+          {/* Spent Progress Section */}
+          <div className="spent-progress-section">
+            <div className="spent-labels-row">
+              <span className="spent-text">
+                Spent: <strong>₹{totalSpent.toLocaleString()}</strong> of ₹{budget.toLocaleString()}
+              </span>
+              <span className="spent-percentage">
+                {ratio.toFixed(0)}% Used
+              </span>
+            </div>
+            
+            {/* Progress Bar Track */}
+            <div className="spent-progress-track">
+              <div 
+                className={`spent-progress-fill ${meterColorClass}`} 
+                style={{ width: `${percentage}%` }}
+              ></div>
+            </div>
+
+            {/* Weather Tip Bar */}
+            <div className="weather-tip-alert-box">
+              <span className="lightbulb-icon">💡</span>
+              <span className="weather-tip-text">
+                <strong>Weather Tip:</strong> {weather.tip}
+              </span>
+            </div>
+
+            {ratio >= 100 && (
+              <div className="budget-alert-line exceeded" style={{ color: 'var(--color-danger)', fontSize: '0.8rem', fontWeight: 600, marginTop: '8px' }}>
+                ⚠️ Alert: You have exceeded your planned budget!
+              </div>
+            )}
+            {ratio >= 75 && ratio < 100 && (
+              <div className="budget-alert-line warning" style={{ color: 'var(--color-warning)', fontSize: '0.8rem', fontWeight: 600, marginTop: '8px' }}>
+                ⚠️ Caution: You have used over 75% of your budget.
+              </div>
+            )}
+          </div>
+
+          {/* Footer Control Row */}
+          <div className="metrics-footer-controls">
+            
+            {/* Notes Snippet */}
+            <div className="notes-snippet-wrapper">
+              {trip.notes ? (
+                <>
+                  <span className="notes-icon">📝</span>
+                  <span className="notes-text"><strong>Notes:</strong> {trip.notes}</span>
+                </>
+              ) : (
+                <>
+                  <span className="notes-icon">📝</span>
+                  <span className="notes-text" style={{ color: 'var(--text-muted)' }}>No trip notes added yet.</span>
+                </>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="controls-buttons-group">
+              <button onClick={onDelete} className="btn-cancel-trip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14" style={{ marginRight: '6px' }}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Cancel Trip
+              </button>
+
+              {trip.user === user?._id && (
+                <button onClick={onEdit} className="btn-edit-trip" title="Edit Trip Details">
+                  ✏️ Edit
+                </button>
+              )}
+
+              <Link to={`/trip/${trip._id}`} className="btn-manage-trip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14" style={{ marginRight: '6px' }}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Manage Trip
+              </Link>
+            </div>
+
+          </div>
+
         </div>
+
       </div>
 
-      {/* Right side: details and expandable sections */}
-      <div className="trip-content-side">
+      {/* Full-width Bottom Ribbon */}
+      <div className="trip-card-bottom-ribbon">
+        <div className="ribbon-item">
+          <div className="ribbon-icon-wrapper orange-glow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+          <div>
+            <div className="ribbon-title">Group Collaboration</div>
+            <div className="ribbon-desc">Plan together, stay updated</div>
+          </div>
+        </div>
         
-        {/* Meta details */}
-        <div className="trip-meta-grid">
-          <div className="trip-meta-item">
-            <span>Duration</span>
-            <strong>⏱ {getDaysCount(trip.startDate, trip.endDate)}</strong>
-          </div>
-          <div className="trip-meta-item">
-            <span>Date Interval</span>
-            <strong>📅 {formatDate(trip.startDate)} - {formatDate(trip.endDate)}</strong>
-          </div>
-          <div className="trip-meta-item">
-            <span>Total Budget</span>
-            <strong>💵 ₹{budget.toLocaleString()}</strong>
-          </div>
-        </div>
+        <div className="ribbon-divider"></div>
 
-        {/* Budget Status Meter */}
-        <div className="budget-status-section">
-          <div className="budget-meter-labels">
-            <span style={{ color: 'var(--text-secondary)' }}>
-              Spent: <strong>₹{totalSpent.toLocaleString()}</strong> of ₹{budget.toLocaleString()}
-            </span>
-            <span style={{ 
-              color: ratio >= 100 ? 'var(--color-danger)' : ratio >= 75 ? 'var(--color-warning)' : 'var(--color-secondary)',
-              fontWeight: 'bold'
-            }}>
-              {ratio.toFixed(0)}% Used
-            </span>
+        <div className="ribbon-item">
+          <div className="ribbon-icon-wrapper orange-glow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0110 0v4" />
+            </svg>
           </div>
-
-          <div className="budget-progress-bar-bg">
-            <div 
-              className={`budget-progress-bar-fill ${meterColorClass}`} 
-              style={{ width: `${percentage}%` }}
-            ></div>
-          </div>
-
-          {ratio >= 100 && (
-            <p style={{ color: 'var(--color-danger)', fontSize: '0.85rem', fontWeight: 600, marginTop: '8px' }}>
-              ⚠️ Alert: You have exceeded your planned budget!
-            </p>
-          )}
-          {ratio >= 75 && ratio < 100 && (
-            <p style={{ color: 'var(--color-warning)', fontSize: '0.85rem', fontWeight: 600, marginTop: '8px' }}>
-              ⚠️ Caution: You have used over 75% of your budget.
-            </p>
-          )}
-
-          {/* Weather recommendation tag */}
-          <div style={{ marginTop: '12px', fontSize: '0.85rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span>💡</span>
-            <span><strong>Weather Tip:</strong> {weather.tip}</span>
+          <div>
+            <div className="ribbon-title">Secure & Private</div>
+            <div className="ribbon-desc">Only invited members</div>
           </div>
         </div>
 
-        {trip.notes && (
-          <div className="trip-notes">
-            <strong>Notes:</strong> {trip.notes}
+        <div className="ribbon-divider"></div>
+
+        <div className="ribbon-item">
+          <div className="ribbon-icon-wrapper orange-glow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
           </div>
-        )}
-
-        {/* Action button rows */}
-        <div className="trip-actions">
-          <button 
-            onClick={onDelete} 
-            className="btn btn-secondary" 
-            style={{ 
-              borderColor: 'var(--color-danger)', 
-              color: 'var(--color-danger)', 
-              padding: '8px 16px',
-              fontSize: '0.9rem' 
-            }}
-          >
-            Cancel Trip
-          </button>
-
-          {trip.user === user?._id && (
-            <button 
-              onClick={onEdit} 
-              className="btn btn-secondary"
-              style={{ padding: '8px 16px', fontSize: '0.9rem' }}
-            >
-              ✏️ Edit Details
-            </button>
-          )}
-          
-          <Link 
-            to={`/trip/${trip._id}`}
-            className="btn btn-primary" 
-            style={{ padding: '8px 16px', fontSize: '0.9rem' }}
-          >
-            Manage Trip
-          </Link>
+          <div>
+            <div className="ribbon-title">Real-time Updates</div>
+            <div className="ribbon-desc">Changes reflect instantly</div>
+          </div>
         </div>
       </div>
+
     </div>
   );
 }
