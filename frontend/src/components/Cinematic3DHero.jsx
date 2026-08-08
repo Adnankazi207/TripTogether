@@ -241,7 +241,7 @@ export default function Cinematic3DHero({ searchQuery, setSearchQuery, handleSea
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: isMobile ? '24px 0 40px 0' : '40px 0 50px 0',
+        padding: isMobile ? '36px 0 40px 0' : '40px 0 50px 0',
         transition: 'background-color 0.4s ease, color 0.4s ease',
       }}
     >
