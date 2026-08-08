@@ -464,11 +464,6 @@ export default function FeatureSlider() {
           <div className="explore-section-bg-overlay"></div>
         </div>
 
-        {/* Decorative overlapping travel flatlay backpack on the left */}
-        <div className="explore-overlapping-gear">
-          <img src="/explore_gear.png" alt="Travel Gear Flatlay" className="explore-gear-img" />
-        </div>
-
         {/* Next & Previous Navigation Buttons (Placed here to avoid clipping by overflow: hidden) */}
         <button className="slider-nav-btn btn-prev" onClick={handlePrev} aria-label="Previous Slide">
           <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
