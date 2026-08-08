@@ -88,11 +88,11 @@ export default function FeatureSlider() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [typedText, setTypedText] = useState("");
   
-  // Auto-play state
+  // Auto-play state (automatically cycles slides every 5.5s)
   useEffect(() => {
     const timer = setInterval(() => {
       handleNext();
-    }, 9500);
+    }, 5500);
     return () => clearInterval(timer);
   }, [activeSlide]);
 
@@ -485,20 +485,6 @@ export default function FeatureSlider() {
         {/* Slider Viewport Frosted Glass Container */}
         <div className="slider-viewport-container explore-glass-container">
           
-          {/* Dynamic Dotted connector wave and floating active icon */}
-          <div className="slider-wave-connector-wrapper">
-            <svg viewBox="0 0 600 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="slider-wave-connector-svg">
-              <path d="M 50,100 C 150,150 250,50 350,100 C 450,150 500,100 550,100" stroke="var(--color-primary)" strokeWidth="1.5" strokeDasharray="4,6" opacity="0.35"/>
-            </svg>
-            <div className="slider-floating-token-badge">
-              {slide.type === 'budget' ? '₹' : (
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.286L13 21l-2.286-6.857L5 12l5.714-2.286L13 3z" />
-                </svg>
-              )}
-            </div>
-          </div>
-
           {/* Core Slide Wrapper */}
           <div className={`slider-grid ${isAnimating ? 'slider-animating' : ''}`}>
             

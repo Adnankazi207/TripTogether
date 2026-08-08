@@ -3610,6 +3610,18 @@ p {
   box-shadow: var(--shadow-lg), 0 30px 60px rgba(0, 0, 0, 0.6) !important;
 }
 
+@media (min-width: 992px) {
+  .explore-glass-container {
+    padding-left: 210px !important; /* Move text right to avoid postcard overlap */
+  }
+}
+
+@media (min-width: 1200px) {
+  .explore-glass-container {
+    padding-left: 250px !important; /* Move text right to avoid larger postcard overlap */
+  }
+}
+
 /* Floating connector wave */
 .slider-wave-connector-wrapper {
   position: absolute;
